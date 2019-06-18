@@ -94,5 +94,34 @@
                 "email": "448901948@qq.com"
             }
         ]
+    },
+    {
+        "name": "workerman/gatewayclient",
+        "version": "v3.0.13",
+        "version_normalized": "3.0.13.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/walkor/GatewayClient.git",
+            "reference": "6f4e76f38947be5cabca2c6fee367151f248d949"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/walkor/GatewayClient/zipball/6f4e76f38947be5cabca2c6fee367151f248d949",
+            "reference": "6f4e76f38947be5cabca2c6fee367151f248d949",
+            "shasum": ""
+        },
+        "time": "2018-09-15T03:03:50+00:00",
+        "type": "library",
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "GatewayClient\\": "./"
+            }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "homepage": "http://www.workerman.net"
     }
 ]

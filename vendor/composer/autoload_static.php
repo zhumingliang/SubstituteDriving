@@ -15,6 +15,10 @@ class ComposerStaticInitad3a9aa249d827d7da494fc28d2e1cee
         array (
             'app\\' => 4,
         ),
+        'G' => 
+        array (
+            'GatewayClient\\' => 14,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -25,6 +29,10 @@ class ComposerStaticInitad3a9aa249d827d7da494fc28d2e1cee
         'app\\' => 
         array (
             0 => __DIR__ . '/../..' . '/application',
+        ),
+        'GatewayClient\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/workerman/gatewayclient',
         ),
     );
 
