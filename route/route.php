@@ -9,12 +9,6 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
-Route::get('think', function () {
-    return 'hello,ThinkPHP5!';
-});
+Route::rule('api/:version/index', 'api/:version.Index/index');
+Route::rule('api/:version/send', 'api/:version.Index/send');
 
-Route::get('hello/:name', 'index/hello');
-
-return [
-
-];
