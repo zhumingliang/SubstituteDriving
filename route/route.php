@@ -18,3 +18,29 @@ Route::post('api/:version/token/small', 'api/:version.Token/getSmallToken');
 Route::get('api/:version/token/login/out', 'api/:version.Token/loginOut');
 
 Route::post('api/:version/user/info', 'api/:version.User/userInfo');
+
+Route::post('api/:version/driver/bind', 'api/:version.Driver/bind');
+
+Route::post('api/:version/ticket/save', 'api/:version.Ticket/save');
+Route::post('api/:version/ticket/update', 'api/:version.Ticket/update');
+Route::post('api/:version/ticket/handel', 'api/:version.Ticket/handel');
+Route::post('api/:version/tickets/manage', 'api/:version.Ticket/ManageTickets');
+
+Route::post('api/:version/SystemPrice/interval/save', 'api/:version.SystemPrice/intervalSave');
+Route::post('api/:version/SystemPrice/interval/handel', 'api/:version.SystemPrice/intervalHandel');
+Route::post('api/:version/SystemPrice/interval/update', 'api/:version.SystemPrice/intervalUpdate');
+Route::get('api/:version/SystemPrice/interval', 'api/:version.SystemPrice/intervalPrice');
+
+Route::post('api/:version/SystemPrice/start/save', 'api/:version.SystemPrice/startSave');
+Route::post('api/:version/SystemPrice/start/handel', 'api/:version.SystemPrice/startHandel');
+Route::post('api/:version/SystemPrice/start/open/handel', 'api/:version.SystemPrice/startOpenHandel');
+Route::get('api/:version/SystemPrice/start', 'api/:version.SystemPrice/startPrice');
+Route::post('api/:version/SystemPrice/start/update', 'api/:version.SystemPrice/startUpdate');
+
+Route::get('api/:version/SystemPrice/wait', 'api/:version.SystemPrice/waitPrice');
+Route::post('api/:version/SystemPrice/wait/update', 'api/:version.SystemPrice/waitUpdate');
+
+Route::get('api/:version/SystemPrice/weather', 'api/:version.SystemPrice/weatherPrice');
+Route::post('api/:version/SystemPrice/weather/update', 'api/:version.SystemPrice/weatherUpdate');
+
+

@@ -64,9 +64,10 @@ class Token extends Controller
      * @apiParam (请求参数说明) {String} pwd   用户密码
      * @apiParam (请求参数说明) {String} code   安卓手机唯一识别码
      * @apiSuccessExample {json} 返回样例:
-     * {"username":"朱明良","token":"d3fd8533d1a7c032e08e77e8c8fb3bb9"}
+     * {"username":"朱明良","online":1,"token":"d3fd8533d1a7c032e08e77e8c8fb3bb9"}
      * @apiSuccess (返回参数说明) {String} username 用户名
-     * @apiSuccess (返回参数说明) {String} token 口令令牌，每次请求接口需要传入，有效期 2 hours
+     * @apiSuccess (返回参数说明) {int} online 司机在线状态：1 | 在线；2 | 下线
+     * @apiSuccess (返回参数说明) {String} token 口令令牌，每次请求接口需要传入，有效期 24 hours
      */
     public function getAndroidToken()
     {
@@ -82,7 +83,7 @@ class Token extends Controller
      * @apiVersion 1.0.1
      * @apiDescription CMS退出当前账号登陆。
      * @apiExample {get}  请求样例:
-     * http://api.tljinghua.com/api/v1/token/loginOut
+     * https://tonglingok.com/api/v1/token/loginOut
      * @apiSuccessExample {json} 返回样例:
      *{"msg":"ok","errorCode":0}
      * @apiSuccess (返回参数说明) {int} error_code 错误码： 0表示操作成功无错误
@@ -102,7 +103,7 @@ class Token extends Controller
      * @apiVersion 1.0.1
      * @apiDescription  微信用户登录获取token
      * @apiExample {get}  请求样例:
-     * http://mengant.cn/api/v1/token/user?code=mdksk
+     * https://tonglingok.com/api/v1/token/user?code=mdksk
      * @apiParam (请求参数说明) {String} code    小程序code
      * @apiSuccessExample {json} 返回样例:
      *{"token":"f4ad56e55cad93833180186f22586a08","type":1}

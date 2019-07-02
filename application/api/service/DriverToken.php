@@ -83,12 +83,11 @@ class DriverToken extends Token
             ]);
         }
 
-        $cachedValue['token'] = $key;
-        unset($cachedValue['phone']);
-        unset($cachedValue['u_id']);
-        unset($cachedValue['account']);
-        unset($cachedValue['phone_code']);
-        return $cachedValue;
+        return [
+            'token' => $key,
+            'username' => $cachedValue['username'],
+            'online'=>$cachedValue['online']
+        ];
     }
 
     private function prepareCachedValue($admin)
@@ -100,6 +99,7 @@ class DriverToken extends Token
             'username' => $admin->username,
             'account' => $admin->account,
             'phone_code' => $admin->phone_code,
+            'online' => $admin->online,
         ];
         return $cachedValue;
     }

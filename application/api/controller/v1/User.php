@@ -39,27 +39,19 @@ class User extends BaseController
      *
      * @apiSuccessExample {json} 返回样例:
      *{"msg":"ok","errorCode":0}
-     * @apiSuccess (返回参数说明) {int} error_code 错误码： 0表示操作成功无错误
+     * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误
      * @apiSuccess (返回参数说明) {String} msg 信息描述
      *
-     * @param $iv
-     * @param $encryptedData
-     * @return \think\response\Json
-     * @throws ParameterException
-     * @throws \app\lib\exception\TokenException
-     * @throws \app\lib\exception\WeChatException
-     * @throws \think\Exception
      */
-    public function userInfo($iv, $encryptedData)
+    public function userInfo()
     {
+        $params = $this->request->param();
+        $iv = $params['iv'];
+        $encryptedData = $params['encryptedData'];
         $user_info = new UserInfoService($iv, $encryptedData);
         $user_info->saveUserInfo();
         return json(new SuccessMessage());
     }
-
-
-
-
 
 
 }

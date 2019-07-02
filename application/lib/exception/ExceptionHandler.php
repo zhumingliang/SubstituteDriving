@@ -9,11 +9,7 @@
 namespace app\lib\exception;
 
 
-use think\Exception;
 use think\exception\Handle;
-use think\Log;
-use think\facade\Request;
-
 class ExceptionHandler extends Handle
 {
 

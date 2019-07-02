@@ -3,7 +3,7 @@
 namespace app\lib\exception;
 
 
-class SuccessMessage
+class SuccessMessageWithData extends BaseException
 {
     public $msg = 'ok';
     public $errorCode = 0;
