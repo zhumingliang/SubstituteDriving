@@ -5,9 +5,11 @@ namespace app\api\controller\v1;
 
 
 use app\api\controller\BaseController;
+use app\api\model\DriverT;
 use app\api\service\DriverService;
 use app\lib\exception\SuccessMessage;
 use app\lib\exception\SuccessMessageWithData;
+use app\lib\exception\UpdateException;
 use GatewayClient\Gateway;
 
 class Driver extends BaseController
@@ -100,10 +102,39 @@ class Driver extends BaseController
      * @apiSuccess (返回参数说明) {int} online 状态：1 | 正常；2 | 停用
      * @apiSuccess (返回参数说明) {String} create_time 创建时间
      */
-    public function drivers($page = 1, $size = 10, $time_begin = '', $time_end = '', $username = '', $account = '',$online=3)
+    public function drivers($page = 1, $size = 10, $time_begin = '', $time_end = '', $username = '', $account = '', $online = 3)
     {
-        $drivers = (new DriverService())->drivers($page, $size, $time_begin, $time_end, $username, $account,$online);
+        $drivers = (new DriverService())->drivers($page, $size, $time_begin, $time_end, $username, $account, $online);
         return json(new SuccessMessageWithData(['data' => $drivers]));
+
+    }
+
+    /**
+     * @api {POST} /api/v1/driver/handel CMS管理端-修改司机状态(停用/启用)
+     * @apiGroup   CMS
+     * @apiVersion 1.0.1
+     * @apiDescription  CMS管理端-修改司机状态(停用/启用)
+     * @apiExample {POST}  请求样例:
+     * {
+     * "id": 1,
+     * "state":2
+     * }
+     * @apiParam (请求参数说明) {int} d_id 司机ID
+     * @apiParam (请求参数说明) {int} state 状态：1 | 正常；2 | 停用
+     * @apiSuccessExample {json} 返回样例:
+     * {"msg": "ok","error_code": 0}
+     * @apiSuccess (返回参数说明) {int} error_code 错误代码 0 表示没有错误
+     * @apiSuccess (返回参数说明) {String} msg 操作结果描述
+     *
+     */
+    public function handel()
+    {
+        $params = $this->request->param();
+        $id = DriverT::update(['state' => $params['state']], ['id' => $params['d_id']]);
+        if (!$id) {
+            throw new UpdateException();
+        }
+        return json(new SuccessMessage());
 
     }
 

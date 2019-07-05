@@ -25,4 +25,14 @@ class RechargeT extends Model
         return $list;
 
     }
+
+    public static function rechargesForDriver($page, $size, $d_id)
+    {
+        $list = self::where('d_id', $d_id)
+            ->where('state', CommonEnum::STATE_IS_OK)
+            ->field('id,money,create_time')
+            ->paginate($size, false, ['page' => $page]);
+        return $list;
+
+    }
 }

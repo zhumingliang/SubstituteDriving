@@ -36,6 +36,13 @@ class WalletService
 
     }
 
+    public function driverRecharges($page, $size,$d_id)
+    {
+        $list = RechargeT::rechargesForDriver($page, $size,$d_id);
+        return $list;
+
+    }
+
 
     private function checkDriver($d_id)
     {
