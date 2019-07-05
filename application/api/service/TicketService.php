@@ -17,7 +17,7 @@ class TicketService
         $u_id_arr = explode(',', $u_id);
         $ticket = TicketT::where('id', $t_id)->find();
         if (!$ticket) {
-            throw new SaveException(['msg'=>'卡券不存在']);
+            throw new SaveException(['msg' => '卡券不存在']);
         }
         $data = array();
         foreach ($u_id_arr as $k => $v) {

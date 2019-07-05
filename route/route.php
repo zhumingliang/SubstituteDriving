@@ -22,6 +22,8 @@ Route::post('api/:version/user/info', 'api/:version.User/userInfo');
 Route::post('api/:version/driver/bind', 'api/:version.Driver/bind');
 Route::post('api/:version/driver/save', 'api/:version.Driver/save');
 Route::get('api/:version/drivers', 'api/:version.Driver/drivers');
+Route::post('api/:version/driver/handel', 'api/:version.Driver/handel');
+Route::post('api/:version/driver/online', 'api/:version.Driver/online');
 
 Route::post('api/:version/ticket/save', 'api/:version.Ticket/save');
 Route::post('api/:version/ticket/update', 'api/:version.Ticket/update');
@@ -44,6 +46,8 @@ Route::post('api/:version/SystemPrice/wait/update', 'api/:version.SystemPrice/wa
 
 Route::get('api/:version/SystemPrice/weather', 'api/:version.SystemPrice/weatherPrice');
 Route::post('api/:version/SystemPrice/weather/update', 'api/:version.SystemPrice/weatherUpdate');
+
+Route::get('api/:version/SystemPrice/init/mini', 'api/:version.SystemPrice/priceInfoForMINI');
 
 Route::post('api/:version/notice/save', 'api/:version.Notice/save');
 Route::post('api/:version/notice/update', 'api/:version.Notice/update');

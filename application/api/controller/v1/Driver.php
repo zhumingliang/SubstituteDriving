@@ -7,6 +7,7 @@ namespace app\api\controller\v1;
 use app\api\controller\BaseController;
 use app\api\model\DriverT;
 use app\api\service\DriverService;
+use app\lib\exception\AuthException;
 use app\lib\exception\SuccessMessage;
 use app\lib\exception\SuccessMessageWithData;
 use app\lib\exception\UpdateException;
@@ -137,5 +138,38 @@ class Driver extends BaseController
         return json(new SuccessMessage());
 
     }
+
+    /**
+     * @api {POST} /api/v1/driver/online Android司机端-司机上下线状态操作(上线/下线)
+     * @apiGroup   Android
+     * @apiVersion 1.0.1
+     * @apiDescription  Android司机端-司机上下线状态操作(上线/下线)
+     * @apiExample {POST}  请求样例:
+     * {
+     * "online":2
+     * }
+     * @apiParam (请求参数说明) {int} online 上下线状态：1 | 上线；2 | 下线
+     * @apiSuccessExample {json} 返回样例:
+     * {"msg": "ok","error_code": 0}
+     * @apiSuccess (返回参数说明) {int} error_code 错误代码 0 表示没有错误
+     * @apiSuccess (返回参数说明) {String} msg 操作结果描述
+     *
+     */
+    public function online()
+    {
+        $params = $this->request->param();
+        $type = \app\api\service\Token::getCurrentTokenVar('type');
+        if ($type !== "driver") {
+            throw new AuthException();
+        }
+        $id = \app\api\service\Token::getCurrentUid();
+        $res = DriverT::update(['online' => $params['inline']], ['id' => $id]);
+        if (!$res) {
+            throw new UpdateException();
+        }
+        return json(new SuccessMessage());
+
+    }
+
 
 }

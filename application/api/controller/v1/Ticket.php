@@ -11,6 +11,7 @@ use app\api\service\TicketService;
 use app\lib\enum\CommonEnum;
 use app\lib\exception\SaveException;
 use app\lib\exception\SuccessMessage;
+use app\lib\exception\SuccessMessageWithData;
 use app\lib\exception\UpdateException;
 
 class Ticket extends BaseController
@@ -205,7 +206,7 @@ class Ticket extends BaseController
     public function userTickets()
     {
         $ticks = (new TicketService())->userTickets();
-        return json(new SuccessMessage(['data' => $ticks]));
+        return json(new SuccessMessageWithData(['data' => $ticks]));
     }
 
 }
