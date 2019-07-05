@@ -19,5 +19,9 @@ class CommonEnum
 
     const STATE_IS_DELETE = 3;
 
+    const NOTICE_NO_RELEASE = 1;
+
+    const NOTICE_RELEASED = 2;
+
 
 }

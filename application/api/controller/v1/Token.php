@@ -53,16 +53,18 @@ class Token extends Controller
      * @api {POST} /api/v1/token/android  Android客户端获取登陆token
      * @apiGroup  Android
      * @apiVersion 1.0.1
-     * @apiDescription  后台用户登录
+     * @apiDescription  Android客户端获取登陆token
      * @apiExample {post}  请求样例:
      *    {
      *       "account": "18956225230",
      *       "pwd": "a123456"
-     *       "code": "121212"
+     *       "code": "121212",
+     *       "type": "driver",
      *     }
      * @apiParam (请求参数说明) {String} phone    用户手机号
      * @apiParam (请求参数说明) {String} pwd   用户密码
      * @apiParam (请求参数说明) {String} code   安卓手机唯一识别码
+     * @apiParam (请求参数说明) {String} type  当前登录用户类别：driver|司机；manager|管理员
      * @apiSuccessExample {json} 返回样例:
      * {"username":"朱明良","online":1,"token":"d3fd8533d1a7c032e08e77e8c8fb3bb9"}
      * @apiSuccess (返回参数说明) {String} username 用户名
@@ -72,7 +74,7 @@ class Token extends Controller
     public function getAndroidToken()
     {
         $params = $this->request->param();
-        $at = new DriverToken($params['account'], $params['pwd'], $params['code']);
+        $at = new DriverToken($params['account'], $params['pwd'], $params['code'],$params['type']);
         $token = $at->get();
         return json($token);
     }

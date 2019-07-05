@@ -11,7 +11,7 @@ namespace app\lib\exception;
 
 class AuthException extends BaseException
 {
-    public $msg = '新增分组失败';
-    public $errorCode = 250001;
+    public $msg = '用户权限不足';
+    public $errorCode = 50001;
 
 }

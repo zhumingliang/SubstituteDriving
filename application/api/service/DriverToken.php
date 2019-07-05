@@ -16,13 +16,15 @@ class DriverToken extends Token
     protected $account;
     protected $pwd;
     protected $code;
+    protected $type;
 
 
-    function __construct($account, $pwd, $code)
+    function __construct($account, $pwd, $code, $type)
     {
         $this->account = $account;
         $this->pwd = $pwd;
         $this->code = $code;
+        $this->type = $type;
     }
 
     /**
@@ -33,25 +35,27 @@ class DriverToken extends Token
     {
         try {
 
-            $admin = DriverT::where('account', '=', $this->account)
-                ->where('state', CommonEnum::STATE_IS_OK)
-                ->find();
+            if ($this->type == 'driver') {
+                $admin = DriverT::where('account', '=', $this->account)
+                    ->where('state', CommonEnum::STATE_IS_OK)
+                    ->find();
+            } else if ($this->type == 'manager') {
+                $admin = AdminT::where('account', '=', $this->account)
+                    ->where('state', CommonEnum::STATE_IS_OK)
+                    ->where('grade', 1)
+                    ->find();
+            }
 
-            if (is_null($admin) || sha1($this->pwd) != $admin->pwd) {
+            if ($admin->isEmpty() || sha1($this->pwd) != $admin->pwd) {
                 throw new TokenException([
                     'msg' => '账号或者密码不正确',
                     'errorCode' => 30000
                 ]);
             }
 
-            // $this->saveLog($admin->id, $admin->username);
-            /**
-             * 获取缓存参数
-             */
+            // 获取缓存参数
             $cachedValue = $this->prepareCachedValue($admin);
-            /**
-             * 缓存数据
-             */
+           //缓存数据
             $token = $this->saveToCache('', $cachedValue);
             return $token;
 
@@ -86,20 +90,20 @@ class DriverToken extends Token
         return [
             'token' => $key,
             'username' => $cachedValue['username'],
-            'online'=>$cachedValue['online']
+            'online' => $cachedValue['online']
         ];
     }
 
     private function prepareCachedValue($admin)
     {
-
         $cachedValue = [
             'u_id' => $admin->id,
-            'phone' => $admin->phone,
-            'username' => $admin->username,
+            'phone' => $this->type == 'driver' ? $admin->phone : '',
+            'username' =>$this->type == 'driver' ? $admin->username : '',
             'account' => $admin->account,
-            'phone_code' => $admin->phone_code,
-            'online' => $admin->online,
+            'phone_code' =>$this->type == 'driver' ? $admin->phone_code : '',
+            'online' =>$this->type == 'driver' ? $admin->online : '',
+            'type' => $this->type,
         ];
         return $cachedValue;
     }
