@@ -21,6 +21,7 @@ Route::post('api/:version/user/info', 'api/:version.User/userInfo');
 
 Route::post('api/:version/driver/bind', 'api/:version.Driver/bind');
 Route::post('api/:version/driver/save', 'api/:version.Driver/save');
+Route::post('api/:version/driver/send', 'api/:version.Driver/send');
 Route::get('api/:version/drivers', 'api/:version.Driver/drivers');
 Route::post('api/:version/driver/handel', 'api/:version.Driver/handel');
 Route::post('api/:version/driver/online', 'api/:version.Driver/online');
