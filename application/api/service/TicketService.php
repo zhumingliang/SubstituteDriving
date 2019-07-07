@@ -8,6 +8,7 @@ use app\api\model\TicketT;
 use app\api\model\TicketUserT;
 use app\api\model\TicketV;
 use app\lib\enum\CommonEnum;
+use app\lib\enum\TicketEnum;
 use app\lib\exception\SaveException;
 
 class TicketService
@@ -55,6 +56,26 @@ class TicketService
         $u_id = Token::getCurrentUid();
         $ticks = TicketUserT::userTickets($u_id);
         return $ticks;
+    }
+
+    public static function userTicketSave($scene, $u_id)
+    {
+        $ticket = TicketT::where('scene', $scene)->find();
+        if (!$ticket) {
+            return false;
+        }
+        $data = [
+            'u_id' => $u_id,
+            't_id' => $ticket->id,
+            'state' => CommonEnum::STATE_IS_OK,
+            'money' => $ticket->price,
+            'time_begin' => $ticket->time_begin,
+            'time_end' => $ticket->time_end,
+            'scene' => $scene,
+            'name' => $ticket->name
+        ];
+        TicketUserT::create($data);
+
     }
 
 

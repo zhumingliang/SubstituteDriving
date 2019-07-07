@@ -7,6 +7,7 @@ namespace app\api\service;
 use app\api\model\UserT as UserModel;
 use app\api\model\UserT;
 use app\lib\enum\CommonEnum;
+use app\lib\enum\TicketEnum;
 use app\lib\exception\TokenException;
 use app\lib\exception\WeChatException;
 use think\facade\Cache;
@@ -76,10 +77,10 @@ class UserToken
 
         $openid = $wxResult['openid'];
         $user = UserModel::getByOpenID($openid);
-        $red_money = 0;
+
         if (!$user) {
             $u_id = $this->newUser($openid);
-            // $red_money = RedService::addRed(RedEnum::FIRST_LOGIN, $u_id);
+              TicketService::userTicketSave(TicketEnum::MINI_FIRST_LOGIN, $u_id);
         } else {
             $u_id = $user->id;
         }
