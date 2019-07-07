@@ -13,7 +13,7 @@ use app\lib\exception\WeChatException;
 use think\facade\Cache;
 use zml\tp_tools\Curl;
 
-class UserToken
+class UserToken extends Token
 {
 
     protected $code;
