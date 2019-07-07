@@ -194,7 +194,7 @@ class Ticket extends BaseController
      * @apiDescription  小程序获取客户拥有可使用卡券
      *
      * @apiExample {get}  请求样例:
-     * http://tonglingok.com/api/v1/tickets/user
+     * https://tonglingok.com/api/v1/tickets/user
      * @apiSuccessExample {json} 返回样例:
      * [{"id":1,"name":"新用户优惠券","money":5,"time_begin":"2019-06-04 11:06:30","time_end":"2020-06-04 11:06:30"}]
      * @apiSuccess (返回参数说明) {int} id 卡券id
