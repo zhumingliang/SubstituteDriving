@@ -18,8 +18,8 @@ class SendSms
     static protected $instance;
     protected $accessKeyId;
     protected $accessSecret;
-    protected $templateDemandCode;
-    protected $templateServiceCode;
+    protected $TemplateLoginCode;
+    protected $TemplateRegisterCode;
     protected $signName;
     protected $requestHost = "http://dysmsapi.aliyuncs.com";
     protected $requestUrl;
@@ -33,8 +33,8 @@ class SendSms
         date_default_timezone_set("GMT");
         isset($options["AccessKeyId"]) && $this->accessKeyId = $options["AccessKeyId"];
         isset($options["AccessSecret"]) && $this->accessSecret = $options["AccessSecret"];
-        isset($options["TemplateDemandCode"]) && $this->templateDemandCode = $options["TemplateDemandCode"];
-        isset($options["TemplateServiceCode"]) && $this->templateServiceCode = $options["TemplateServiceCode"];
+        isset($options["TemplateRegisterCode"]) && $this->TemplateRegisterCode = $options["TemplateRegisterCode"];
+        isset($options["TemplateLoginCode"]) && $this->TemplateLoginCode = $options["TemplateLoginCode"];
         isset($options["SignName"]) && $this->signName = $options["SignName"];
     }
 
@@ -57,9 +57,9 @@ class SendSms
     /**
      * @title setAccessKeyId
      * @description 设置AccessKey
-     * @author Mikkle
      * @param string $accessKeyId
      * @return $this
+     * @author Mikkle
      */
     public function setAccessKeyId($accessKeyId = "")
     {
@@ -72,9 +72,9 @@ class SendSms
     /**
      * @title setAppSecret
      * @description
-     * @author Mikkle
      * @param string $accessSecret
      * @return $this
+     * @author Mikkle
      */
     public function setAppSecret($accessSecret = "")
     {
@@ -103,23 +103,18 @@ class SendSms
 
     /**
      * 发送
-     * @param string $phone
-     * @param array $param
-     * @param array $type
-     * @return mixed
      */
-    public function send( $phone , $param ,$type)
+    public function send($phone, $code, $type)
     {
         try {
-            /*if (!$this->checkParams($phone, $code)) {
+           /* if (!$this->checkParams($phone, $code)) {
 
                 throw  new  Exception($this->error);
             }*/
-            if ($this->createRequestUrl($phone, $param, $type) && $this->signature) {
+            if ($this->createRequestUrl($phone, $code, $type) && $this->signature) {
                 $url = "{$this->requestHost}/?Signature={$this->signature}{$this->requestUrl}";
                 $res = $this->fetchContent($url);
-                LogT::create(['msg' => $res]);
-                //return json_decode($res);
+                return json_decode($res, true);
             } else {
                 LogT::create(['msg' => '参数错误']);
             }
@@ -129,16 +124,10 @@ class SendSms
     }
 
 
-    /**
-     * @param string $phone
-     * @param $param
-     * @param $type
-     * @return bool
-     */
-    protected function createRequestUrl($phone, $param, $type)
+    protected function createRequestUrl($phone, $code, $type)
     {
         try {
-            unset($param['id']);
+
             $requestParams = [
                 //'RegionId' => 'cn-hangzhou', // API支持的RegionID，如短信API的值为：cn-hangzhou
                 'AccessKeyId' => $this->accessKeyId, // 访问密钥，在阿里云的密钥管理页面创建
@@ -151,10 +140,9 @@ class SendSms
                 'Version' => '2017-05-25', // API的版本，固定值，如短信API的值为：2017-05-25
                 'PhoneNumbers' => $phone, // 短信接收号码
                 'SignName' => $this->signName, // 短信签名
-                'TemplateCode' => $type == "normal" ? $this->templateDemandCode : $this->templateServiceCode, // 短信模板ID
-                'TemplateParam' => json_encode($param, JSON_UNESCAPED_UNICODE),
+                'TemplateCode' => $type == "register" ? $this->TemplateRegisterCode : $this->TemplateLoginCode, // 短信模板ID
+                'TemplateParam' => json_encode(['code' => $code], JSON_UNESCAPED_UNICODE),
             ];
-
             ksort($requestParams);
             $requestUrl = "";
             foreach ($requestParams as $key => $value) {
@@ -218,6 +206,7 @@ class SendSms
         if (empty($options) && !empty(Config("alisms.default_options_name"))) {
             $name = "alisms" . "." . Config("alisms.default_options_name");
             $options = Config("$name");
+
         } elseif (is_string($options) && !empty(Config("alisms.$options"))) {
             $options = Config("alisms.$options");
         }

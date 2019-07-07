@@ -62,3 +62,7 @@ Route::get('api/:version/recharges', 'api/:version.Wallet/recharges');
 Route::get('api/:version/driver/recharges', 'api/:version.Wallet/driverRecharges');
 
 
+Route::post('api/:version/sms/register', 'api/:version.SendSMS/sendCodeToMINI');
+Route::post('api/:version/sms/login', 'api/:version.SendSMS/sendCodeToAndroid');
+
+

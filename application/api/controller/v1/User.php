@@ -53,5 +53,10 @@ class User extends BaseController
         return json(new SuccessMessage());
     }
 
+    public function bindPhone()
+    {
+
+    }
+
 
 }
