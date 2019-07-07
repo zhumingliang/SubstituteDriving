@@ -165,6 +165,7 @@ class UserToken extends Token
         $cachedValue['phone'] = $user['phone'];
         $cachedValue['openId'] = $user['openId'];
         $cachedValue['gender'] = $user['gender'];
+        $cachedValue['province'] = $user['province'];
         $cachedValue['nickName'] = $user['nickName'];
       //  $cachedValue['name_sub'] = $user['name_sub'];
         $cachedValue['avatarUrl'] = $user['avatarUrl'];
