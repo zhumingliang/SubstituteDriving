@@ -92,7 +92,7 @@ class UserToken
         if (!strlen($cachedValue['nickName']) && !strlen($cachedValue['province'])) {
             return [
                 'token' => $token,
-                'type' => $this->USER_MSG_IS_NULL
+                'type' => $this->USER_MSG_IS_NULL,
             ];
 
         }
@@ -100,7 +100,8 @@ class UserToken
 
         return [
             'token' => $token,
-            'type' => $this->USER_MSG_IS_OK
+            'type' => $this->USER_MSG_IS_OK,
+            'phone' => $cachedValue['phone']
         ];
     }
 
