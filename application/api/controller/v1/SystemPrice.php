@@ -415,19 +415,19 @@ class SystemPrice extends BaseController
      * @apiSuccess (返回参数说明) {String} tickets-time_end  有效期截止时间
      * @apiSuccess (返回参数说明) {int} drivers 附近候驾司机数量
      * @apiSuccess (返回参数说明) {Obj} start  价格信息
-     * @apiSuccess (返回参数说明) {int} start|id  价格设置id
-     * @apiSuccess (返回参数说明) {float} start|distance  距离
-     * @apiSuccess (返回参数说明) {float} start|price  价格
-     * @apiSuccess (返回参数说明) {int} start|order  排序
+     * @apiSuccess (返回参数说明) {int} start-id  价格设置id
+     * @apiSuccess (返回参数说明) {float} start-distance  距离
+     * @apiSuccess (返回参数说明) {float} start-price  价格
+     * @apiSuccess (返回参数说明) {int} start-order  排序
      * @apiSuccess (返回参数说明) {Obj} wait 等待时间设置
-     * @apiSuccess (返回参数说明) {int} wait|id 等待时间设置id
-     * @apiSuccess (返回参数说明) {int} wait|free 免费等待时间
-     * @apiSuccess (返回参数说明) {float} wait|price 超出免费等待时间价格：min/元
+     * @apiSuccess (返回参数说明) {int} wait-id 等待时间设置id
+     * @apiSuccess (返回参数说明) {int} wait-free 免费等待时间
+     * @apiSuccess (返回参数说明) {float} wait-price 超出免费等待时间价格：min/元
      * @apiSuccess (返回参数说明) {Obj} interval 起步价时间段设置
-     * @apiSuccess (返回参数说明) {int} interval|id 起步价时间段设置id
-     * @apiSuccess (返回参数说明) {int} interval|time_begin 起步价时间段开始时间
-     * @apiSuccess (返回参数说明) {int} interval|time_end 起步价时间段结束时间
-     * @apiSuccess (返回参数说明) {Float} interval|price 该时间段内的价格
+     * @apiSuccess (返回参数说明) {int} interval-id 起步价时间段设置id
+     * @apiSuccess (返回参数说明) {int} interval-time_begin 起步价时间段开始时间
+     * @apiSuccess (返回参数说明) {int} interval-time_end 起步价时间段结束时间
+     * @apiSuccess (返回参数说明) {Float} interval-price 该时间段内的价格
      */
     public function priceInfoForMINI()
     {
