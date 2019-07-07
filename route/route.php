@@ -13,6 +13,7 @@ Route::rule('api/:version/index', 'api/:version.Index/index');
 Route::rule('api/:version/send', 'api/:version.Index/send');
 
 Route::post('api/:version/token/admin', 'api/:version.Token/getAdminToken');
+Route::get('api/:version/token/user', 'api/:version.Token/getUserToken');
 Route::post('api/:version/token/android', 'api/:version.Token/getAndroidToken');
 Route::post('api/:version/token/small', 'api/:version.Token/getSmallToken');
 Route::get('api/:version/token/login/out', 'api/:version.Token/loginOut');
