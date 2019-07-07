@@ -166,7 +166,7 @@ class UserToken
         $cachedValue['openId'] = $user['openId'];
         $cachedValue['gender'] = $user['gender'];
         $cachedValue['nickName'] = $user['nickName'];
-        $cachedValue['name_sub'] = $user['name_sub'];
+      //  $cachedValue['name_sub'] = $user['name_sub'];
         $cachedValue['avatarUrl'] = $user['avatarUrl'];
         return $cachedValue;
     }
