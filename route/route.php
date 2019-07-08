@@ -19,9 +19,11 @@ Route::post('api/:version/token/small', 'api/:version.Token/getSmallToken');
 Route::get('api/:version/token/login/out', 'api/:version.Token/loginOut');
 
 Route::post('api/:version/user/info', 'api/:version.User/userInfo');
-Route::rule('api/:version/user/bindPhone', 'api/:version.User/bindPhone');
+Route::post('api/:version/user/bindPhone', 'api/:version.User/bindPhone');
+Route::get('api/:version/user/login/out', 'api/:version.User/loginOut');
 
-Route::post('api/:version/driver/bind', 'api/:version.Driver/bind');
+Route::post('api/:version/gateway/bind', 'api/:version.Gateway/bind');
+
 Route::post('api/:version/driver/save', 'api/:version.Driver/save');
 Route::post('api/:version/driver/send', 'api/:version.Driver/send');
 Route::get('api/:version/drivers', 'api/:version.Driver/drivers');
@@ -66,4 +68,6 @@ Route::get('api/:version/driver/recharges', 'api/:version.Wallet/driverRecharges
 Route::post('api/:version/sms/register', 'api/:version.SendSMS/sendCodeToMINI');
 Route::post('api/:version/sms/login', 'api/:version.SendSMS/sendCodeToAndroid');
 
+Route::post('api/:version/order/mini/save', 'api/:version.Order/saveMiniOrder');
+Route::post('api/:version/order/list/handel', 'api/:version.Order/orderListHandel');
 

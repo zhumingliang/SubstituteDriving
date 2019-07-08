@@ -9,8 +9,6 @@
 namespace app\api\service;
 
 
-use app\lib\exception\AuthException;
-use app\lib\exception\SaveException;
 use app\lib\exception\TokenException;
 use app\lib\exception\UpdateException;
 use app\lib\exception\UserInfoException;
@@ -67,7 +65,7 @@ class UserInfo
         $errCode = $pc->decryptData($this->encryptedData, $this->iv, $data);
 
         if ($errCode == 0) {
-            return json_decode($data);
+            return json_decode($data, true);
         } else {
             throw new WeChatException(
                 [
@@ -105,12 +103,12 @@ class UserInfo
     {
         $save_res = UserModel::where('id', '=', $this->user_id)
             ->update([
-                'nickName' => $user_info->nickName,
-                'avatarUrl' => $user_info->avatarUrl,
-                'gender' => $user_info->gender,
-                'province' => $user_info->province,
-                'city' => $user_info->city,
-                'country' => $user_info->country,
+                'nickName' => $user_info['nickName'],
+                'avatarUrl' => $user_info['avatarUrl'],
+                'gender' => $user_info['gender'],
+                'province' => $user_info['province'],
+                'city' => $user_info['city'],
+                'country' => $user_info['country'],
                 'update_time' => date("Y-m-d H:i:s", time()),
             ]);
         if (!$save_res) {
@@ -133,8 +131,11 @@ class UserInfo
         $cache = Token::getCurrentTokenVar();
         $cache = json_decode($cache, true);
 
-        $cache['nickName'] = $user_info->nickName;
-        $cache['avatarUrl'] = $user_info->avatarUrl;
+        if (count($user_info)) {
+            foreach ($user_info as $k => $v) {
+                $cache[$k] = $v;
+            }
+        }
 
         $cache = json_encode($cache);
         $token = Request::header('token');
@@ -157,6 +158,8 @@ class UserInfo
         if (!$res) {
             throw new UpdateException(['msg' => '绑定手机用户手机号失败']);
         }
+
+        $this->updateCache(['phone' => $params['phone']]);
 
     }
 

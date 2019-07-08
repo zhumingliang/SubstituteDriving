@@ -8,16 +8,11 @@
 
 namespace app\api\controller\v1;
 
-use app\api\model\ImgT;
-use app\api\model\UserV;
-use app\api\service\ImageService;
-use app\api\service\UserService;
-use app\api\validate\UserInfo;
-
+use app\api\model\UserT;
 use app\api\controller\BaseController;
 use  app\api\service\UserInfo as UserInfoService;
 use app\lib\exception\SuccessMessage;
-use app\lib\exception\UserInfoException;
+use think\facade\Cache;
 
 class User extends BaseController
 {
@@ -73,6 +68,29 @@ class User extends BaseController
     {
         $params = $this->request->param();
         (new UserInfoService('', ''))->bindPhone($params);
+        return json(new SuccessMessage());
+    }
+
+
+    /**
+     * @api {GET} /api/v1/user/login/out  小程序客户端-注销登录
+     * @apiGroup  MINI
+     * @apiVersion 1.0.1
+     * @apiDescription 小程序客户端-注销登录
+     * @apiExample {get}  请求样例:
+     * https://tonglingok.com/api/v1/user/login/out
+     * @apiSuccessExample {json} 返回样例:
+     *{"msg":"ok","errorCode":0}
+     * @apiSuccess (返回参数说明) {int} error_code 错误码： 0表示操作成功无错误
+     * @apiSuccess (返回参数说明) {String} msg 信息描述
+     *
+     */
+    public function loginOut()
+    {
+        //清除用户手机号
+        UserT::update(['phone' => ''], ['id' => \app\api\service\Token::getCurrentUid()]);
+        $token = think\facade\Request::header('token');
+        Cache::rm($token);
         return json(new SuccessMessage());
     }
 
