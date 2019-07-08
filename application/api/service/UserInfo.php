@@ -9,6 +9,7 @@
 namespace app\api\service;
 
 
+use app\lib\exception\AuthException;
 use app\lib\exception\SaveException;
 use app\lib\exception\TokenException;
 use app\lib\exception\UpdateException;
@@ -17,6 +18,7 @@ use app\lib\exception\WeChatException;
 use think\facade\Cache;
 use think\facade\Request;
 use app\api\model\UserT as UserModel;
+use think\facade\Session;
 
 class UserInfo
 {
@@ -30,7 +32,7 @@ class UserInfo
         $this->iv = $iv;
         $this->encryptedData = $encryptedData;
         $this->wxAppID = config('wx.app_id');
-        $this->user_id = Token::getCurrentUid();
+        $this->user_id = 1;//Token::getCurrentUid();
     }
 
 
@@ -143,6 +145,19 @@ class UserInfo
                 'errorCode' => 20002]);
         }
         return 1;
+    }
+
+    public function bindPhone($params)
+    {
+        $current_code = Session::get('register_code', 'register');
+        if ($current_code != $params['phone'] . '-' . $params['code']) {
+            throw new UpdateException(['errorCode' => '10002', 'msg' => '验证码不正确']);
+        }
+        $res = UserModel::update(['phone' => $params['phone']], ['id' => 1]);
+        if (!$res) {
+            throw new UpdateException(['msg' => '绑定手机用户手机号失败']);
+        }
+
     }
 
 }

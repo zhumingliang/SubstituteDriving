@@ -9,7 +9,6 @@
 namespace app\api\controller\v1;
 
 use app\api\model\ImgT;
-use app\api\model\UserT;
 use app\api\model\UserV;
 use app\api\service\ImageService;
 use app\api\service\UserService;
@@ -18,8 +17,6 @@ use app\api\validate\UserInfo;
 use app\api\controller\BaseController;
 use  app\api\service\UserInfo as UserInfoService;
 use app\lib\exception\SuccessMessage;
-use \app\api\service\Token as TokenService;
-use app\lib\exception\UpdateException;
 use app\lib\exception\UserInfoException;
 
 class User extends BaseController
@@ -53,9 +50,30 @@ class User extends BaseController
         return json(new SuccessMessage());
     }
 
+    /**
+     * @api {POST} /api/v1/user/bindPhone 小程序客户端-绑定手机号
+     * @apiGroup  MINI
+     * @apiVersion 1.0.1
+     * @apiDescription  小程序客户端-绑定手机号
+     * @apiExample {post}  请求样例:
+     *    {
+     *       "phone": "18956225230",
+     *       "code": "34982"
+     *     }
+     * @apiParam (请求参数说明) {String} phone  用户输入手机号
+     * @apiParam (请求参数说明) {String} code   用户输入验证码
+     *
+     * @apiSuccessExample {json} 返回样例:
+     *{"msg":"ok","errorCode":0}
+     * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误
+     * @apiSuccess (返回参数说明) {String} msg 信息描述
+     *
+     */
     public function bindPhone()
     {
-
+        $params = $this->request->param();
+        (new UserInfoService('', ''))->bindPhone($params);
+        return json(new SuccessMessage());
     }
 
 

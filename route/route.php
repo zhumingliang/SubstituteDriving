@@ -19,6 +19,7 @@ Route::post('api/:version/token/small', 'api/:version.Token/getSmallToken');
 Route::get('api/:version/token/login/out', 'api/:version.Token/loginOut');
 
 Route::post('api/:version/user/info', 'api/:version.User/userInfo');
+Route::rule('api/:version/user/bindPhone', 'api/:version.User/bindPhone');
 
 Route::post('api/:version/driver/bind', 'api/:version.Driver/bind');
 Route::post('api/:version/driver/save', 'api/:version.Driver/save');
