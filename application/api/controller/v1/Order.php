@@ -40,4 +40,11 @@ class Order extends BaseController
         var_dump($redis->rawCommand('geopos', 'drivers_location', $d_id));
     }
 
+    public function deleteLocation($d_id)
+    {
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1', 6379, 60);
+        var_dump($redis->rawCommand('zrem', 'drivers_location', $d_id));
+    }
+
 }
