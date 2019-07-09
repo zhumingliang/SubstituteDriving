@@ -47,12 +47,12 @@ class Order extends BaseController
         var_dump($redis->rawCommand('zrem', 'drivers_tongling', $d_id));
     }
 
-    public function radius($lat, $lng)
+    public function radius($lat, $lng,$type)
     {
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
         //查询所有司机并按距离排序
-        $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, '1000000', 'km', 'ASC');
+        $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, '1000000', 'km', $type);
         print_r($list);
     }
 
