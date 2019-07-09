@@ -28,7 +28,7 @@ class Order extends BaseController
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
 
-        $ret = $redis->rawCommand('geoadd', 'drivers_location', $lat, $lng, $d_id);
+        $ret = $redis->rawCommand('geoadd', 'drivers_tongling', $lat, $lng, $d_id);
         var_dump($ret);
 
     }
@@ -37,14 +37,23 @@ class Order extends BaseController
     {
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
-        var_dump($redis->rawCommand('geopos', 'drivers_location', $d_id));
+        var_dump($redis->rawCommand('geopos', 'drivers_tongling', $d_id));
     }
 
     public function deleteLocation($d_id)
     {
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
-        var_dump($redis->rawCommand('zrem', 'drivers_location', $d_id));
+        var_dump($redis->rawCommand('zrem', 'drivers_tongling', $d_id));
+    }
+
+    public function radius($lat, $lng)
+    {
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1', 6379, 60);
+        //查询所有司机并按距离排序
+        $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, '100', 'km', 'ASC');
+        print_r($list);
     }
 
 }

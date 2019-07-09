@@ -73,4 +73,5 @@ Route::post('api/:version/order/list/handel', 'api/:version.Order/orderListHande
 Route::post('api/:version/order/location/add', 'api/:version.Order/locationAdd');
 Route::post('api/:version/order/location', 'api/:version.Order/location');
 Route::post('api/:version/order/location/delete', 'api/:version.Order/deleteLocation');
+Route::post('api/:version/order/radius', 'api/:version.Order/radius');
 
