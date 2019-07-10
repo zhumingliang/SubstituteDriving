@@ -15,6 +15,8 @@ class OrderEnum
 
     const FROM_DRIVER = 2;
 
+    const FROM_TRANSFER = 2;
+
     const NOT_FIXED_MONEY = 1;
 
     const FIXED_MONEY = 2;
@@ -37,6 +39,14 @@ class OrderEnum
     const ORDER_LIST_COMPLETE = 3;
 
     const ORDER_LIST_CANCEL = 4;
+
+    const ORDER_PUSH_NO = 1;
+
+    const ORDER_PUSH_AGREE = 2;
+
+    const ORDER_PUSH_REFUSE = 3;
+
+    const ORDER_PUSH_INVALID = 4;
 
 
 }

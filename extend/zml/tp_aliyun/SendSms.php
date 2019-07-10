@@ -20,6 +20,7 @@ class SendSms
     protected $accessSecret;
     protected $TemplateLoginCode;
     protected $TemplateRegisterCode;
+    protected $TemplateDriverCode;
     protected $signName;
     protected $requestHost = "http://dysmsapi.aliyuncs.com";
     protected $requestUrl;
@@ -35,6 +36,7 @@ class SendSms
         isset($options["AccessSecret"]) && $this->accessSecret = $options["AccessSecret"];
         isset($options["TemplateRegisterCode"]) && $this->TemplateRegisterCode = $options["TemplateRegisterCode"];
         isset($options["TemplateLoginCode"]) && $this->TemplateLoginCode = $options["TemplateLoginCode"];
+        isset($options["TemplateDriverCode"]) && $this->TemplateDriverCode = $options["TemplateDriverCode"];
         isset($options["SignName"]) && $this->signName = $options["SignName"];
     }
 
@@ -104,14 +106,14 @@ class SendSms
     /**
      * 发送
      */
-    public function send($phone, $code, $type)
+    public function send($phone, $params, $type)
     {
         try {
-           /* if (!$this->checkParams($phone, $code)) {
+            /* if (!$this->checkParams($phone, $code)) {
 
-                throw  new  Exception($this->error);
-            }*/
-            if ($this->createRequestUrl($phone, $code, $type) && $this->signature) {
+                 throw  new  Exception($this->error);
+             }*/
+            if ($this->createRequestUrl($phone, $params, $type) && $this->signature) {
                 $url = "{$this->requestHost}/?Signature={$this->signature}{$this->requestUrl}";
                 $res = $this->fetchContent($url);
                 return json_decode($res, true);
@@ -124,9 +126,17 @@ class SendSms
     }
 
 
-    protected function createRequestUrl($phone, $code, $type)
+    protected function createRequestUrl($phone, $params, $type)
     {
         try {
+
+            if ($type == 'register') {
+                $templateCode = $this->TemplateRegisterCode;
+            } else if ($type == 'login') {
+                $templateCode = $this->TemplateLoginCode;
+            } else {
+                $templateCode = $this->TemplateDriverCode;
+            }
 
             $requestParams = [
                 //'RegionId' => 'cn-hangzhou', // API支持的RegionID，如短信API的值为：cn-hangzhou
@@ -140,9 +150,10 @@ class SendSms
                 'Version' => '2017-05-25', // API的版本，固定值，如短信API的值为：2017-05-25
                 'PhoneNumbers' => $phone, // 短信接收号码
                 'SignName' => $this->signName, // 短信签名
-                'TemplateCode' => $type == "register" ? $this->TemplateRegisterCode : $this->TemplateLoginCode, // 短信模板ID
-                'TemplateParam' => json_encode(['code' => $code], JSON_UNESCAPED_UNICODE),
+                'TemplateCode' => $templateCode, // 短信模板ID
+                'TemplateParam' => json_encode($params, JSON_UNESCAPED_UNICODE),
             ];
+
             ksort($requestParams);
             $requestUrl = "";
             foreach ($requestParams as $key => $value) {

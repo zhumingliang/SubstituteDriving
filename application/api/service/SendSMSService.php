@@ -16,13 +16,29 @@ class SendSMSService
             throw new SaveException(['msg' => '短信服务出错']);
         }
         $code = rand(10000, 99999);
-        $res = SendSms::instance()->send($phone, $code, $type);
+        $res = SendSms::instance()->send($phone, ['code' => $code], $type);
         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
             Session($type . '_code', $phone . '-' . $code, 'register');
             return true;
         }
         $num++;
         $this->sendCode($phone, $type, $num);
+
+    }
+
+    public function sendOrderSMS($phone, $params, $num = 1)
+    {
+
+        if ($num > 3) {
+            throw new SaveException(['msg' => '短信服务出错']);
+        }
+        $res = SendSms::instance()->send($phone, $params, 'driver');
+        print_r($res);
+        if (key_exists('Code', $res) && $res['Code'] == 'OK') {
+            return true;
+        }
+        $num++;
+        $this->sendOrderSMS($phone, $params, $num);
 
     }
 

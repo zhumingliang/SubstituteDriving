@@ -20,6 +20,7 @@ return [
         'AccessSecret' => 'IGyopSctAoahUva0wP4wYDOMBuz4aq', // 访问密钥，在阿里云的密钥管理页面创建
         'TemplateRegisterCode' => 'SMS_166310718', // 小程序注册
         'TemplateLoginCode' => 'SMS_166310720', // 司机端登录
+        'TemplateDriverCode' => 'SMS_170116164', // 发送接单通知给司机端
         'SignName' => '奥凯代驾'
     ],
 ];
