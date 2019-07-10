@@ -6,7 +6,6 @@ namespace app\api\controller\v1;
 
 use app\api\controller\BaseController;
 use app\api\service\OrderService;
-use app\api\service\SendSMSService;
 use app\lib\exception\SuccessMessage;
 use app\lib\exception\SuccessMessageWithData;
 
@@ -88,7 +87,6 @@ class Order extends BaseController
         return json(new SuccessMessage());
     }
 
-
     /**
      * @api {POST} /api/v1/order/push/handel  Android司机端-接单/拒单
      * @apiGroup   Android
@@ -114,7 +112,6 @@ class Order extends BaseController
 
     }
 
-
     /**
      * @api {POST} /api/v1/order/begin  Android司机端-开始出发
      * @apiGroup   Android
@@ -135,6 +132,32 @@ class Order extends BaseController
         $params = $this->request->param();
         (new OrderService())->orderBegin($params);
         return json(new SuccessMessage());
+
+    }
+
+    /**
+     * @api {GET} /api/v1/orders/mini 小程序端-获取订单列表
+     * @apiGroup  MINI
+     * @apiVersion 1.0.1
+     * @apiDescription   小程序端-获取订单列表
+     * @apiExample {get}  请求样例:
+     * https://tonglingok.com/api/v1/orders/mini
+     * @apiSuccessExample {json} 返回样例:
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"total":1,"per_page":10,"current_page":1,"last_page":1,"data":[{"id":1,"start":"长江路","end":"高速地产","state":1,"create_time":"2019-07-11 01:30:00"}]}}
+     * @apiSuccess (返回参数说明) {int} total 数据总数
+     * @apiSuccess (返回参数说明) {int} per_page 每页多少条数据
+     * @apiSuccess (返回参数说明) {int} current_page 当前页码
+     * @apiSuccess (返回参数说明) {int} last_page 最后页码
+     * @apiSuccess (返回参数说明) {int} id 订单id
+     * @apiSuccess (返回参数说明) {String} start 出发点
+     * @apiSuccess (返回参数说明) {String} end 目的地
+     * @apiSuccess (返回参数说明) {String}  create_time 创建时间
+     * @apiSuccess (返回参数说明) {int} state 订单状态：1 | 未接单；2 | 已接单，代驾中；4 | 完成；
+     */
+    public function miniOrders($page = 1, $size = 10)
+    {
+        $orders = (new OrderService())->miniOrders($page, $size);
+        return json(new SuccessMessageWithData(['data' => $orders]));
 
     }
 

@@ -280,4 +280,13 @@ class OrderService
         }
     }
 
+    public function miniOrders($page, $size)
+    {
+        $u_id = Token::getCurrentUid();
+        $orders = OrderT::miniOrders($u_id, $page, $size);
+        return $orders;
+
+
+    }
+
 }
