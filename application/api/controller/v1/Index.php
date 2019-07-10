@@ -2,36 +2,14 @@
 
 namespace app\api\controller\v1;
 
-use app\lib\exception\SuccessMessage;
-use app\lib\exception\SuccessMessageWithData;
-use GatewayClient\Gateway;
+use app\api\service\SendSMSService;
 
 class Index
 {
     public function index()
     {
-        $distance = 1;
-        $farRule = [
-            ['distance' => 5, 'price' => 0],
-            ['distance' => 1, 'price' => 5],
-            ['distance' => 2, 'price' => 2],
-        ];
-        $money_new = 0;
-        $count = count($farRule) - 1;
-        foreach ($farRule as $k => $v) {
-            if ($distance <= 0) {
-                return $money_new;
-                break;
-            }
-            if ($count > $k) {
-                $money_new += $v['price'];
-                $distance -= $v['distance'];
-            } else {
-                $money_new += $v['price'] * ceil($distance / $v['distance']);
-            }
+        (new SendSMSService())->sendOrderSMS('18956225230', ['code' => '*****' . substr('sajdlkjdsk21312', 5), 'order_time' => date('H:i', time())]);
 
-        }
-        echo $money_new;
     }
 
     public function send($client_id)

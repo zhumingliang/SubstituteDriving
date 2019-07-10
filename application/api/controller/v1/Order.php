@@ -64,6 +64,30 @@ class Order extends BaseController
         (new OrderService())->handelDriverNoAnswer();
     }
 
+    /**
+     * @api {POST} /api/v1/order/mini/cancel 小程序端-取消订单
+     * @apiGroup   MINI
+     * @apiVersion 1.0.1
+     * @apiDescription   小程序端-取消订单
+     * @apiExample {post}  请求样例:
+     *    {
+     *       "id": 1,
+     *       "remark":"无人接单"
+     *     }
+     * @apiParam (请求参数说明) {int} id  订单id
+     * @apiParam (请求参数说明) {String} remark  取消理由
+     * @apiSuccessExample {json} 返回样例:
+     *{"msg":"ok","errorCode":0}
+     * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误
+     * @apiSuccess (返回参数说明) {String} msg 信息描述
+     */
+    public function miniCancel()
+    {
+        $params = $this->request->param();
+        (new OrderService())->miniCancel($params);
+        return json(new SuccessMessage());
+    }
+
 
     /**
      * @api {POST} /api/v1/order/push/handel  Android司机端-接单/拒单
@@ -73,7 +97,7 @@ class Order extends BaseController
      * @apiExample {post}  请求样例:
      *    {
      *       "p_id": 1,
-     *       "type":2"
+     *       "type":2
      *     }
      * @apiParam (请求参数说明) {int} p_id  推送id
      * @apiParam (请求参数说明) {int} type  推送处理状态：2 | 接单；3 | 拒单
@@ -91,10 +115,33 @@ class Order extends BaseController
     }
 
 
+    /**
+     * @api {POST} /api/v1/order/begin  Android司机端-开始出发
+     * @apiGroup   Android
+     * @apiVersion 1.0.1
+     * @apiDescription   Android司机端-开始出发
+     * @apiExample {post}  请求样例:
+     *    {
+     *       "id": 1
+     *     }
+     * @apiParam (请求参数说明) {int} id  订单id
+     * @apiSuccessExample {json} 返回样例:
+     *{"msg":"ok","errorCode":0}
+     * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误
+     * @apiSuccess (返回参数说明) {String} msg 信息描述
+     */
+    public function orderBegin()
+    {
+        $params = $this->request->param();
+        (new OrderService())->orderBegin($params);
+        return json(new SuccessMessage());
+
+    }
+
+
     public function locationAdd($lat, $lng, $d_id)
     {
 
-        (new SendSMSService())->sendOrderSMS('18956225230', ['code' => '*****' . substr('sajdlkjdsk21312', 5), 'order_time' => date('H:i', time())]);
 
         /*  $redis = new \Redis();
           $redis->connect('127.0.0.1', 6379, 60);

@@ -72,4 +72,6 @@ Route::post('api/:version/order/mini/save', 'api/:version.Order/saveMiniOrder');
 Route::post('api/:version/order/list/handel', 'api/:version.Order/orderListHandel');
 Route::post('api/:version/order/push/handel', 'api/:version.Order/orderPushHandel');
 Route::post('api/:version/order/push/no/handel', 'api/:version.Order/handelDriverNoAnswer');
+Route::post('api/:version/order/mini/cancel', 'api/:version.Order/miniCancel');
+Route::post('api/:version/order/begin', 'api/:version.Order/orderBegin');
 
