@@ -125,7 +125,7 @@ class OrderService
     public function handelDriverNoAnswer()
     {
         OrderPushT::where('state', OrderEnum::ORDER_PUSH_NO)
-            ->where('create_time', '<', date("Y-m-d H:i:s", time() - 30))
+            ->where('create_time', '<', date("Y-m-d H:i:s", time() - config('setting.driver_push_expire_in')))
             ->update(['state' => 4]);
     }
 
