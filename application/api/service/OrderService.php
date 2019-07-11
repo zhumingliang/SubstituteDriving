@@ -302,7 +302,7 @@ class OrderService
             $info = [
                 'driver' => $order->driver->username,
                 'phone' => $order->driver->phone,
-                'start' => $order->statr,
+                'start' => $order->start,
                 'begin' => $order->begin,
                 'driver_lng' => $driver_location['lng'],
                 'driver_lat' => $driver_location['lat']
