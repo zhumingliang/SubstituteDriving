@@ -64,6 +64,9 @@ class Index
         var_dump($res);
         $distance = $redis->zScore('order:distance', 'o:2');
         var_dump($distance);
+        $redis->zIncrBy('order:distance', $dis, 'o:2');
+        $distance = $redis->zScore('order:distance', 'o:2');
+        var_dump($distance);
         /* $distance = $redis->zScore('order:distance', 'o:1');
          var_dump($distance);
          if (!$distance) {
