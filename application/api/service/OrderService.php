@@ -349,7 +349,7 @@ class OrderService
 
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
-        $location = self::$redis->rawCommand('geopos', 'drivers_tongling', $u_id);
+        $location = $redis->rawCommand('geopos', 'drivers_tongling', $u_id);
         if ($location) {
             $lng = $location[0][0];
             $lat = $location[0][1];
