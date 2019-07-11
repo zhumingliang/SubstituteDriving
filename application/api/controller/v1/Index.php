@@ -60,7 +60,7 @@ class Index
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
         var_dump($redis->zScore('order:distance', 'o:2'));
-        $res = $redis->zAdd('order:distance', 'incr', 1, 'o:2');
+        $res = $redis->zAdd('order:distance', 'nx', 0, 'o:2');
         var_dump($res);
         $distance = $redis->zScore('order:distance', 'o:2');
         var_dump($distance);
