@@ -13,6 +13,7 @@ use app\api\controller\BaseController;
 use  app\api\service\UserInfo as UserInfoService;
 use app\lib\exception\SuccessMessage;
 use think\facade\Cache;
+use think\facade\Request;
 
 class User extends BaseController
 {
@@ -89,7 +90,7 @@ class User extends BaseController
     {
         //清除用户手机号
         UserT::update(['phone' => ''], ['id' => \app\api\service\Token::getCurrentUid()]);
-        $token = think\facade\Request::header('token');
+        $token =Request::header('token');
         Cache::rm($token);
         return json(new SuccessMessage());
     }
