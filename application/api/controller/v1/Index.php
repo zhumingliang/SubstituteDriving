@@ -70,6 +70,8 @@ class Index
         $res = $redis->zIncrBy('order:distance', $dis, 'o:1');
         echo 'save:' . $res;
 
+        var_dump($redis->zRangeByScore('order:distance',0,100));
+
     }
 
 }
