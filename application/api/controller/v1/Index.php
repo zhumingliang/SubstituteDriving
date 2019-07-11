@@ -62,7 +62,7 @@ class Index
         $distance = $redis->zScore('order:distance', 'o:1');
         var_dump($distance);
         if (!$distance) {
-            $res = $redis->zAdd('order:distance', 'o:1', 1);
+            $res = $redis->zAdd('order:distance', 'nx', 1,'o:1');
             echo 'add:' . $res;
             return $res;
         }
