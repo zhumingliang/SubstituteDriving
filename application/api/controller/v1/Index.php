@@ -59,19 +59,20 @@ class Index
         $dis = 1.1;
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
-/*        var_dump($redis->zScore('order:distance', 'o:2'));
-        // $res = $redis->zAdd('order:distance', 0, 'o:2');
-        //var_dump($res);
-        $distance = $redis->zScore('order:distance', 'o:2');
-        var_dump($distance);
-        $redis->zIncrBy('order:distance', $dis, 'o:2');
-        $distance = $redis->zScore('order:distance', 'o:2');
-        var_dump($distance);
-        $distance = $redis->zScore('order:distance', 'o:1');
-        var_dump($distance);*/
+        /*        var_dump($redis->zScore('order:distance', 'o:2'));
+                // $res = $redis->zAdd('order:distance', 0, 'o:2');
+                //var_dump($res);
+                $distance = $redis->zScore('order:distance', 'o:2');
+                var_dump($distance);
+                $redis->zIncrBy('order:distance', $dis, 'o:2');
+                $distance = $redis->zScore('order:distance', 'o:2');
+                var_dump($distance);
+                $distance = $redis->zScore('order:distance', 'o:1');
+                var_dump($distance);*/
 
 
         $distance = $redis->zScore('order:distance', 'o:3');
+        var_dump($distance);
         if ($distance == false) {
             $res = $redis->zAdd('order:distance', 0, 'o:3');
             echo 'add:' . $res;
