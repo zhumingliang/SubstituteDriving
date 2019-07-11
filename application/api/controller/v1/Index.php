@@ -35,7 +35,7 @@ class Index
     {
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
-        var_dump($redis->rawCommand('geopos', 'drivers_tongling', $d_id));
+        print_r($redis->rawCommand('geopos', 'drivers_tongling', $d_id));
     }
 
     public function deleteLocation($d_id)
