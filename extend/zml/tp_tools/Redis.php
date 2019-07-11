@@ -30,10 +30,10 @@ class Redis
 
     public function __construct($options = [])
     {
-        if (!config('app.app_debug')) {
+       /* if (!config('app.app_debug')) {
             $this->host = '10.66.217.183';
             $this->auth='crs-qwfosn9e:mengant@2018';
-        }
+        }*/
         $host = trim(isset($options["host"]) ? $options["host"] : $this->host);
         $port = trim(isset($options["port"]) ? $options["port"] : $this->port);
         $auth = trim(isset($options["auth"]) ? $options["auth"] : $this->auth);
@@ -50,14 +50,14 @@ class Redis
                 $this->redisObj[$this->sn]->auth($auth);
                 $this->redisObj[$this->sn]->select($index);
             } catch (\Exception $e) {
-                Rollbar::log(Level::ERROR, $e->getMessage());
+               // Rollbar::log(Level::ERROR, $e->getMessage());
                 try {
                     $this->redisObj[$this->sn] = new \Redis();
                     $this->redisObj[$this->sn]->connect($host, $port);
                     $this->redisObj[$this->sn]->auth($auth);
                     $this->redisObj[$this->sn]->select($index);
                 } catch (\Exception $e) {
-                    Rollbar::log(Level::ERROR, $e->getMessage());
+                 //   Rollbar::log(Level::ERROR, $e->getMessage());
                 }
             }
         }

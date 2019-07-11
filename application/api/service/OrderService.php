@@ -12,7 +12,6 @@ use app\api\model\OrderT;
 use app\api\model\StartPriceT;
 use app\lib\enum\CommonEnum;
 use app\lib\enum\OrderEnum;
-use app\lib\exception\ParameterException;
 use app\lib\exception\SaveException;
 use app\lib\exception\UpdateException;
 use GatewayClient\Gateway;
@@ -286,19 +285,88 @@ class OrderService
     public function miniOrder($id)
     {
         $order = $this->getOrder($id);
-        if ($order->state == OrderEnum::ORDER_COMPLETE) {
+        if ($order->state == OrderEnum::ORDER_NO) {
+            $info = [
+                'state' => OrderEnum::ORDER_NO
+            ];
 
+        } else if ($order->state == OrderEnum::ORDER_CANCEL) {
+            $info = [
+                'state' => OrderEnum::ORDER_CANCEL
+            ];
+
+        } else if ($order->state == OrderEnum::ORDER_COMPLETE) {
+            $info = $this->prepareCompleteInfo($order);
         } else {
+            $driver_location = $this->getDriverLocation($order->d_id);
+            $info = [
+                'driver' => $order->driver->username,
+                'phone' => $order->driver->phone,
+                'start' => $order->statr,
+                'begin' => $order->begin,
+                'driver_lng' => $driver_location['lng'],
+                'driver_lat' => $driver_location['lat']
+            ];
 
         }
+
+        return $info;
 
 
     }
 
+    private function prepareCompleteInfo($order)
+    {
+
+        $info = [
+            'state' => OrderEnum::ORDER_COMPLETE,
+            'distance' => $order->distance,
+            'money' => $order->money,
+            'far_distance' => $order->far_distance,
+            'far_money' => $order->far_money,
+            'ticket_money' => $order->ticket ? $order->ticket->money : 0,
+            'wait_time' => $order->wait_time,
+            'wait_money' => $order->wait_money,
+            'weather_money' => $order->wait_money,
+
+        ];
+        return $info;
+
+    }
+
+    private function getDriverLocation($u_id)
+    {
+        /* $redis = new \zml\tp_tools\Redis();
+         $order_id = 'o_' . $o_id;
+         $distance = $redis->zScore('order:distance', $order_id);
+         if (!$distance) {
+             return [
+                 'lng' => null,
+                 'lat' => null
+             ];
+
+         }*/
+
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1', 6379, 60);
+        $location = self::$redis->rawCommand('geopos', 'drivers_tongling', $u_id);
+        if ($location) {
+            $lng = $location[0][0];
+            $lat = $location[0][1];
+        } else {
+            $lng = null;
+            $lat = null;
+        }
+
+        return [
+            'lng' => $lng,
+            'lat' => $lat,
+        ];
+    }
 
     private function getOrder($id)
     {
-        $order = OrderT::get($id);
+        $order = OrderT::with(['ticket', 'driver'])->get($id);
         if (!$order) {
             throw new UpdateException(['msg' => '订单不存在']);
         }

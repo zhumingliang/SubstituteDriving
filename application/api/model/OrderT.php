@@ -4,7 +4,6 @@
 namespace app\api\model;
 
 
-use app\lib\enum\CommonEnum;
 use app\lib\enum\OrderEnum;
 use think\Model;
 
@@ -14,6 +13,16 @@ class OrderT extends Model
     {
         return $this->belongsTo('UserT', 'u_id', 'id');
 
+    }
+
+    public function ticket()
+    {
+        return $this->belongsTo('TicketUserT', 't_id', 'id');
+    }
+
+    public function driver()
+    {
+        return $this->belongsTo('DriverT', 'd_id', 'id');
     }
 
     public function getOrder($o_id)

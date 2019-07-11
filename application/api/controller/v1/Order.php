@@ -152,7 +152,7 @@ class Order extends BaseController
      * @apiSuccess (返回参数说明) {String} start 出发点
      * @apiSuccess (返回参数说明) {String} end 目的地
      * @apiSuccess (返回参数说明) {String}  create_time 创建时间
-     * @apiSuccess (返回参数说明) {int} state 订单状态：1 | 未接单；2 | 已接单，代驾中；4 | 完成；
+     * @apiSuccess (返回参数说明) {int} state 订单状态：1 | 未接单；2 | 已接单；4 | 完成；
      */
     public function miniOrders($page = 1, $size = 10)
     {

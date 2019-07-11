@@ -71,17 +71,7 @@ class Index
                 var_dump($distance);*/
 
 
-        $distance = $redis->zScore('order:distance', 'o:3');
-        var_dump($distance);
-        if ($distance === false) {
-            $res = $redis->zAdd('order:distance', 0, 'o:3');
-            echo 'add:' . $res;
-            return $res;
-        }
 
-        $res = $redis->zIncrBy('order:distance', $dis, 'o:3');
-        echo 'save:' . $res;
-        var_dump($redis->zScore('order:distance', 'o:3'));
     }
 
 }
