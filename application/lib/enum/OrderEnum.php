@@ -27,7 +27,7 @@ class OrderEnum
 
     const ORDER_TRANSFER = 3;
 
-    const ORDER_COMPLETE = 5;
+    const ORDER_COMPLETE = 4;
 
     const ORDER_CANCEL = 5;
 

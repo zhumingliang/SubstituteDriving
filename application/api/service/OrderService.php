@@ -12,6 +12,7 @@ use app\api\model\OrderT;
 use app\api\model\StartPriceT;
 use app\lib\enum\CommonEnum;
 use app\lib\enum\OrderEnum;
+use app\lib\exception\ParameterException;
 use app\lib\exception\SaveException;
 use app\lib\exception\UpdateException;
 use GatewayClient\Gateway;
@@ -249,13 +250,7 @@ class OrderService
 
     public function miniCancel($params)
     {
-        $order = OrderT::get($params['id']);
-        if (!$order) {
-            throw new UpdateException(['msg' => '订单不存在']);
-        }
-        if (Token::getCurrentUid() != $order->u_id) {
-            throw new UpdateException(['msg' => '无权限操作此订单']);
-        }
+        $order = $this->getOrder($params['id']);
         $order->state = OrderEnum::ORDER_CANCEL;
         $order->cancel_remark = $params['remark'];
         $res = $order->save();
@@ -286,7 +281,31 @@ class OrderService
         $orders = OrderT::miniOrders($u_id, $page, $size);
         return $orders;
 
+    }
 
+    public function miniOrder($id)
+    {
+        $order = $this->getOrder($id);
+        if ($order->state == OrderEnum::ORDER_COMPLETE) {
+
+        } else {
+
+        }
+
+
+    }
+
+
+    private function getOrder($id)
+    {
+        $order = OrderT::get($id);
+        if (!$order) {
+            throw new UpdateException(['msg' => '订单不存在']);
+        }
+        if (Token::getCurrentUid() != $order->u_id) {
+            throw new UpdateException(['msg' => '无权限操作此订单']);
+        }
+        return $order;
     }
 
 }

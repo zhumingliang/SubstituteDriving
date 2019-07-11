@@ -23,7 +23,8 @@ class Order extends BaseValidate
     protected $scene = [
         'orderPushHandel' => ['p_id', 'type'],
         'miniCancel' => ['id', 'remark'],
+        'miniOrder' => ['id'],
         'orderBegin' => ['id'],
-        'saveMiniOrder' => ['start', 'start_lng','start_lat','end', 'end_lng','end_lat','t_id'],
+        'saveMiniOrder' => ['start', 'start_lng', 'start_lat', 'end', 'end_lng', 'end_lat', 't_id'],
     ];
 }
