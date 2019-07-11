@@ -10,7 +10,7 @@ class Index
     {
         //(new SendSMSService())->sendOrderSMS('18956225230', ['code' => '*****' . substr('sajdlkjdsk21312', 5), 'order_time' => date('H:i', time())]);
 
-        $this->location(4);
+        $this->zset();
     }
 
     public function send($client_id)
@@ -52,6 +52,24 @@ class Index
         //查询所有司机并按距离排序
         $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, '1000000', 'km', $type);
         print_r($list);
+    }
+
+    public function zset()
+    {
+        $dis = 1.1;
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1', 6379, 60);
+        $distance = $redis->zScore('order:distance', 'o:1');
+        var_dump($distance);
+        if (!$distance) {
+            $res = $redis->zAdd('order:distance', 0, 'o:1');
+            echo 'add:' . $res;
+            return $res;
+        }
+
+        $res = $redis->zIncrBy('order:distance', $dis, 'o:1');
+        echo 'save:' . $res;
+
     }
 
 }
