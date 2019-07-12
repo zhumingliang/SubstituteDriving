@@ -156,10 +156,6 @@ class OrderService
     {
         //更新order表状态 - 用触发器：update_order_state 解决
 
-        /* $res = OrderT::update(['d_id' => $d_id, 'state' => OrderEnum::ORDER_ING], ['id' => $o_id]);
-         if (!$res) {
-             throw new UpdateException();
-         }*/
         //更新司机状态:从正在派单移除；添加到已接单
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
@@ -208,7 +204,7 @@ class OrderService
             return false;
         }
 
-        //设置三个set: 司机未接单；司机正在派单；司机已经接单
+        //设置三个set: 司机未接单 driver_order_no；司机正在派单 driver_order_ing；司机已经接单 driver_order_receive
         foreach ($list as $k => $v) {
             $d_id = $v;
             if (Gateway::isUidOnline($d_id) &&
