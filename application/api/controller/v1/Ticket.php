@@ -183,12 +183,12 @@ class Ticket extends BaseController
     public function ManageTickets($page = 1, $size = 10, $time_begin = '', $time_end = '', $key = '')
     {
         $ticks = (new TicketService())->ticketsForCMS($page, $size, $time_begin, $time_end, $key);
-        return json(new SuccessMessage(['data' => $ticks]));
+        return json(new SuccessMessageWithData(['data' => $ticks]));
 
     }
 
     /**
-     * @api {GET} /api/v1/tickets 小程序获取客户拥有可使用卡券
+     * @api {GET} /api/v1/tickets/user 小程序获取客户拥有可使用卡券
      * @apiGroup  MINI
      * @apiVersion 1.0.1
      * @apiDescription  小程序获取客户拥有可使用卡券
