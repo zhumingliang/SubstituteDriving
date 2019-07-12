@@ -143,6 +143,12 @@ class Driver extends BaseController
         if (!$res) {
             throw new UpdateException();
         }
+        //处理司机状态
+        //1.上线-添加进入未接单
+        //2.下线-需要检测当前时候否有进行中的订单
+        /*$redis->sRem('driver_order_no', $d_id);
+        $redis->sAdd('driver_order_ing', $d_id);*/
+
         return json(new SuccessMessage());
 
     }
