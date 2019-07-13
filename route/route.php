@@ -70,6 +70,8 @@ Route::post('api/:version/sms/register', 'api/:version.SendSMS/sendCodeToMINI');
 Route::post('api/:version/sms/login', 'api/:version.SendSMS/sendCodeToAndroid');
 
 Route::post('api/:version/order/mini/save', 'api/:version.Order/saveMiniOrder');
+Route::post('api/:version/order/drive/save', 'api/:version.Order/saveDriverOrder');
+Route::post('api/:version/order/manager/save', 'api/:version.Order/saveManagerOrder');
 Route::post('api/:version/order/list/handel', 'api/:version.Order/orderListHandel');
 Route::post('api/:version/order/push/handel', 'api/:version.Order/orderPushHandel');
 Route::post('api/:version/order/push/no/handel', 'api/:version.Order/handelDriverNoAnswer');

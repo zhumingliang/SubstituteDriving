@@ -15,7 +15,9 @@ class OrderEnum
 
     const FROM_DRIVER = 2;
 
-    const FROM_TRANSFER = 2;
+    const FROM_TRANSFER = 3;
+
+    const FROM_MANAGER = 4;
 
     const NOT_FIXED_MONEY = 1;
 

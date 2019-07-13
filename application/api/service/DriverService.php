@@ -83,6 +83,15 @@ class DriverService
 
     }
 
+    public function checkDriverOrderNo($d_id)
+    {
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1', 6379, 60);
+        $ret = $redis->sIsMember('driver_order_no', $d_id);
+        return $ret;
+
+    }
+
     /**
      * 订单完成修改司机接单状态
      * 接单中->未接单
@@ -98,14 +107,27 @@ class DriverService
 
     /**
      * 司机接单修改司机接单状态
-     * 未接单->接单中
+     * 未接单->已接单
      */
-    public function handelDriveStateByING($d_id)
+    public function handelDriveStateByReceive($d_id)
     {
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
         $redis->sRem('driver_order_no', $d_id);
         $redis->sAdd('driver_order_receive', $d_id);
     }
+
+    /**
+     * 司机接单修改司机接单状态
+     * 未接单->正在派送
+     */
+    public function handelDriveStateByING($d_id)
+    {
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1', 6379, 60);
+        $redis->sRem('driver_order_no', $d_id);
+        $redis->sAdd('driver_order_ing', $d_id);
+    }
+
 
 }
