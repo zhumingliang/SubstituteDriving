@@ -25,7 +25,7 @@ class OrderT extends Model
         return $this->belongsTo('DriverT', 'd_id', 'id');
     }
 
-    public function getOrder($o_id)
+    public static function getOrder($o_id)
     {
         $order = self::where('id', $o_id)
             ->with('user')

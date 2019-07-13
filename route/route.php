@@ -77,4 +77,5 @@ Route::post('api/:version/order/mini/cancel', 'api/:version.Order/miniCancel');
 Route::post('api/:version/order/begin', 'api/:version.Order/orderBegin');
 Route::get('api/:version/orders/mini', 'api/:version.Order/miniOrders');
 Route::get('api/:version/order/mini', 'api/:version.Order/miniOrder');
+Route::get('api/:version/order/driver/complete', 'api/:version.Order/orderComplete');
 

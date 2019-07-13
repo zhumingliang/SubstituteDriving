@@ -185,6 +185,7 @@ class Order extends BaseController
      * {"msg":"ok","errorCode":0,"code":200,"data":{"state":4,"distance":0,"money":0,"far_distance":0,"far_money":0,"ticket_money":0,"wait_time":0,"wait_money":0,"weather_money":0}}
      * @apiSuccess (返回参数说明) {int}  state 订单状态：4-已完成
      * @apiSuccess (返回参数说明) {int}  distance  司机行驶路径距离
+     * @apiSuccess (返回参数说明) {int}  distance_money  司机行驶路径距离产生金额
      * @apiSuccess (返回参数说明) {int}  money 订单金额
      * @apiSuccess (返回参数说明) {int}  far_distance 远程接驾距离
      * @apiSuccess (返回参数说明) {int}  far_money 远程接驾金额
@@ -198,6 +199,39 @@ class Order extends BaseController
         $id = $this->request->param('id');
         $order = (new OrderService())->miniOrder($id);
         return json(new SuccessMessageWithData(['data' => $order]));
+    }
+
+    /**
+     * @api {POST} /api/v1/order/driver/complete Android司机端-司机确认订单完成
+     * @apiGroup  Android
+     * @apiVersion 1.0.1
+     * @apiDescription   小程序端-获取订单信息
+     * @apiExample {post}  请求样例:
+     *    {
+     *       "id":1,
+     *       "wait_time":360
+     *     }
+     * @apiParam (请求参数说明) {int} id 订单id
+     * @apiParam (请求参数说明) {int} wait_time 等待时间 单位秒
+     * @apiSuccessExample {json} 返回样例:
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"state":4,"distance":16,"distance_money":158,"money":202,"far_distance":0,"far_money":0,"ticket_money":5,"wait_time":31,"wait_money":1,"weather_money":48}}
+     * @apiSuccess (返回参数说明) {int}  state 订单状态：4-已完成
+     * @apiSuccess (返回参数说明) {int}  distance  司机行驶路径距离
+     * @apiSuccess (返回参数说明) {int}  distance_money  司机行驶路径距离产生金额
+     * @apiSuccess (返回参数说明) {int}  money 订单金额
+     * @apiSuccess (返回参数说明) {int}  far_distance 远程接驾距离
+     * @apiSuccess (返回参数说明) {int}  far_money 远程接驾金额
+     * @apiSuccess (返回参数说明) {int}  ticket_money 使用优惠券金额
+     * @apiSuccess (返回参数说明) {int}  wait_time  等待时间
+     * @apiSuccess (返回参数说明) {int}  wait_money 等待时间金额
+     * @apiSuccess (返回参数说明) {int}  weather_money 恶劣天气补助
+     */
+    public function orderComplete()
+    {
+        $params = $this->request->param();
+        $order = (new OrderService())->driverCompleteOrder($params);
+        return json(new SuccessMessageWithData(['data' => $order]));
+
     }
 
 

@@ -21,6 +21,7 @@ use app\lib\exception\SuccessMessage;
 use app\lib\exception\TokenException;
 use think\Controller;
 use think\facade\Cache;
+use think\facade\Request;
 
 class Token extends Controller
 {
@@ -74,7 +75,7 @@ class Token extends Controller
     public function getAndroidToken()
     {
         $params = $this->request->param();
-        $at = new DriverToken($params['account'], $params['pwd'], $params['code'],$params['type']);
+        $at = new DriverToken($params['account'], $params['pwd'], $params['code'], $params['type']);
         $token = $at->get();
         return json($token);
     }
@@ -94,7 +95,8 @@ class Token extends Controller
      */
     public function loginOut()
     {
-        $token = \think\facade\Request::header('token');
+
+        $token = Request::header('token');
         Cache::rm($token);
         return json(new SuccessMessage());
     }
@@ -115,7 +117,7 @@ class Token extends Controller
      */
     public function getUserToken()
     {
-        $code=$this->request->param('code');
+        $code = $this->request->param('code');
         $ut = new UserToken($code);
         $token = $ut->get();
         return json($token);

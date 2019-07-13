@@ -10,12 +10,19 @@ use app\api\model\OrderListT;
 use app\api\model\OrderPushT;
 use app\api\model\OrderT;
 use app\api\model\StartPriceT;
+use app\api\model\TicketT;
+use app\api\model\TimeIntervalT;
+use app\api\model\WaitPriceT;
+use app\api\model\WeatherT;
 use app\lib\enum\CommonEnum;
 use app\lib\enum\OrderEnum;
 use app\lib\exception\SaveException;
 use app\lib\exception\UpdateException;
 use GatewayClient\Gateway;
+use think\Db;
+use think\Exception;
 use zml\tp_tools\CalculateUtil;
+use zml\tp_tools\Redis;
 
 class OrderService
 {
@@ -40,18 +47,19 @@ class OrderService
 
     private function prefixFar($params)
     {
+        //计算距离
+        $far_distance = CalculateUtil::GetDistance($params['start_lng'],
+            $params['start_lat'], $params['end_lng'],
+            $params['end_lat']);
+
         //检查远程接驾是否开启
         $far_state = FarStateT::get();
         if ($far_state->open == 2) {
             return [
                 'far_money' => 0,
-                'far_distance' => 0,
+                'far_distance' => $far_distance,
             ];
         }
-        //计算距离
-        $far_distance = CalculateUtil::GetDistance($params['start_lng'],
-            $params['start_lat'], $params['end_lng'],
-            $params['end_lat']);
 
         $farRule = StartPriceT::where('type', 2)
             ->where('state', CommonEnum::STATE_IS_OK)
@@ -72,17 +80,22 @@ class OrderService
 
     }
 
-    private function prefixStartPriceWithDistance($distance, $farRule)
+    private function prefixStartPriceWithDistance($distance, $Rule, $type = 'far')
     {
         $money_new = 0;
-        $count = count($farRule) - 1;
-        foreach ($farRule as $k => $v) {
+        $count = count($Rule) - 1;
+        foreach ($Rule as $k => $v) {
+            $price = $v['price'];
+            if ($k == 0 && $type == 'start') {
+                $price = $this->getStartPrice($price);
+            }
+
             if ($distance <= 0) {
                 return $money_new;
                 break;
             }
             if ($count > $k) {
-                $money_new += $v['price'];
+                $money_new += $price;
                 $distance -= $v['distance'];
             } else {
                 $money_new += $v['price'] * ceil($distance / $v['distance']);
@@ -90,6 +103,20 @@ class OrderService
 
         }
         return $money_new;
+
+    }
+
+    private function getStartPrice($price)
+    {
+        $time_now = date('H:i', time());
+        $interval = TimeIntervalT::where('state', CommonEnum::STATE_IS_OK)
+            ->whereTime('time_begin', '<=', $time_now)
+            ->whereTime('time_end', '>=', $time_now)
+            ->find();
+        if (!$interval) {
+            return $price;
+        }
+        return $interval->price;
 
     }
 
@@ -256,13 +283,7 @@ class OrderService
 
     public function orderBegin($params)
     {
-        $order = OrderT::get($params['id']);
-        if (!$order) {
-            throw new UpdateException(['msg' => '订单不存在']);
-        }
-        if (Token::getCurrentUid() != $order->d_id) {
-            throw new UpdateException(['msg' => '无权限操作此订单']);
-        }
+        $order = $this->getOrder($params['id']);
         $order->begin = CommonEnum::STATE_IS_OK;
         $res = $order->save();
         if (!$res) {
@@ -307,7 +328,94 @@ class OrderService
         }
 
         return $info;
+    }
 
+    public function driverCompleteOrder($params)
+    {
+
+        try {
+            Db::startTrans();
+
+            $id = $params['id'];
+            $wait_time = $params['wait_time'];
+            $order = $this->getOrder($id);
+            if ($order->state == OrderEnum::ORDER_COMPLETE) {
+                return $this->prepareCompleteInfo($order);
+            }
+
+            //处理 订单距离/距离产生的价格
+           $redis = new Redis();
+            $distance = $redis->zScore('order:distance', $id);
+            $startRule = StartPriceT::where('type', 1)
+                ->where('state', CommonEnum::STATE_IS_OK)
+                ->order('order')
+                ->select();
+            $distance_money = $this->prefixStartPriceWithDistance($distance, $startRule, 'start');
+
+            //处理等待费用
+            $wait_money = $this->prefixWait($wait_time);
+
+            //处理恶劣天气费用
+            $weather_money = $this->prefixWeather($distance_money);
+
+            //处理订单金额
+            $money = $distance_money + $wait_money + $weather_money + $order->far_money;
+
+            if ($order->ticket) {
+                $ticket = $order->ticket;
+                $money -= $ticket->money;
+                //处理优惠券
+                $t_res = TicketT::update(['state' => CommonEnum::STATE_IS_FAIL], ['id' => $ticket->id]);
+                if (!$t_res) {
+                    Db::rollback();
+                    throw new SaveException(['msg' => '保存处理优惠券失败']);
+                }
+            }
+
+            $order->state = OrderEnum::ORDER_COMPLETE;
+            $order->distance = $distance;
+            $order->distance_money = $distance_money;
+            $order->wait_time = $wait_time;
+            $order->wait_money = $wait_money;
+            $order->weather_money = $weather_money;
+            $order->money = $money;
+            $res = $order->save();
+            if (!$res) {
+                Db::rollback();
+                throw new SaveException(['msg' => '保存结算数据失败']);
+            }
+            Db::commit();
+            (new DriverService())->handelDriveStateByComplete($id);
+            return $this->prepareCompleteInfo($order);
+
+        } catch (Exception $e) {
+            Db::rollback();
+            throw $e;
+        }
+
+    }
+
+    private function prefixWait($wait_time)
+    {
+        $wait = WaitPriceT::where('state', CommonEnum::STATE_IS_OK)
+            ->find();
+        if (!$wait || ($wait->free >= $wait_time)) {
+            return 0;
+        }
+
+        return (ceil($wait_time / 60) - $wait->free) * $wait->price;
+
+
+    }
+
+    private function prefixWeather($distance_money)
+    {
+        $weather = WeatherT::find();
+        if (!$weather || $weather->state == CommonEnum::STATE_IS_FAIL) {
+            return 0;
+        }
+
+        return ceil($distance_money * ($weather->ratio - 1));
 
     }
 
@@ -317,13 +425,14 @@ class OrderService
         $info = [
             'state' => OrderEnum::ORDER_COMPLETE,
             'distance' => $order->distance,
+            'distance_money' => $order->distance_money,
             'money' => $order->money,
             'far_distance' => $order->far_distance,
             'far_money' => $order->far_money,
             'ticket_money' => $order->ticket ? $order->ticket->money : 0,
             'wait_time' => $order->wait_time,
             'wait_money' => $order->wait_money,
-            'weather_money' => $order->wait_money,
+            'weather_money' => $order->weather_money,
 
         ];
         return $info;
@@ -332,17 +441,6 @@ class OrderService
 
     private function getDriverLocation($u_id)
     {
-        /* $redis = new \zml\tp_tools\Redis();
-         $order_id = 'o_' . $o_id;
-         $distance = $redis->zScore('order:distance', $order_id);
-         if (!$distance) {
-             return [
-                 'lng' => null,
-                 'lat' => null
-             ];
-
-         }*/
-
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
         $location = $redis->rawCommand('geopos', 'drivers_tongling', $u_id);
@@ -366,10 +464,17 @@ class OrderService
         if (!$order) {
             throw new UpdateException(['msg' => '订单不存在']);
         }
-        if (Token::getCurrentUid() != $order->u_id) {
+        $grade = Token::getCurrentTokenVar('type');
+        if ($grade == 'driver') {
+            $field_id = $order->d_id;
+        } else {
+            $field_id = $order->u_id;
+        }
+        if (Token::getCurrentUid() != $field_id) {
             throw new UpdateException(['msg' => '无权限操作此订单']);
         }
         return $order;
     }
+
 
 }
