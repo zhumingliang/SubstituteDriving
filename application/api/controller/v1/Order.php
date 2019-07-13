@@ -234,5 +234,43 @@ class Order extends BaseController
 
     }
 
+    /**
+     * @api {POST} /api/v1/order/drive/save  Android司机端-司机自主创建订单
+     * @apiGroup   Android
+     * @apiVersion 1.0.1
+     * @apiDescription   Android司机端-司机自主创建订单
+     * @apiExample {post}  请求样例:
+     *    {
+     *       "start":"铜陵市维也纳大酒店",
+     *       "start_lat":"12.1212",
+     *       "start_lng":"23.121",
+     *       "end":铜陵市高速",
+     *       "end_lat":"12.1212",
+     *       "end_lng":"21.1212",
+     *       "phone":"18956225230",
+     *       "name":"詹先生",
+     *     }
+     * @apiParam (请求参数说明) {String} start  出发地
+     * @apiParam (请求参数说明) {String} start_lat  出发地纬度
+     * @apiParam (请求参数说明) {String} start_lng  出发地经度
+     * @apiParam (请求参数说明) {String} end  目的地
+     * @apiParam (请求参数说明) {String} end_lat  目的地纬度
+     * @apiParam (请求参数说明) {String} end_lng  目的地经度
+     * @apiParam (请求参数说明) {int} phone  手机号
+     * @apiParam (请求参数说明) {int} name  乘客姓名
+     * @apiSuccessExample {json} 返回样例:
+     *{"id":1,"errorCode":0,"data":{"id":1}}
+     * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误
+     * @apiSuccess (返回参数说明) {String} msg 信息描述
+     * @apiSuccess (返回参数说明) {int} id 订单id
+     */
+    public function saveDriverOrder()
+    {
+        $params = $this->request->param();
+        $o_id = (new OrderService())->saveDriverOrder($params);
+        return json(new SuccessMessageWithData(['data' => ['id' => $o_id]]));
+
+    }
+
 
 }

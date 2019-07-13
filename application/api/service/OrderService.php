@@ -19,6 +19,7 @@ use app\lib\enum\OrderEnum;
 use app\lib\exception\SaveException;
 use app\lib\exception\UpdateException;
 use GatewayClient\Gateway;
+use http\Params;
 use think\Db;
 use think\Exception;
 use zml\tp_tools\CalculateUtil;
@@ -44,6 +45,32 @@ class OrderService
         $this->saveOrderList($o_id);
         return $o_id;
     }
+
+    /**
+     * 司机自主下单
+     */
+    public function saveDriverOrder($params)
+    {
+        $d_id = Token::getCurrentUid();
+        if ((new DriverService())->checkNoCompleteOrder($d_id)) {
+            throw  new SaveException(['msg' => '创建订单失败,已有未完成的订单']);
+        }
+        if (key_exists('phone', $params) && strlen($params['phone'])) {
+            $params['u_id'] = (new UserInfo('', ''))->getUserByPhone($params['phone']);
+        }
+        $params['d_id'] = $d_id;
+        $params['from'] = OrderEnum::FROM_DRIVER;
+        $params['type'] = OrderEnum::NOT_FIXED_MONEY;
+        $params['state'] = OrderEnum::ORDER_ING;
+        $params['order_num'] = time();
+        $o_id = $this->saveOrder($params);
+
+        //处理司机状态
+        //未接单状态->已接单状态
+        (new DriverService())->handelDriveStateByING($d_id);
+        return $o_id;
+    }
+
 
     private function prefixFar($params)
     {
@@ -344,7 +371,7 @@ class OrderService
             }
 
             //处理 订单距离/距离产生的价格
-           $redis = new Redis();
+            $redis = new Redis();
             $distance = $redis->zScore('order:distance', $id);
             $startRule = StartPriceT::where('type', 1)
                 ->where('state', CommonEnum::STATE_IS_OK)

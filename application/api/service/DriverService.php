@@ -52,7 +52,7 @@ class DriverService
 
     }
 
-    private function checkNoCompleteOrder($id)
+    public function checkNoCompleteOrder($id)
     {
         $count = OrderT::where('d_id', $id)
             ->where('state', OrderEnum::ORDER_ING)
@@ -95,4 +95,17 @@ class DriverService
         $redis->sAdd('driver_order_no', $d_id);
 
     }
+
+    /**
+     * 司机接单修改司机接单状态
+     * 未接单->接单中
+     */
+    public function handelDriveStateByING($d_id)
+    {
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1', 6379, 60);
+        $redis->sRem('driver_order_no', $d_id);
+        $redis->sAdd('driver_order_receive', $d_id);
+    }
+
 }

@@ -9,6 +9,7 @@
 namespace app\api\service;
 
 
+use app\api\model\UserT;
 use app\lib\exception\TokenException;
 use app\lib\exception\UpdateException;
 use app\lib\exception\UserInfoException;
@@ -162,5 +163,16 @@ class UserInfo
         $this->updateCache(['phone' => $params['phone']]);
 
     }
+
+    public function getUserByPhone($phone)
+    {
+        $user = UserT::where('phone', $phone)
+            ->find();
+        if (!$user) {
+            return '';
+        }
+        return $user->id;
+    }
+
 
 }
