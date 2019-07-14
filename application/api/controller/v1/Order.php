@@ -136,6 +136,29 @@ class Order extends BaseController
     }
 
     /**
+     * @api {POST} /api/v1/order/arriving  Android司机端-点击到达起点
+     * @apiGroup   Android
+     * @apiVersion 1.0.1
+     * @apiDescription   Android司机端-开始出发
+     * @apiExample {post}  请求样例:
+     *    {
+     *       "id": 1
+     *     }
+     * @apiParam (请求参数说明) {int} id  订单id
+     * @apiSuccessExample {json} 返回样例:
+     *{"msg":"ok","errorCode":0}
+     * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误
+     * @apiSuccess (返回参数说明) {String} msg 信息描述
+     */
+    public function orderArriving()
+    {
+        $params = $this->request->param();
+        (new OrderService())->arrivingStart($params);
+        return json(new SuccessMessage());
+
+    }
+
+    /**
      * @api {GET} /api/v1/orders/mini 小程序端-获取订单列表
      * @apiGroup  MINI
      * @apiVersion 1.0.1
@@ -174,11 +197,13 @@ class Order extends BaseController
      * {"msg":"ok","errorCode":0,"code":200,"data":{"state":1}}
      * @apiSuccess (返回参数说明) {int} state 订单状态：1 | 未接单
      * @apiSuccessExample {json} 订单已被接单但是未完成订单返回样例:
-     * {"msg":"ok","errorCode":0,"code":200,"data":{"driver":"朱明良","phone":"18956225230","start":"长江路","begin":2,"driver_lng":"115.79384654760360718","driver_lat":"40.58445845049069334"}}
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"state":2,"driver":"朱明良","phone":"18956225230","start":"长江路","begin":2,"arriving_time":"2019-07-14 10:00:00","receive_time":"2019-07-14 10:00:10","driver_lng":"115.79384654760360718","driver_lat":"40.58445845049069334"}}
      * @apiSuccess (返回参数说明) {String} driver 司机名称
      * @apiSuccess (返回参数说明) {String} phone 司机手机号
      * @apiSuccess (返回参数说明) {String} start 出发点
      * @apiSuccess (返回参数说明) {String} begin 司机是否点击开始出发：1-是；2-否
+     * @apiSuccess (返回参数说明) {String} arriving_time 到达起点时间
+     * @apiSuccess (返回参数说明) {String} receive_time 司机接单时间
      * @apiSuccess (返回参数说明) {String} driver_lng 司机当前位置经度
      * @apiSuccess (返回参数说明) {String} driver_lat 司机当前位置纬度
      * @apiSuccessExample {json} 订单已完成返回样例:

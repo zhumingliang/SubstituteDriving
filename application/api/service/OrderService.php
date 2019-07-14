@@ -302,7 +302,7 @@ class OrderService
         if ($u_id) {
             $send_data = [
                 'id' => $order->id,
-                'driver_name' => $order->driver->name,
+                'driver_name' => $order->driver->username,
                 'driver_phone' => $order->driver->phone,
                 'distance' => $this->getDriverDistance($order->start_lng, $order->start_lat, $d_id)];
             Gateway::sendToUid($u_id, json_encode($send_data));
@@ -423,6 +423,19 @@ class OrderService
         }
     }
 
+    /**
+     * 到达起点
+     */
+    public function arrivingStart($id)
+    {
+        $order = $this->getOrder($id);
+        $order->arriving_time = date('Y-m-d H:i:s', time());
+        $res = $order->save();
+        if (!$res) {
+            throw new UpdateException();
+        }
+    }
+
     public function miniOrders($page, $size)
     {
         $u_id = Token::getCurrentUid();
@@ -449,10 +462,13 @@ class OrderService
         } else {
             $driver_location = $this->getDriverLocation($order->d_id);
             $info = [
+                'state' => $order->state,
                 'driver' => $order->driver->username,
                 'phone' => $order->driver->phone,
                 'start' => $order->start,
                 'begin' => $order->begin,
+                'arriving_time' => $order->arriving_time,
+                'receive_time' => $order->receive_time,
                 'driver_lng' => $driver_location['lng'],
                 'driver_lat' => $driver_location['lat']
             ];
