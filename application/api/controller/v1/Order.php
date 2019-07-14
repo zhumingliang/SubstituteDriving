@@ -43,7 +43,7 @@ class Order extends BaseController
     {
         $params = $this->request->param();
         $id = (new OrderService())->saveMiniOrder($params);
-        return json(new SuccessMessageWithData(['id' => $id]));
+        return json(new SuccessMessageWithData(['data' => ['id' => $id]]));
     }
 
     /**
