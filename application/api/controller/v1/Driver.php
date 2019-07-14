@@ -148,7 +148,7 @@ class Driver extends BaseController
      * @apiExample {get}  请求样例:
      * https://tonglingok.com/api/v1/driver/acceptableOrde
      * @apiSuccessExample {json} 返回样例:
-     * {"msg":"ok","errorCode":0,"code":200,"data":{"total":1,"per_page":10,"current_page":1,"last_page":1,"data":[{"d_id":1,"account":"18956225230","username":"朱明良","phone":"18956225230","money":100,"state":1,"create_time":"2019-06-26 23:50:08"}]}}
+     * {"msg":"ok","errorCode":0,"code":200,"data":[{"id":1,"username":"朱明良"}]}
      * @apiSuccess (返回参数说明) {int} id 司机ID
      * @apiSuccess (返回参数说明) {String} username 司机姓名
      */
