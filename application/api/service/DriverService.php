@@ -152,7 +152,7 @@ class DriverService
         }
 
         $d_ids = implode(',', $driver_ids);
-        $drivers = DriverT::field('id,name')->whereIn('id', $d_ids)->select();
+        $drivers = DriverT::field('id,username')->whereIn('id', $d_ids)->select();
         return $drivers;
     }
 
