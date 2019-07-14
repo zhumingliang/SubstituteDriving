@@ -29,6 +29,7 @@ Route::post('api/:version/driver/send', 'api/:version.Driver/send');
 Route::get('api/:version/drivers', 'api/:version.Driver/drivers');
 Route::post('api/:version/driver/handel', 'api/:version.Driver/handel');
 Route::post('api/:version/driver/online', 'api/:version.Driver/online');
+Route::get('api/:version/driver/acceptableOrder', 'api/:version.Driver/acceptableOrder');
 
 Route::post('api/:version/ticket/save', 'api/:version.Ticket/save');
 Route::post('api/:version/ticket/update', 'api/:version.Ticket/update');

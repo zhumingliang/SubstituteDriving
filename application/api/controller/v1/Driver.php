@@ -138,8 +138,13 @@ class Driver extends BaseController
         (new DriverService())->online($params);
 
         return json(new SuccessMessage());
-
     }
 
+    public function acceptableOrder()
+    {
+        $drivers = (new DriverService())->acceptableOrder();
+        return json(new SuccessMessageWithData(['data' => $drivers]));
+
+    }
 
 }

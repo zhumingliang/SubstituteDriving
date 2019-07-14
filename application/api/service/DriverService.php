@@ -142,5 +142,14 @@ class DriverService
         $redis->sAdd('driver_order_no', $d_id);
     }
 
+    public function acceptableOrder()
+    {
+
+        $redis = new Redis();
+        $drivers = $redis->sMembers('driver_order_no');
+        print_r($drivers);
+        return $drivers;
+    }
+
 
 }
