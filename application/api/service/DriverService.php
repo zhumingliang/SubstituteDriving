@@ -129,5 +129,18 @@ class DriverService
         $redis->sAdd('driver_order_ing', $d_id);
     }
 
+    /**
+     * 订单撤销修改司机接单状态
+     * 接单/派单中->未接单
+     */
+    public function handelDriveStateByCancel($d_id)
+    {
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1', 6379, 60);
+        $redis->sRem('driver_order_ing', $d_id);
+        $redis->sRem('driver_order_receive', $d_id);
+        $redis->sAdd('driver_order_no', $d_id);
+    }
+
 
 }

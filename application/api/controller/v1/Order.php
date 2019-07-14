@@ -64,10 +64,10 @@ class Order extends BaseController
     }
 
     /**
-     * @api {POST} /api/v1/order/mini/cancel 小程序端-取消订单
-     * @apiGroup   MINI
+     * @api {POST} /api/v1/order/mini/cancel 小程序端/Android司机端/Android管理端-撤销订单
+     * @apiGroup   COMMON
      * @apiVersion 1.0.1
-     * @apiDescription   小程序端-取消订单
+     * @apiDescription   小程序端/Android司机端/Android管理端-撤销订单
      * @apiExample {post}  请求样例:
      *    {
      *       "id": 1,

@@ -6,6 +6,7 @@ namespace app\api\service;
 
 use app\api\model\DriverT;
 use app\api\model\FarStateT;
+use app\api\model\LogT;
 use app\api\model\OrderListT;
 use app\api\model\OrderPushT;
 use app\api\model\OrderT;
@@ -31,18 +32,22 @@ class OrderService
      */
     public function saveMiniOrder($params)
     {
-        $far = $this->prefixFar($params);
-        $params['u_id'] = Token::getCurrentUid();
-        $params['phone'] = Token::getCurrentTokenVar('phone');
-        $params['from'] = OrderEnum::FROM_MINI;
-        $params['type'] = OrderEnum::NOT_FIXED_MONEY;
-        $params['state'] = OrderEnum::ORDER_NO;
-        $params['order_num'] = time();
-        $params['far_distance'] = $far['far_distance'];
-        $params['far_money'] = $far['far_money'];
-        $order = $this->saveOrder($params);
-        $this->saveOrderList($order->id, OrderEnum::ORDER_LIST_NO);
-        return $order->id;
+        try {
+            $far = $this->prefixFar($params);
+            $params['u_id'] = Token::getCurrentUid();
+            $params['phone'] = Token::getCurrentTokenVar('phone');
+            $params['from'] = OrderEnum::FROM_MINI;
+            $params['type'] = OrderEnum::NOT_FIXED_MONEY;
+            $params['state'] = OrderEnum::ORDER_NO;
+            $params['order_num'] = time();
+            $params['far_distance'] = $far['far_distance'];
+            $params['far_money'] = $far['far_money'];
+            $order = $this->saveOrder($params);
+            $this->saveOrderList($order->id, OrderEnum::ORDER_LIST_NO);
+            return $order->id;
+        } catch (Exception $e) {
+            LogT::create(['msg' => 'save_order_mini:' . $e->getMessage()]);
+        }
     }
 
     /**
@@ -50,27 +55,31 @@ class OrderService
      */
     public function saveDriverOrder($params)
     {
-        $d_id = Token::getCurrentUid();
-        if ((new DriverService())->checkNoCompleteOrder($d_id)) {
-            throw  new SaveException(['msg' => '创建订单失败,已有未完成的订单']);
-        }
-        if (key_exists('phone', $params) && strlen($params['phone'])) {
-            $params['u_id'] = (new UserInfo('', ''))->getUserByPhone($params['phone']);
-        }
-        $params['d_id'] = $d_id;
-        $params['from'] = OrderEnum::FROM_DRIVER;
-        $params['type'] = OrderEnum::NOT_FIXED_MONEY;
-        $params['state'] = OrderEnum::ORDER_ING;
-        $params['order_num'] = time();
-        $order = $this->saveOrder($params);
-        $o_id = $order->id;
-        //新增到订单待处理队列
-        $this->saveOrderList($o_id, OrderEnum::ORDER_LIST_COMPLETE);
+        try {
+            $d_id = Token::getCurrentUid();
+            if ((new DriverService())->checkNoCompleteOrder($d_id)) {
+                throw  new SaveException(['msg' => '创建订单失败,已有未完成的订单']);
+            }
+            if (key_exists('phone', $params) && strlen($params['phone'])) {
+                $params['u_id'] = (new UserInfo('', ''))->getUserByPhone($params['phone']);
+            }
+            $params['d_id'] = $d_id;
+            $params['from'] = OrderEnum::FROM_DRIVER;
+            $params['type'] = OrderEnum::NOT_FIXED_MONEY;
+            $params['state'] = OrderEnum::ORDER_ING;
+            $params['order_num'] = time();
+            $order = $this->saveOrder($params);
+            $o_id = $order->id;
+            //新增到订单待处理队列
+            $this->saveOrderList($o_id, OrderEnum::ORDER_LIST_COMPLETE);
 
-        //处理司机状态
-        //未接单状态->已接单状态
-        (new DriverService())->handelDriveStateByReceive($d_id);
-        return $o_id;
+            //处理司机状态
+            //未接单状态->已接单状态
+            (new DriverService())->handelDriveStateByReceive($d_id);
+            return $o_id;
+        } catch (Exception $e) {
+            LogT::create(['msg' => 'save_order_driver:' . $e->getMessage()]);
+        }
     }
 
     /**
@@ -78,31 +87,37 @@ class OrderService
      */
     public function saveManagerOrder($params)
     {
-        $d_id = $params['d_id'];
-        if (!(new DriverService())->checkDriverOrderNo($d_id)) {
-            throw new SaveException(['msg' => '该司机已有订单，不能重复接单']);
+        try {
+            $d_id = $params['d_id'];
+            if (!(new DriverService())->checkDriverOrderNo($d_id)) {
+                throw new SaveException(['msg' => '该司机已有订单，不能重复接单']);
+            }
+            if (key_exists('phone', $params) && strlen($params['phone'])) {
+                $params['u_id'] = (new UserInfo('', ''))->getUserByPhone($params['phone']);
+            }
+            $params['from'] = OrderEnum::FROM_MANAGER;
+            $params['state'] = OrderEnum::ORDER_NO;
+            $params['order_num'] = time();
+            $order = $this->saveOrder($params);
+            $o_id = $order->id;
+            //新增到订单待处理队列-状态：正在派单
+            $this->saveOrderList($o_id, OrderEnum::ORDER_LIST_ING);
+
+            //处理司机状态
+            //未接单状态->已接单状态
+            (new DriverService())->handelDriveStateByING($d_id);
+
+            //推送给司机
+            $this->pushToDriver($d_id, $order);
+            return $o_id;
+        } catch (Exception $e) {
+            LogT::create(['msg' => 'save_order__manager:' . $e->getMessage()]);
         }
-        if (key_exists('phone', $params) && strlen($params['phone'])) {
-            $params['u_id'] = (new UserInfo('', ''))->getUserByPhone($params['phone']);
-        }
-        $params['from'] = OrderEnum::FROM_MANAGER;
-        $params['state'] = OrderEnum::ORDER_NO;
-        $params['order_num'] = time();
-        $order = $this->saveOrder($params);
-        $o_id = $order->id;
-        //新增到订单待处理队列-状态：正在派单
-        $this->saveOrderList($o_id, OrderEnum::ORDER_LIST_ING);
-
-        //处理司机状态
-        //未接单状态->已接单状态
-        (new DriverService())->handelDriveStateByING($d_id);
-
-        //推送给司机
-        $this->pushToDriver($d_id, $order);
-
-        return $o_id;
     }
 
+    /**
+     * 向司机推送服务-websocket/短信
+     */
     private function pushToDriver($d_id, $order)
     {
         $push = OrderPushT::create(
@@ -166,6 +181,7 @@ class OrderService
 
     }
 
+
     private function prefixStartPriceWithDistance($distance, $Rule, $type = 'far')
     {
         $money_new = 0;
@@ -206,9 +222,8 @@ class OrderService
 
     }
 
-
     /**
-     * 处理等待推送队列
+     * 处理等待推送队列-定时服务
      */
     public function orderListHandel()
     {
@@ -234,7 +249,7 @@ class OrderService
     }
 
     /**
-     * 处理推送列表
+     * 处理推送列表-定时服务
      */
     public function handelDriverNoAnswer()
     {
@@ -244,7 +259,7 @@ class OrderService
     }
 
     /**
-     * 司机处理推送请求
+     * 司机处理推送请求-定时服务
      */
     public function orderPushHandel($params)
     {
@@ -257,6 +272,7 @@ class OrderService
 
         if ($type == OrderEnum::ORDER_PUSH_AGREE) {
             $this->prefixPushAgree($push->d_id);
+            $this->sendToMini($push);
 
         } else if ($type == OrderEnum::ORDER_PUSH_REFUSE) {
             $this->prefixPushRefuse($push->d_id);
@@ -274,6 +290,23 @@ class OrderService
         $redis->connect('127.0.0.1', 6379, 60);
         $redis->sRem('driver_order_ing', $d_id);
         $redis->sAdd('driver_order_receive', $d_id);
+
+    }
+
+    private function sendToMini($push)
+    {
+        $order = $this->getOrder($push->o_id);
+        $u_id = $order->u_id;
+        $d_id = $order->d_id;
+
+        if ($u_id) {
+            $send_data = [
+                'id' => $order->id,
+                'driver_name' => $order->driver->name,
+                'driver_phone' => $order->driver->phone,
+                'distance' => $this->getDriverDistance($order->start_lng, $order->start_lat, $d_id)];
+            Gateway::sendToUid($u_id, json_encode($send_data));
+        }
 
     }
 
@@ -362,6 +395,8 @@ class OrderService
         $order->state = OrderEnum::ORDER_CANCEL;
         $order->cancel_remark = $params['remark'];
         $res = $order->save();
+        //处理司机状态
+        (new DriverService())->handelDriveStateByCancel($params['id']);
         if (!$res) {
             throw new UpdateException();
         }
@@ -542,6 +577,17 @@ class OrderService
             'lng' => $lng,
             'lat' => $lat,
         ];
+    }
+
+    private function getDriverDistance($user_lng, $user_lat, $d_id)
+    {
+        $location = $this->getDriverLocation($d_id);
+        if ($location['lng'] && $location['lat']) {
+            return CalculateUtil::GetDistance($user_lat, $user_lng, $location['lat'], $location['lng']);
+
+        }
+        return 0;
+
     }
 
     private function getOrder($id)
