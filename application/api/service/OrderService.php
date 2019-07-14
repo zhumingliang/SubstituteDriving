@@ -154,7 +154,7 @@ class OrderService
             $params['end_lat']);
 
         //检查远程接驾是否开启
-        $far_state = FarStateT::get();
+        $far_state = FarStateT::find();
         if ($far_state->open == 2) {
             return [
                 'far_money' => 0,
