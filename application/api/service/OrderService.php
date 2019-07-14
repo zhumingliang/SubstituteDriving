@@ -259,7 +259,7 @@ class OrderService
     }
 
     /**
-     * 司机处理推送请求-定时服务
+     * 司机处理推送请求
      */
     public function orderPushHandel($params)
     {
@@ -389,14 +389,25 @@ class OrderService
         }
     }
 
-    public function miniCancel($params)
+    public function orderCancel($params)
     {
         $order = $this->getOrder($params['id']);
+        //检查订单是否可以取消
+        if (!($order->state != OrderEnum::ORDER_NO || $order->begin != CommonEnum::STATE_IS_FAIL)) {
+            throw new UpdateException(['msg' => '订单已经开始，不能撤销']);
+        }
+
         $order->state = OrderEnum::ORDER_CANCEL;
         $order->cancel_remark = $params['remark'];
         $res = $order->save();
         //处理司机状态
         (new DriverService())->handelDriveStateByCancel($params['id']);
+
+        //处理订单状态
+        //由接单中/派单中/未接单->订单撤销
+        OrderListT::update(['state' => OrderEnum::ORDER_LIST_CANCEL],
+            ['o_id' => $params['id']]);
+
         if (!$res) {
             throw new UpdateException();
         }

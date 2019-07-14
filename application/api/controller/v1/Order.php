@@ -80,10 +80,10 @@ class Order extends BaseController
      * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误
      * @apiSuccess (返回参数说明) {String} msg 信息描述
      */
-    public function miniCancel()
+    public function orderCancel()
     {
         $params = $this->request->param();
-        (new OrderService())->miniCancel($params);
+        (new OrderService())->orderCancel($params);
         return json(new SuccessMessage());
     }
 
