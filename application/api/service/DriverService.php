@@ -146,8 +146,13 @@ class DriverService
     {
 
         $redis = new Redis();
-        $drivers = $redis->sMembers('driver_order_no');
-        print_r($drivers);
+        $driver_ids = $redis->sMembers('driver_order_no');
+        if (!$driver_ids) {
+            return array();
+        }
+
+        $d_ids = implode(',', $driver_ids);
+        $drivers = DriverT::field('id,name')->whereIn('id', $d_ids)->seleect();
         return $drivers;
     }
 
