@@ -364,10 +364,10 @@ class Order extends BaseController
     }
 
     /**
-     * @api {POST} /api/v1/order/transferOrder/manager  Android管理端-转单
+     * @api {POST} /api/v1/order/transferOrder/manager  Android管理端-分配司机订单
      * @apiGroup   Android
      * @apiVersion 1.0.1
-     * @apiDescription    Android管理端-转单
+     * @apiDescription    Android管理端-分配司机订单
      * @apiExample {post}  请求样例:
      *    {
      *       "id": 1,

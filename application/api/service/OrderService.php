@@ -721,7 +721,9 @@ class OrderService
     public function choiceDriverByManager($params)
     {
         //检测被推送司机状态
-
+        if (!(new DriverService())->checkDriverOrderNo($params['d_id'])) {
+            throw new SaveException(['msg' => '司机已已有订单，不能接单']);
+        }
 
         //清除订单信息
         //1.清除司机信息
