@@ -401,7 +401,7 @@ class OrderService
     {
         $order = $this->getOrder($params['id']);
         //检查订单是否可以取消
-        if (!($order->state != OrderEnum::ORDER_NO || $order->begin != CommonEnum::STATE_IS_FAIL)) {
+        if ($order->state != OrderEnum::ORDER_NO || $order->begin != CommonEnum::STATE_IS_FAIL) {
             throw new UpdateException(['msg' => '订单已经开始，不能撤销']);
         }
 
