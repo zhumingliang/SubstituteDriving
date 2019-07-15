@@ -340,6 +340,9 @@ class Order extends BaseController
 
     public function transferOrder()
     {
+        $params = $this->request->param();
+        (new OrderService())->transferOrder($params);
+        return json(new SuccessMessage());
 
     }
 

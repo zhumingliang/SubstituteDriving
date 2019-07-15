@@ -4,7 +4,7 @@
 namespace app\api\validate;
 
 
-class Notice
+class Notice extends BaseValidate
 {
     protected $rule = [
         'id' => 'require|isPositiveInteger',

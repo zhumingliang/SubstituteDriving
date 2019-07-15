@@ -635,5 +635,65 @@ class OrderService
         return $order;
     }
 
+    public function transferOrder($params)
+    {
+        //检查订单是否开始
+
+
+        //重新新增订单
+        //修改旧订单状态
+        //发起推送给新司机
+        $order = $this->getOrder($params['id']);
+        if ($order->state != OrderEnum::ORDER_NO) {
+            throw  new SaveException(['msg' => '订单已开始，不能转单']);
+        }
+
+        //检查新司机状态是否有订单，修改司机状态
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1', 6379, 60);
+        $d_id = $params['d_id'];
+        if (!$redis->sIsMember('driver_order_no', $d_id)) {
+            throw  new SaveException(['msg' => '该司机有订单派送中，暂时不能接单']);
+        }
+        //将被转单司机从'未接单'移除，添加到：正在派单
+        $redis->sRem('driver_order_no', $d_id);
+        $redis->sAdd('driver_order_ing', $d_id);
+
+        //新增推送状态
+
+
+    }
+
+    /**
+     * 向司机推送服务-转单服务-websocket/短信
+     */
+    private function pushToDriverWithTransfer($d_id, $order)
+    {
+        $push = OrderPushT::create(
+            [
+                'd_id' => $d_id,
+                'o_id' => $order->id,
+                'state' => OrderEnum::ORDER_PUSH_NO
+            ]
+        );
+        //通过websocket推送给司机
+        $push_data = [
+            'type' => 'transfer',
+            'order_info' => [
+                'from' => $order->driver->username,
+                'phone' => $order->phone,
+                'start' => $order->start,
+                'end' => $order->end,
+                'create_time' => $order->create_time,
+                'p_id' => $push->id,
+
+            ]
+        ];
+        (new GatewayService())->sendToClient($d_id, $push_data);
+        //通过短信推送给司机
+        $driver = DriverT::where('id', $d_id)->find();
+        $phone = $driver->phone;
+        (new SendSMSService())->sendOrderSMS($phone, ['code' => '*****' . substr($order->order_num, 5), 'order_time' => date('H:i', strtotime($order->create_time))]);
+    }
 
 }
