@@ -651,28 +651,44 @@ class OrderService
         if ($order->state != OrderEnum::ORDER_NO) {
             throw  new SaveException(['msg' => '订单已开始，不能转单']);
         }
+        $d_id = $params['id'];
 
         //检查新司机状态是否有订单，修改司机状态
-        $redis = new \Redis();
-        $redis->connect('127.0.0.1', 6379, 60);
-        $d_id = $params['d_id'];
-        if (!$redis->sIsMember('driver_order_no', $d_id)) {
+        if (!$this->updateDriverCanReceive($d_id)) {
             throw  new SaveException(['msg' => '该司机有订单派送中，暂时不能接单']);
         }
-        //将被转单司机从'未接单'移除，添加到：正在派单
-        $redis->sRem('driver_order_no', $d_id);
-        $redis->sAdd('driver_order_ing', $d_id);
 
         //新增推送状态
         $this->pushToDriverWithTransfer($d_id, $order);
 
     }
 
+    private function updateDriverCanReceive($d_id)
+    {
+        //检查新司机状态是否有订单，修改司机状态
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1', 6379, 60);
+        if (!$redis->sIsMember('driver_order_no', $d_id)) {
+            return false;
+        }
+        //将被转单司机从'未接单'移除，添加到：正在派单
+        $redis->sRem('driver_order_no', $d_id);
+        $redis->sAdd('driver_order_ing', $d_id);
+    }
+
     /**
      * 向司机推送服务-转单服务-websocket/短信
      */
-    private function pushToDriverWithTransfer($d_id, $order)
+    private function pushToDriverWithTransfer($d_id, $order, $push_type = "transfer")
     {
+
+        $from_name = '';
+        if ($push_type == "transfer") {
+            $from_name = $order->driver->username;
+
+        } else if ($push_type == "manager") {
+            $from_name = "管理员";
+        }
         $push = OrderPushT::create(
             [
                 'f_d_id' => $order->d_id,
@@ -684,9 +700,9 @@ class OrderService
         );
         //通过websocket推送给司机
         $push_data = [
-            'type' => 'transfer',
+            'type' => $push_type,
             'order_info' => [
-                'from' => $order->driver->username,
+                'from' => $from_name,
                 'phone' => $order->phone,
                 'start' => $order->start,
                 'end' => $order->end,
@@ -704,7 +720,26 @@ class OrderService
 
     public function choiceDriverByManager($params)
     {
-        //
+        //检测被推送司机状态
+
+
+        //清除订单信息
+        //1.清除司机信息
+        $o_id = $params['o_id'];
+        $push = OrderPushT::where('o_id', $o_id)
+            ->order('create_time')
+            ->find();
+        if ($push) {
+            $o_d_id = $push->d_id;
+            (new DriverService())->handelDriveStateByCancel($o_d_id);
+        }
+        //2.删除推送
+        $push->delete();
+
+        //推送给司机
+        $d_id = $params['d_id'];
+        $this->pushToDriverWithTransfer($d_id, $o_id);
+
 
     }
 

@@ -64,7 +64,7 @@ class Order extends BaseController
     }
 
     /**
-     * @api {POST} /api/v1/order/mini/cancel 小程序端/Android司机端/Android管理端-撤销订单
+     * @api {POST} /api/v1/order/cancel 小程序端/Android司机端/Android管理端-撤销订单
      * @apiGroup   COMMON
      * @apiVersion 1.0.1
      * @apiDescription   小程序端/Android司机端/Android管理端-撤销订单
@@ -339,7 +339,7 @@ class Order extends BaseController
     }
 
     /**
-     * @api {POST} /api/v1/order/transferOrder  Android司机端-转单
+     * @api {POST} /api/v1/order/transferOrder/driver  Android司机端-转单
      * @apiGroup   Android
      * @apiVersion 1.0.1
      * @apiDescription   Android司机端-转单
@@ -363,7 +363,24 @@ class Order extends BaseController
 
     }
 
-    public function choiceDriverByManager($params)
+    /**
+     * @api {POST} /api/v1/order/transferOrder/manager  Android管理端-转单
+     * @apiGroup   Android
+     * @apiVersion 1.0.1
+     * @apiDescription    Android管理端-转单
+     * @apiExample {post}  请求样例:
+     *    {
+     *       "id": 1,
+     *       "d_id":1,
+     *     }
+     * @apiParam (请求参数说明) {int} id  订单id
+     * @apiParam (请求参数说明) {int} d_id  被转单司机id
+     * @apiSuccessExample {json} 返回样例:
+     *{"msg":"ok","errorCode":0}
+     * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误
+     * @apiSuccess (返回参数说明) {String} msg 信息描述
+     */
+    public function choiceDriverByManager()
     {
         $params = $this->request->param();
         (new OrderService())->choiceDriverByManager($params);
