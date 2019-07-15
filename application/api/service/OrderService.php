@@ -269,10 +269,17 @@ class OrderService
         $push = OrderPushT::get($p_id);
         $push->state = $type;
         $push->save();
+        $push_type = $push->type;
 
         if ($type == OrderEnum::ORDER_PUSH_AGREE) {
-            $this->prefixPushAgree($push->d_id);
-            $this->sendToMini($push);
+            if ($push_type == "normal") {
+                $this->prefixPushAgree($push->d_id);
+                $this->sendToMini($push);
+            } else if ($push_type == "transfer") {
+                //释放转单司机
+                $this->prefixPushRefuse($push->f_d_id);
+            }
+
 
         } else if ($type == OrderEnum::ORDER_PUSH_REFUSE) {
             $this->prefixPushRefuse($push->d_id);
@@ -363,6 +370,7 @@ class OrderService
                     [
                         'd_id' => $d_id,
                         'o_id' => $order->id,
+                        'type' => 'normal',
                         'state' => OrderEnum::ORDER_PUSH_NO
                     ]
                 );
@@ -638,11 +646,6 @@ class OrderService
     public function transferOrder($params)
     {
         //检查订单是否开始
-
-
-        //重新新增订单
-        //修改旧订单状态
-        //发起推送给新司机
         $order = $this->getOrder($params['id']);
         if ($order->state != OrderEnum::ORDER_NO) {
             throw  new SaveException(['msg' => '订单已开始，不能转单']);
@@ -660,7 +663,7 @@ class OrderService
         $redis->sAdd('driver_order_ing', $d_id);
 
         //新增推送状态
-
+        $this->pushToDriverWithTransfer($d_id, $order);
 
     }
 
@@ -671,8 +674,10 @@ class OrderService
     {
         $push = OrderPushT::create(
             [
+                'f_d_id' => $order->d_id,
                 'd_id' => $d_id,
                 'o_id' => $order->id,
+                'type' => 'transfer',
                 'state' => OrderEnum::ORDER_PUSH_NO
             ]
         );
