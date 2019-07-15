@@ -474,6 +474,7 @@ class OrderService
                 'driver' => $order->driver->username,
                 'phone' => $order->driver->phone,
                 'start' => $order->start,
+                'end' => $order->end,
                 'begin' => $order->begin,
                 'arriving_time' => $order->arriving_time,
                 'receive_time' => $order->receive_time,
@@ -699,6 +700,12 @@ class OrderService
         $driver = DriverT::where('id', $d_id)->find();
         $phone = $driver->phone;
         (new SendSMSService())->sendOrderSMS($phone, ['code' => '*****' . substr($order->order_num, 5), 'order_time' => date('H:i', strtotime($order->create_time))]);
+    }
+
+    public function choiceDriverByManager($params)
+    {
+        //
+
     }
 
 }

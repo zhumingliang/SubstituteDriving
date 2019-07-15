@@ -363,4 +363,12 @@ class Order extends BaseController
 
     }
 
+    public function choiceDriverByManager($params)
+    {
+        $params = $this->request->param();
+        (new OrderService())->choiceDriverByManager($params);
+        return json(new SuccessMessage());
+
+    }
+
 }

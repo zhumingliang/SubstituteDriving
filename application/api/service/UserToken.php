@@ -169,6 +169,7 @@ class UserToken extends Token
         $cachedValue['nickName'] = $user['nickName'];
       //  $cachedValue['name_sub'] = $user['name_sub'];
         $cachedValue['avatarUrl'] = $user['avatarUrl'];
+        $cachedValue['type'] = 'mini';
         return $cachedValue;
     }
 
