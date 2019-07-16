@@ -226,6 +226,48 @@ class Order extends BaseController
         return json(new SuccessMessageWithData(['data' => $order]));
     }
 
+
+    /**
+     * @api {GET} /api/v1/order/end Android司机端-点击到达目的地获取订单信息
+     * @apiGroup  Android
+     * @apiVersion 1.0.1
+     * @apiDescription   Android司机端-点击到达目的地获取订单信息
+     * @apiExample {get}  请求样例:
+     * https://tonglingok.com/api/v1/order/end?id=1
+     * @apiParam (请求参数说明) {int} id 订单id
+     * @apiSuccessExample {json} 订单未被接单返回样例:
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"state":1}}
+     * @apiSuccess (返回参数说明) {int} state 订单状态：1 | 未接单
+     * @apiSuccessExample {json} 订单已被接单但是未完成订单返回样例:
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"state":2,"driver":"朱明良","phone":"18956225230","start":"长江路","begin":2,"arriving_time":"2019-07-14 10:00:00","receive_time":"2019-07-14 10:00:10","driver_lng":"115.79384654760360718","driver_lat":"40.58445845049069334"}}
+     * @apiSuccess (返回参数说明) {String} driver 司机名称
+     * @apiSuccess (返回参数说明) {String} phone 司机手机号
+     * @apiSuccess (返回参数说明) {String} start 出发点
+     * @apiSuccess (返回参数说明) {String} begin 司机是否点击开始出发：1-是；2-否
+     * @apiSuccess (返回参数说明) {String} arriving_time 到达起点时间
+     * @apiSuccess (返回参数说明) {String} receive_time 司机接单时间
+     * @apiSuccess (返回参数说明) {String} driver_lng 司机当前位置经度
+     * @apiSuccess (返回参数说明) {String} driver_lat 司机当前位置纬度
+     * @apiSuccessExample {json} 订单已完成返回样例:
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"state":4,"distance":0,"money":0,"far_distance":0,"far_money":0,"ticket_money":0,"wait_time":0,"wait_money":0,"weather_money":0}}
+     * @apiSuccess (返回参数说明) {int}  state 订单状态：4-已完成
+     * @apiSuccess (返回参数说明) {int}  distance  司机行驶路径距离
+     * @apiSuccess (返回参数说明) {int}  distance_money  司机行驶路径距离产生金额
+     * @apiSuccess (返回参数说明) {int}  money 订单金额
+     * @apiSuccess (返回参数说明) {int}  far_distance 远程接驾距离
+     * @apiSuccess (返回参数说明) {int}  far_money 远程接驾金额
+     * @apiSuccess (返回参数说明) {int}  ticket_money 使用优惠券金额
+     * @apiSuccess (返回参数说明) {int}  wait_time  等待时间
+     * @apiSuccess (返回参数说明) {int}  wait_money 等待时间金额
+     * @apiSuccess (返回参数说明) {int}  weather_money 恶劣天气补助
+     */
+    public function driverOrderWithEnd()
+    {
+        $id = $this->request->param('id');
+        $order = (new OrderService())->driverOrderWithEnd($id);
+        return json(new SuccessMessageWithData(['data' => $order]));
+    }
+
     /**
      * @api {POST} /api/v1/order/driver/complete Android司机端-司机确认订单完成
      * @apiGroup  Android
@@ -235,11 +277,23 @@ class Order extends BaseController
      *    {
      *       "id":1,
      *       "wait_time":360
+     *       "wait_money":10,
+     *       "distance":10.01,
+     *       "distance_money":30,
      *     }
      * @apiParam (请求参数说明) {int} id 订单id
-     * @apiParam (请求参数说明) {int} wait_time 等待时间 单位秒
-     * @apiSuccessExample {json} 返回样例:
-     * {"msg":"ok","errorCode":0,"code":200,"data":{"state":4,"distance":16,"distance_money":158,"money":202,"far_distance":0,"far_money":0,"ticket_money":5,"wait_time":31,"wait_money":1,"weather_money":48}}
+     * @apiParam (请求参数说明) {int} wait_time 等待时间 单位分，不足一分钟按一分钟算
+     * @apiParam (请求参数说明) {Float} wait_money 等待产生费用
+     * @apiParam (请求参数说明) {Float} distance 行驶距离
+     * @apiParam (请求参数说明) {Float} distance_money 行驶产生金额
+     * @apiSuccessExample {json} 返回样例:""
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"driver_name":"张司机","":"start","end":"","name":"","phone":"","state":4,"distance":16,"distance_money":158,"money":202,"far_distance":0,"far_money":0,"ticket_money":5,"wait_time":31,"wait_money":1,"weather_money":48}}
+     * @apiSuccess (返回参数说明) {String}  driver_name 司机名称
+     * @apiSuccess (返回参数说明) {String}  start起点
+     * @apiSuccess (返回参数说明) {String}  end 目的地
+     * @apiSuccess (返回参数说明) {String}  name用户名称
+     * @apiSuccess (返回参数说明) {String}  phone 用户手机号
+     * @apiSuccess (返回参数说明) {String}  create_time 订单创建时间
      * @apiSuccess (返回参数说明) {int}  state 订单状态：4-已完成
      * @apiSuccess (返回参数说明) {int}  distance  司机行驶路径距离
      * @apiSuccess (返回参数说明) {int}  distance_money  司机行驶路径距离产生金额

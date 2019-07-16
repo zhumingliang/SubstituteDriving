@@ -18,7 +18,10 @@ class Order extends BaseValidate
         'end_lng' => 'require|isNotEmpty',
         'remark' => 'require|isNotEmpty',
         't_id' => 'require|isPositiveInteger',
-        'wait_time' => 'require|isPositiveInteger'
+        'wait_time' => 'require|isPositiveInteger',
+        'wait_money' => 'require',
+        'distance' => 'require|isNotEmpty',
+        'distance_money' => 'require|isNotEmpty'
     ];
 
     protected $scene = [
@@ -28,6 +31,6 @@ class Order extends BaseValidate
         'orderBegin' => ['id'],
         'saveMiniOrder' => ['start', 'start_lng', 'start_lat'],
         'saveDriverOrder' => ['start', 'start_lng', 'start_lat'],
-        'orderComplete' => ['id', 'wait_time'],
+        'orderComplete' => ['id', 'wait_time', 'wait_money', 'distance', 'distance_money'],
     ];
 }

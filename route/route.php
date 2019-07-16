@@ -55,6 +55,7 @@ Route::get('api/:version/SystemPrice/weather', 'api/:version.SystemPrice/weather
 Route::post('api/:version/SystemPrice/weather/update', 'api/:version.SystemPrice/weatherUpdate');
 
 Route::get('api/:version/SystemPrice/init/mini', 'api/:version.SystemPrice/priceInfoForMINI');
+Route::get('api/:version/SystemPrice/init/driver', 'api/:version.SystemPrice/priceInfoForDriver');
 
 Route::post('api/:version/notice/save', 'api/:version.Notice/save');
 Route::post('api/:version/notice/update', 'api/:version.Notice/update');
@@ -81,5 +82,6 @@ Route::post('api/:version/order/begin', 'api/:version.Order/orderBegin');
 Route::post('api/:version/order/arriving', 'api/:version.Order/orderArriving');
 Route::get('api/:version/orders/mini', 'api/:version.Order/miniOrders');
 Route::get('api/:version/order/mini', 'api/:version.Order/miniOrder');
+Route::get('api/:version/order/end', 'api/:version.Order/driverOrderWithEnd');
 Route::get('api/:version/order/driver/complete', 'api/:version.Order/orderComplete');
 

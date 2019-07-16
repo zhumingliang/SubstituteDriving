@@ -208,7 +208,7 @@ class OrderService
 
     }
 
-    private function getStartPrice($price)
+    public function getStartPrice($price)
     {
         $time_now = date('H:i', time());
         $interval = TimeIntervalT::where('state', CommonEnum::STATE_IS_OK)
@@ -500,18 +500,20 @@ class OrderService
                 return $this->prepareCompleteInfo($order);
             }
 
-            //处理 订单距离/距离产生的价格
-            $redis = new Redis();
-            $distance = $redis->zScore('order:distance', $id);
-            $startRule = StartPriceT::where('type', 1)
-                ->where('state', CommonEnum::STATE_IS_OK)
-                ->order('order')
-                ->select();
-            $distance_money = $this->prefixStartPriceWithDistance($distance, $startRule, 'start');
+            /*  //处理 订单距离/距离产生的价格
+              $redis = new Redis();
+              $distance = $redis->zScore('order:distance', $id);
+              $startRule = StartPriceT::where('type', 1)
+                  ->where('state', CommonEnum::STATE_IS_OK)
+                  ->order('order')
+                  ->select();
+              $distance_money = $this->prefixStartPriceWithDistance($distance, $startRule, 'start');
 
-            //处理等待费用
-            $wait_money = $this->prefixWait($wait_time);
-
+              //处理等待费用
+              $wait_money = $this->prefixWait($wait_time);*/
+            $distance_money = $params['distance_money'];
+            $wait_money = $params['wait_money'];
+            $distance = $params['distance'];
             //处理恶劣天气费用
             $weather_money = $this->prefixWeather($distance_money);
 
@@ -580,6 +582,12 @@ class OrderService
     {
 
         $info = [
+            'driver_name' => $order->driver->nmae,
+            'start' => $order->start,
+            'end' => $order->end,
+            'name' => $order->name,
+            'phone' => $order->phone,
+            'create_time' => $order->create_time,
             'state' => OrderEnum::ORDER_COMPLETE,
             'distance' => $order->distance,
             'distance_money' => $order->distance_money,
@@ -703,6 +711,7 @@ class OrderService
             'type' => $push_type,
             'order_info' => [
                 'from' => $from_name,
+                'name' => $order->name,
                 'phone' => $order->phone,
                 'start' => $order->start,
                 'end' => $order->end,
@@ -741,6 +750,11 @@ class OrderService
         //推送给司机
         $d_id = $params['d_id'];
         $this->pushToDriverWithTransfer($d_id, $o_id);
+
+    }
+
+    public function driverOrderWithEnd($id)
+    {
 
 
     }

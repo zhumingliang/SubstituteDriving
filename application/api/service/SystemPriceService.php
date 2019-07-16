@@ -68,7 +68,7 @@ class SystemPriceService
     {
         $info = StartPriceT::where('type', 1)
             ->where('state', CommonEnum::STATE_IS_OK)
-            ->hidden(['type', 'state', 'area','create_time', 'update_time'])
+            ->hidden(['type', 'state', 'area', 'create_time', 'update_time'])
             ->order('order')
             ->select();
         return $info;
@@ -89,6 +89,26 @@ class SystemPriceService
         $info = WaitPriceT::field('id,free,price')
             ->find();
         return $info;
+    }
+
+    public function priceInfoForDriver()
+    {
+
+        $start = $this->startPrice();
+        if (count($start)) {
+            foreach ($start as $k => $v) {
+                if ($k == 0) {
+                    $start[$k]['price'] = (new OrderService())->getStartPrice($v['price']);
+                }
+            }
+        }
+
+        $wait = $this->wait();
+
+        return [
+            'start' => $start,
+            'wait' => $wait];
+
     }
 
 }

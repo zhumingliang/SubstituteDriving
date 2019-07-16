@@ -436,5 +436,29 @@ class SystemPrice extends BaseController
         return json(new SuccessMessageWithData(['data' => $info]));
     }
 
+    /**
+     * @api {GET} /api/v1/SystemPrice/init/driver  Android司机端-获取初始化价格设置信息
+     * @apiGroup   Android
+     * @apiVersion 1.0.1
+     * @apiDescription   Android司机端-获取初始化价格设置信息
+     * @apiExample {get}  请求样例:
+     * https://tonglingok.com/api/v1/SystemPrice/init/driver
+     * @apiSuccessExample {json} 返回样例:
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"start":[{"id":1,"distance":8,"price":18,"order":1},{"id":2,"distance":1,"price":80,"order":2},{"id":3,"distance":2,"price":15,"order":3}],"wait":{"id":1,"free":30,"price":1}}}
+     * @apiSuccess (返回参数说明) {Obj} start  价格信息
+     * @apiSuccess (返回参数说明) {int} start-id  价格设置id
+     * @apiSuccess (返回参数说明) {float} start-distance  距离
+     * @apiSuccess (返回参数说明) {float} start-price  价格
+     * @apiSuccess (返回参数说明) {int} start-order  排序
+     * @apiSuccess (返回参数说明) {Obj} wait 等待时间设置
+     * @apiSuccess (返回参数说明) {int} wait-id 等待时间设置id
+     * @apiSuccess (返回参数说明) {int} wait-free 免费等待时间
+     * @apiSuccess (返回参数说明) {float} wait-price 超出免费等待时间价格：min/元
+     */
+    public function priceInfoForDriver()
+    {
+        $info = (new SystemPriceService())->priceInfoForDriver();
+        return json(new SuccessMessageWithData(['data' => $info]));
+    }
 
 }
