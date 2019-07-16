@@ -184,7 +184,6 @@ class DriverService
 
     private function prefixDrivers($drivers, $order_no)
     {
-        print_r($drivers);
         $online = array();
         $ids_arr = array();
         $order_no_arr = array();
@@ -195,8 +194,6 @@ class DriverService
         }
 
         foreach ($drivers as $k => $v) {
-            var_dump(Gateway::isUidOnline($v[0]));
-            echo $v[0];
             if (Gateway::isUidOnline($v[0])) {
                 $state = 2;//不可接单
                 if (in_array($v[0], $order_no_arr)) {
@@ -214,8 +211,9 @@ class DriverService
             return array();
         }
         $ids = implode(',', $ids_arr);
+        echo $ids;
         $drivers_info = DriverT::field('id,username')->whereIn('id', $ids)->select();
-
+        print_r($drivers_info);
         foreach ($online as $k => $v) {
             foreach ($drivers_info as $k2 => $v2) {
                 if ($v['id'] === $v2['id']) {
