@@ -43,4 +43,13 @@ class OrderT extends Model
         return $list;
     }
 
+    public static function getDriverOrders($d_id, $page, $size)
+    {
+        $list = self::where('d_id', $d_id)
+            ->field('id,start,end,name,state,create_time')
+            ->order('create_time desc')
+            ->paginate($size, false, ['page' => $page]);
+        return $list;
+    }
+
 }

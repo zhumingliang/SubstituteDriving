@@ -28,6 +28,7 @@ class Order extends BaseValidate
         'orderPushHandel' => ['p_id', 'type'],
         'miniCancel' => ['id', 'remark'],
         'miniOrder' => ['id'],
+        'driverOrder' => ['id'],
         'orderBegin' => ['id'],
         'saveMiniOrder' => ['start', 'start_lng', 'start_lat'],
         'saveDriverOrder' => ['start', 'start_lng', 'start_lat'],

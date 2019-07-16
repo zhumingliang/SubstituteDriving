@@ -598,7 +598,7 @@ class OrderService
             'name' => $order->name,
             'phone' => $order->phone,
             'create_time' => $order->create_time,
-            'state' => OrderEnum::ORDER_COMPLETE,
+            'state' =>$order->state,
             'distance' => $order->distance,
             'distance_money' => $order->distance_money,
             'money' => $order->money,
@@ -788,6 +788,21 @@ class OrderService
             'distance' => $distance,
             'distance_money' => $distance_money
         ];
+    }
+
+    public function driverOrders($page, $size)
+    {
+        $d_id = Token::getCurrentUid();
+        $orders = OrderT::getDriverOrders($d_id, $page, $size);
+        return $orders;
+
+    }
+
+    public function driverOrder($id)
+    {
+        $order=$this->getOrder($id);
+        $info=$this->prepareCompleteInfo($order);
+        return $info;
     }
 
 
