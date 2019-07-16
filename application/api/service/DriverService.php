@@ -167,9 +167,7 @@ class DriverService
         $d_id = Token::getCurrentUid();
         $driver_location = (new OrderService())->getDriverLocation($d_id);
         $drivers = $this->getDriversWithLocation($driver_location['lng'], $driver_location['lat'], $km);
-        print_r($drivers);
         $order_no = $this->getDriverOrderNo();
-        print_r($order_no);
         $drivers = $this->prefixDrivers($drivers, $order_no);
         return $drivers;
     }
@@ -188,10 +186,18 @@ class DriverService
     {
         $online = array();
         $ids_arr = array();
+        $order_no_arr = array();
+        if (count($order_no)) {
+            foreach ($order_no as $k => $v) {
+                array_push($order_no_arr, $v);
+            }
+        }
+
         foreach ($drivers as $k => $v) {
+            var_dump(Gateway::isUidOnline($v[0]));
             if (Gateway::isUidOnline($v[0])) {
                 $state = 2;//不可接单
-                if (in_array($v[0], $order_no)) {
+                if (in_array($v[0], $order_no_arr)) {
                     $state = 1;//可以接单
                 }
                 array_push($online, [
