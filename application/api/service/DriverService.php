@@ -212,7 +212,7 @@ class DriverService
                 array_push($online, [
                     'id' => $v[0],
                     'state' => $state,
-                    'location' => $v[1]
+                    'location' => ['lng' => $v[1][0], 'lat' => $v[1][1]]
                 ]);
                 array_push($ids_arr, $v[0]);
             }

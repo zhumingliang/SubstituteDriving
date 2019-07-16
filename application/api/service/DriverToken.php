@@ -46,7 +46,7 @@ class DriverToken extends Token
                     ->find();
             }
 
-            if ($admin->isEmpty() || sha1($this->pwd) != $admin->pwd) {
+            if (!$admin || sha1($this->pwd) != $admin->pwd) {
                 throw new TokenException([
                     'msg' => '账号或者密码不正确',
                     'errorCode' => 30000
