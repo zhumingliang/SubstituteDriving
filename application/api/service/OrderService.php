@@ -35,6 +35,7 @@ class OrderService
         try {
             $far = $this->prefixFar($params);
             $params['u_id'] = Token::getCurrentUid();
+            $params['name'] = '先生/女士';
             $params['phone'] = Token::getCurrentTokenVar('phone');
             $params['from'] = OrderEnum::FROM_MINI;
             $params['type'] = OrderEnum::NOT_FIXED_MONEY;
@@ -62,6 +63,9 @@ class OrderService
             }
             if (key_exists('phone', $params) && strlen($params['phone'])) {
                 $params['u_id'] = (new UserInfo('', ''))->getUserByPhone($params['phone']);
+            }
+            if (key_exists('name', $params) && !strlen($params['name'])) {
+                $params['name'] = '先生/女士';
             }
             $params['d_id'] = $d_id;
             $params['from'] = OrderEnum::FROM_DRIVER;
@@ -94,6 +98,9 @@ class OrderService
             }
             if (key_exists('phone', $params) && strlen($params['phone'])) {
                 $params['u_id'] = (new UserInfo('', ''))->getUserByPhone($params['phone']);
+            }
+            if (key_exists('name', $params) && !strlen($params['name'])) {
+                $params['name'] = '先生/女士';
             }
             $params['from'] = OrderEnum::FROM_MANAGER;
             $params['state'] = OrderEnum::ORDER_NO;
@@ -190,6 +197,9 @@ class OrderService
             $price = $v['price'];
             if ($k == 0 && $type == 'start') {
                 $price = $this->getStartPrice($price);
+                if ($distance == 0) {
+                    return $price;
+                }
             }
 
             if ($distance <= 0) {
@@ -666,8 +676,10 @@ class OrderService
             throw  new SaveException(['msg' => '该司机有订单派送中，暂时不能接单']);
         }
 
+        //计算距离和价格
+        $distance_info = $this->getDistanceInfoToPush($order);
         //新增推送状态
-        $this->pushToDriverWithTransfer($d_id, $order);
+        $this->pushToDriverWithTransfer($d_id, $order, $distance_info);
 
     }
 
@@ -687,7 +699,7 @@ class OrderService
     /**
      * 向司机推送服务-转单服务-websocket/短信
      */
-    private function pushToDriverWithTransfer($d_id, $order, $push_type = "transfer")
+    private function pushToDriverWithTransfer($d_id, $order, $distance_info, $push_type = "transfer")
     {
 
         $from_name = '';
@@ -717,7 +729,8 @@ class OrderService
                 'end' => $order->end,
                 'create_time' => $order->create_time,
                 'p_id' => $push->id,
-
+                'distance' => $distance_info['distance'],
+                'distance_money' => $distance_info['distance_money']
             ]
         ];
         (new GatewayService())->sendToClient($d_id, $push_data);
@@ -731,7 +744,7 @@ class OrderService
     {
         //检测被推送司机状态
         if (!(new DriverService())->checkDriverOrderNo($params['d_id'])) {
-            throw new SaveException(['msg' => '司机已已有订单，不能接单']);
+            throw new SaveException(['msg' => '司机已有订单，不能接单']);
         }
 
         //清除订单信息
@@ -749,14 +762,33 @@ class OrderService
 
         //推送给司机
         $d_id = $params['d_id'];
-        $this->pushToDriverWithTransfer($d_id, $o_id);
+        $order = $this->getOrder($o_id);
+        $distance_info = $this->getDistanceInfoToPush($order);
+        $this->pushToDriverWithTransfer($d_id, $order, $distance_info);
 
     }
 
-    public function driverOrderWithEnd($id)
+    private function getDistanceInfoToPush($order)
     {
+        $distance = 0;
+        $start_lng = $order->start_lng;
+        $start_lat = $order->start_lat;
+        $end_lng = $order->end_lng;
+        $end_lat = $order->end_lat;
+        if (strlen($end_lng) && strlen($end_lat)) {
+            $distance = CalculateUtil::GetDistance($start_lat, $start_lng, $end_lat, $end_lng);
+        }
+        $startRule = StartPriceT::where('type', 1)
+            ->where('state', CommonEnum::STATE_IS_OK)
+            ->order('order')
+            ->select();
+        $distance_money = $this->prefixStartPriceWithDistance($distance, $startRule, 'start');
 
-
+        return [
+            'distance' => $distance,
+            'distance_money' => $distance_money
+        ];
     }
+
 
 }
