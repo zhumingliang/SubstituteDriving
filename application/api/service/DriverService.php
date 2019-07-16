@@ -211,13 +211,11 @@ class DriverService
             return array();
         }
         $ids = implode(',', $ids_arr);
-        echo $ids;
         $drivers_info = DriverT::field('id,username')->whereIn('id', $ids)->select();
-        print_r($drivers_info);
         foreach ($online as $k => $v) {
             foreach ($drivers_info as $k2 => $v2) {
-                if ($v['id'] === $v2['id']) {
-                    $online[$k]['username'] = $v2['username'];
+                if ($v['id'] === $v2->id) {
+                    $online[$k]['username'] = $v2->username;
                     unset($drivers_info[$k2]);
                     break;
                 }
