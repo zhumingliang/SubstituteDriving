@@ -2,7 +2,7 @@
 
 return [
     'domain' => 'https://mengant.cn/house/',
-    'driver_push_expire_in' => 30,
+    'driver_push_expire_in' => 30000,
     'nearby_km' => 10,
     'token_cms_expire_in' => 7200,
     'token_phone_expire_in' => 3600 * 24,

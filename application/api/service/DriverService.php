@@ -167,8 +167,10 @@ class DriverService
         $d_id = Token::getCurrentUid();
         $driver_location = (new OrderService())->getDriverLocation($d_id);
 
-        $drivers = $this->getDriversWithLocation($driver_location['lng'], $driver_location['lat']);
-
+        $drivers = $this->getDriversWithLocation($driver_location['lng'], $driver_location['lat'],$km);
+        $order_no = $this->getDriverOrderNo();
+        $drivers = $this->prefixDrivers($drivers, $order_no);
+        return $drivers;
     }
 
     private function getDriversWithLocation($lng, $lat, $km)
@@ -177,23 +179,51 @@ class DriverService
         $redis->connect('127.0.0.1', 6379, 60);
         //查询所有司机并按距离排序（包括在线和不在线）
         $list = $redis->rawCommand('georadius',
-            'drivers_tongling', $lng, $lat, $km, 'km', 'ASC');
-
+            'drivers_tongling', $lng, $lat, $km, 'km', 'WITHCOORD');
         return $list;
     }
 
     private function prefixDrivers($drivers, $order_no)
     {
         $online = array();
+        $ids_arr = array();
         foreach ($drivers as $k => $v) {
-            if (Gateway::isUidOnline($v)) {
-                array_push($online);
+            if (Gateway::isUidOnline($v[0])) {
+                $state = 2;//不可接单
+                if (in_array($v[0], $order_no)) {
+                    $state = 1;//可以接单
+                }
+                array_push($online, [
+                    'id' => $v[0],
+                    'state' => $state,
+                    'location' => $v[1]
+                ]);
+                array_push($ids_arr, $v[0]);
             }
         }
-
         if (!count($online)) {
             return array();
         }
+        $ids = implode(',', $ids_arr);
+        $drivers_info = DriverT::field('id,username')->whereIn('id', $ids)->select();
+
+        foreach ($online as $k => $v) {
+            foreach ($drivers_info as $k2 => $v2) {
+                if ($v['id'] === $v2['id']) {
+                    $online[$k]['username'] = $v2['username'];
+                    unset($drivers_info[$k2]);
+                    break;
+                }
+            }
+        }
+        return $online;
+
+    }
+
+    private function getDriverOrderNo()
+    {
+        $redis = new Redis();
+        return $redis->sMembers('driver_order_no');
     }
 
 
