@@ -167,11 +167,13 @@ class Driver extends BaseController
      * @apiExample {get}  请求样例:
      * https://tonglingok.com/api/v1/drivers/nearby
      * @apiSuccessExample {json} 返回样例:
-     * {"msg":"ok","errorCode":0,"code":200,"data":[{"id":"1","state":1,"location":["115.79384654760360718","40.58445845049069334"],"username":"朱明良"}]}
+     * {"msg":"ok","errorCode":0,"code":200,"data":[{"id":"1","state":1,"location":{"lng":"115.79384654760360718","lat":"40.58445845049069334"},"username":"朱明良"}]}
      * @apiSuccess (返回参数说明) {int} id 司机ID
      * @apiSuccess (返回参数说明) {int} state 司机状态：1 | 可接单；2 | 不可接单
      * @apiSuccess (返回参数说明) {String} username 司机姓名
-     * @apiSuccess (返回参数说明) {String} location 司机实时地理位置
+     * @apiSuccess (返回参数说明) {Obj} location 司机实时地理位置
+     * @apiSuccess (返回参数说明) {String} lng 司机实时地理位置-经度
+     * @apiSuccess (返回参数说明) {String} lat 司机实时地理位置-纬度
      */
     public function nearbyDrivers()
     {
