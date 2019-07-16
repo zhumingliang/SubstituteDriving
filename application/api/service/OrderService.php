@@ -592,7 +592,7 @@ class OrderService
     {
 
         $info = [
-            'driver_name' => $order->driver->nmae,
+            'driver_name' => $order->driver->username,
             'start' => $order->start,
             'end' => $order->end,
             'name' => $order->name,
