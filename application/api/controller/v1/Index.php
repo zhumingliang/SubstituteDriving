@@ -6,11 +6,11 @@ use app\api\service\SendSMSService;
 
 class Index
 {
-    public function index()
+    public function index($lat, $lng, $type)
     {
         //(new SendSMSService())->sendOrderSMS('18956225230', ['code' => '*****' . substr('sajdlkjdsk21312', 5), 'order_time' => date('H:i', time())]);
 
-        $this->zset();
+        $this->radius($lat, $lng, $type);
     }
 
     public function send($client_id)
@@ -69,7 +69,6 @@ class Index
                 var_dump($distance);
                 $distance = $redis->zScore('order:distance', 'o:1');
                 var_dump($distance);*/
-
 
 
     }

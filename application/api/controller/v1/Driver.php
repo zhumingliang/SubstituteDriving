@@ -7,7 +7,6 @@ namespace app\api\controller\v1;
 use app\api\controller\BaseController;
 use app\api\model\DriverT;
 use app\api\service\DriverService;
-use app\lib\exception\AuthException;
 use app\lib\exception\SuccessMessage;
 use app\lib\exception\SuccessMessageWithData;
 use app\lib\exception\UpdateException;
@@ -155,6 +154,14 @@ class Driver extends BaseController
     public function acceptableOrder()
     {
         $drivers = (new DriverService())->acceptableOrder();
+        return json(new SuccessMessageWithData(['data' => $drivers]));
+
+    }
+
+
+    public function nearbyDrives()
+    {
+        $drivers = (new DriverService())->nearbyDrives();
         return json(new SuccessMessageWithData(['data' => $drivers]));
 
     }

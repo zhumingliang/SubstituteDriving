@@ -614,7 +614,7 @@ class OrderService
 
     }
 
-    private function getDriverLocation($u_id)
+    public function getDriverLocation($u_id)
     {
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);

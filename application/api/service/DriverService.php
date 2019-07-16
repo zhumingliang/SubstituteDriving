@@ -13,6 +13,7 @@ use app\lib\enum\OrderEnum;
 use app\lib\exception\AuthException;
 use app\lib\exception\SaveException;
 use app\lib\exception\UpdateException;
+use GatewayClient\Gateway;
 use zml\tp_tools\Redis;
 
 class DriverService
@@ -154,6 +155,45 @@ class DriverService
         $d_ids = implode(',', $driver_ids);
         $drivers = DriverT::field('id,username')->whereIn('id', $d_ids)->select();
         return $drivers;
+    }
+
+    /**
+     * 获取司机附近所有司机
+     */
+    public function nearbyDrives()
+    {
+        $km = config('setting.nearby_km');
+        //1.获取本司机当前位置
+        $d_id = Token::getCurrentUid();
+        $driver_location = (new OrderService())->getDriverLocation($d_id);
+
+        $drivers = $this->getDriversWithLocation($driver_location['lng'], $driver_location['lat']);
+
+    }
+
+    private function getDriversWithLocation($lng, $lat, $km)
+    {
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1', 6379, 60);
+        //查询所有司机并按距离排序（包括在线和不在线）
+        $list = $redis->rawCommand('georadius',
+            'drivers_tongling', $lng, $lat, $km, 'km', 'ASC');
+
+        return $list;
+    }
+
+    private function prefixDrivers($drivers, $order_no)
+    {
+        $online = array();
+        foreach ($drivers as $k => $v) {
+            if (Gateway::isUidOnline($v)) {
+                array_push($online);
+            }
+        }
+
+        if (!count($online)) {
+            return array();
+        }
     }
 
 
