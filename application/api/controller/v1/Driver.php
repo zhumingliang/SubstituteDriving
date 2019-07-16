@@ -159,9 +159,9 @@ class Driver extends BaseController
     }
 
 
-    public function nearbyDrives()
+    public function nearbyDrivers()
     {
-        $drivers = (new DriverService())->nearbyDrives();
+        $drivers = (new DriverService())->nearbyDrivers();
         return json(new SuccessMessageWithData(['data' => $drivers]));
 
     }

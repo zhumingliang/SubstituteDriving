@@ -160,7 +160,7 @@ class DriverService
     /**
      * 获取司机附近所有司机
      */
-    public function nearbyDrives()
+    public function nearbyDrivers()
     {
         $km = config('setting.nearby_km');
         //1.获取本司机当前位置
