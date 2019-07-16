@@ -168,7 +168,7 @@ class DriverService
         $driver_location = (new OrderService())->getDriverLocation($d_id);
         $drivers = $this->getDriversWithLocation($driver_location['lng'], $driver_location['lat'], $km);
         $order_no = $this->getDriverOrderNo();
-        $drivers = $this->prefixDrivers($drivers, $order_no);
+        $drivers = $this->prefixDrivers($drivers, $order_no, $d_id);
         return $drivers;
     }
 
@@ -182,7 +182,7 @@ class DriverService
         return $list;
     }
 
-    private function prefixDrivers($drivers, $order_no)
+    private function prefixDrivers($drivers, $order_no, $d_id)
     {
         $online = array();
         $ids_arr = array();
@@ -194,7 +194,7 @@ class DriverService
         }
 
         foreach ($drivers as $k => $v) {
-            if (Gateway::isUidOnline($v[0])) {
+            if (Gateway::isUidOnline($v[0]) && $v[0] != $d_id) {
                 $state = 2;//不可接单
                 if (in_array($v[0], $order_no_arr)) {
                     $state = 1;//可以接单
