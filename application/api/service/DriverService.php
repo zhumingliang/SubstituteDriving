@@ -166,7 +166,6 @@ class DriverService
         //1.获取本司机当前位置
         $d_id = Token::getCurrentUid();
         $driver_location = (new OrderService())->getDriverLocation($d_id);
-        print_r($driver_location);
         $drivers = $this->getDriversWithLocation($driver_location['lng'], $driver_location['lat'], $km);
         print_r($drivers);
         $order_no = $this->getDriverOrderNo();
