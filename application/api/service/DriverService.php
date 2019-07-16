@@ -162,17 +162,25 @@ class DriverService
      */
     public function nearbyDrivers()
     {
-        $km = config('setting.nearby_km');
-        //1.获取本司机当前位置
+        $grade = Token::getCurrentTokenVar('type');
         $d_id = Token::getCurrentUid();
-        $driver_location = (new OrderService())->getDriverLocation($d_id);
-        $drivers = $this->getDriversWithLocation($driver_location['lng'], $driver_location['lat'], $km);
+        if ($grade == "driver") {
+            $km = config('setting.nearby_km');
+            //1.获取本司机当前位置
+            $driver_location = (new OrderService())->getDriverLocation($d_id);
+            $drivers = $this->getDriversWithLocation($driver_location['lng'], $driver_location['lat'], $km);
+
+        } else {
+            $drivers = $this->getDriversWithLocation();
+        }
+
+
         $order_no = $this->getDriverOrderNo();
-        $drivers = $this->prefixDrivers($drivers, $order_no, $d_id);
+        $drivers = $this->prefixDrivers($drivers, $order_no);
         return $drivers;
     }
 
-    private function getDriversWithLocation($lng, $lat, $km)
+    private function getDriversWithLocation($lng = "114", $lat = "30", $km = "30000")
     {
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
@@ -182,7 +190,7 @@ class DriverService
         return $list;
     }
 
-    private function prefixDrivers($drivers, $order_no, $d_id)
+    private function prefixDrivers($drivers, $order_no)
     {
         $online = array();
         $ids_arr = array();
@@ -194,7 +202,7 @@ class DriverService
         }
 
         foreach ($drivers as $k => $v) {
-            if (Gateway::isUidOnline($v[0]) && $v[0] != $d_id) {
+            if (Gateway::isUidOnline($v[0])) {
                 $state = 2;//不可接单
                 if (in_array($v[0], $order_no_arr)) {
                     $state = 1;//可以接单
