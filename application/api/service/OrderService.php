@@ -19,11 +19,9 @@ use app\lib\enum\CommonEnum;
 use app\lib\enum\OrderEnum;
 use app\lib\exception\SaveException;
 use app\lib\exception\UpdateException;
-use GatewayClient\Gateway;
 use think\Db;
 use think\Exception;
 use zml\tp_tools\CalculateUtil;
-use zml\tp_tools\Redis;
 
 class OrderService
 {
@@ -146,7 +144,7 @@ class OrderService
 
             ]
         ];
-        (new GatewayService())->sendToClient('driver' . '-'.$d_id, $push_data);
+        GatewayService::sendToDriverClient($d_id, $push_data);
         //通过短信推送给司机
         $driver = DriverT::where('id', $d_id)->find();
         $phone = $driver->phone;
@@ -322,7 +320,7 @@ class OrderService
                 'driver_name' => $order->driver->username,
                 'driver_phone' => $order->driver->phone,
                 'distance' => $this->getDriverDistance($order->start_lng, $order->start_lat, $d_id)];
-            Gateway::sendToUid('mini' . '-' . $u_id, json_encode($send_data));
+            GatewayService::sendToMiniClient($u_id, json_encode($send_data));
         }
 
     }
@@ -370,7 +368,8 @@ class OrderService
         //设置三个set: 司机未接单 driver_order_no；司机正在派单 driver_order_ing；司机已经接单 driver_order_receive
         foreach ($list as $k => $v) {
             $d_id = $v;
-            if (Gateway::isUidOnline('driver' . '-' . $d_id) &&
+
+            if (GatewayService::isDriverUidOnline($d_id) &&
                 $redis->sIsMember('driver_order_no', $d_id)) {
                 //将司机从'未接单'移除，添加到：正在派单
                 $redis->sRem('driver_order_no', $d_id);
@@ -396,7 +395,7 @@ class OrderService
 
                     ]
                 ];
-                (new GatewayService())->sendToClient('driver' . '-'.$d_id, $push_data);
+                GatewayService::sendToDriverClient($d_id, $push_data);
                 //通过短信推送给司机
                 $driver = DriverT::where('id', $d_id)->find();
                 $phone = $driver->phone;
@@ -733,7 +732,7 @@ class OrderService
                 'distance_money' => $distance_info['distance_money']
             ]
         ];
-        (new GatewayService())->sendToClient('driver' . '-'.$d_id, $push_data);
+        GatewayService::sendToDriverClient($d_id, $push_data);
         //通过短信推送给司机
         $driver = DriverT::where('id', $d_id)->find();
         $phone = $driver->phone;
