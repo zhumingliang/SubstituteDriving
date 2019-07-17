@@ -4,7 +4,6 @@
 namespace app\api\service;
 
 
-use app\api\model\LogT;
 use app\lib\exception\SaveException;
 use zml\tp_aliyun\SendSms;
 
@@ -19,7 +18,8 @@ class SendSMSService
         $code = rand(10000, 99999);
         $res = SendSms::instance()->send($phone, ['code' => $code], $type);
         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
-            Session($type . '_code', $phone . '-' . $code, 'register');
+            LogService::save($phone . '-' . $code);
+            Session($type . '_code', $phone . '-' . $code);
             return true;
         }
         $num++;

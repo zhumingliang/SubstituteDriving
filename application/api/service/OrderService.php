@@ -529,9 +529,10 @@ class OrderService
             //处理订单金额
             $money = $distance_money + $wait_money + $weather_money + $order->far_money;
 
+            $ticket_money = 0;
             if ($order->ticket) {
-                $ticket = $order->ticket;
-                $money -= $ticket->money;
+                $ticket_money = $order->ticket->money;
+                $money -= $ticket_money;
                 //处理优惠券
                 $t_res = TicketT::update(['state' => CommonEnum::STATE_IS_FAIL], ['id' => $ticket->id]);
                 if (!$t_res) {
@@ -552,6 +553,11 @@ class OrderService
                 Db::rollback();
                 throw new SaveException(['msg' => '保存结算数据失败']);
             }
+            //处理抽成
+            if (!$this->prefixOrderCharge($money, $ticket_money)) {
+                Db::rollback();
+                throw new SaveException(['msg' => '订单抽成失败']);
+            }
             Db::commit();
             (new DriverService())->handelDriveStateByComplete($id);
             return $this->prepareCompleteInfo($order);
@@ -560,6 +566,12 @@ class OrderService
             Db::rollback();
             throw $e;
         }
+
+    }
+
+    public function prefixOrderCharge($money)
+    {
+        return false;
 
     }
 
