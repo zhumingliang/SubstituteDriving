@@ -5,7 +5,9 @@ namespace app\api\service;
 
 
 use app\lib\exception\SaveException;
+use think\facade\Request;
 use zml\tp_aliyun\SendSms;
+use zml\tp_tools\Redis;
 
 class SendSMSService
 {
@@ -18,8 +20,9 @@ class SendSMSService
         $code = rand(10000, 99999);
         $res = SendSms::instance()->send($phone, ['code' => $code], $type);
         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
-            LogService::save($phone . '-' . $code);
-            Session($type . '_code', $phone . '-' . $code);
+            $redis = new Redis();
+            $token = Request::header('token');
+            $redis->set($token, $phone . '-' . $code, 60);
             return true;
         }
         $num++;

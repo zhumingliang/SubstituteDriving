@@ -18,6 +18,7 @@ use think\facade\Cache;
 use think\facade\Request;
 use app\api\model\UserT as UserModel;
 use think\facade\Session;
+use zml\tp_tools\Redis;
 
 class UserInfo
 {
@@ -151,8 +152,12 @@ class UserInfo
 
     public function bindPhone($params)
     {
-        $current_code = Session::get('register_code');
-        LogService::save($current_code . '-' . $params['phone'] . '-' . $params['code']);
+        $redis = new Redis();
+        $token = Request::header('token');
+        $current_code = $redis->get($token);
+        if (!$current_code) {
+            throw new UpdateException(['errorCode' => '10007', 'msg' => '验证码过期，请重新获取']);
+        }
         if ($current_code != $params['phone'] . '-' . $params['code']) {
             throw new UpdateException(['errorCode' => '10002', 'msg' => '验证码不正确']);
         }
