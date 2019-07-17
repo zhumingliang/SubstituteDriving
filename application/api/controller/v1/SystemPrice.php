@@ -7,6 +7,7 @@ namespace app\api\controller\v1;
 use app\api\controller\BaseController;
 use app\api\model\FarStateT;
 use app\api\model\StartPriceT;
+use app\api\model\SystemOrderChargeT;
 use app\api\model\TimeIntervalT;
 use app\api\model\WaitPriceT;
 use app\api\model\WeatherT;
@@ -459,6 +460,56 @@ class SystemPrice extends BaseController
     {
         $info = (new SystemPriceService())->priceInfoForDriver();
         return json(new SuccessMessageWithData(['data' => $info]));
+    }
+
+    /**
+     * @api {GET} /api/v1/SystemPrice/order  CMS管理端-获取订单服务费设置信息
+     * @apiGroup   CMS
+     * @apiVersion 1.0.1
+     * @apiDescription    CMS管理端-获取订单服务费设置信息
+     * @apiExample {get}  请求样例:
+     * https://tonglingok.com/api/v1/SystemPrice/order
+     * @apiSuccessExample {json} 返回样例:
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"id":1,"insurance":2.3,"order":0.2}}
+     * @apiSuccess (返回参数说明) {int} id 设置id
+     * @apiSuccess (返回参数说明) {Float} insurance 保险费用，固定金额
+     * @apiSuccess (返回参数说明) {Float} order 订单抽成比例， 小于1
+     */
+    public function orderCharge()
+    {
+        $info = SystemOrderChargeT::field('id,insurance,order')
+            ->find();
+        return json(new SuccessMessageWithData(['data' => $info]));
+    }
+
+    /**
+     * @api {POST} /api/v1/SystemPrice/order/update CMS管理端-修改订单服务费设置信息
+     * @apiGroup  CMS
+     * @apiVersion 1.0.1
+     * @apiDescription CMS管理端-修改订单服务费设置信息
+     * @apiExample {post}  请求样例:
+     *    {
+     *       "id":1,
+     *       "insurance":2.5
+     *       "order":0.3
+     *     }
+     * @apiParam (请求参数说明) {Int} id  设置ID
+     * @apiParam (请求参数说明) {Float} insurance 保险费用，固定金额
+     * @apiParam (请求参数说明) {Float} order 订单抽成比例， 小于1
+     * @apiSuccessExample {json} 返回样例:
+     *{"msg":"ok","errorCode":0}
+     * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误
+     * @apiSuccess (返回参数说明) {String} msg 信息描述
+     */
+    public function updateOrderCharge()
+    {
+        $info = $this->request->param();
+        $res = (new SystemOrderChargeT())->isUpdate()->save($info);
+        if (!$res) {
+            throw  new UpdateException();
+        }
+        return json(new SuccessMessage());
+
     }
 
 }

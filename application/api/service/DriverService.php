@@ -18,6 +18,15 @@ use zml\tp_tools\Redis;
 
 class DriverService
 {
+    private $redis = null;
+
+    public function __construct()
+    {
+        $this->redis = new \Redis();
+        $this->redis->connect('127.0.0.1', 6379, 60);
+
+    }
+
     public function save($params)
     {
         $params['pwd'] = sha1($params['pwd']);
@@ -45,7 +54,7 @@ class DriverService
             throw new AuthException();
         }
         $id = Token::getCurrentUid();
-        $this->prefixDriverState($params['line'], $id);
+        $this->prefixDriverState($params['online'], $id);
         $res = DriverT::update(['online' => $params['online']], ['id' => $id]);
         if (!$res) {
             throw new UpdateException();
@@ -67,18 +76,16 @@ class DriverService
         //处理司机状态
         //1.上线-添加进入未接单
         //2.下线-需要检测当前时候否有进行中的订单；清除接单三大状态
-        $redis = new \Redis();
-        $redis->connect('127.0.0.1', 6379, 60);
         if ($line_type == DriverEnum::ONLINE) {
-            $redis->sAdd('driver_order_no', $d_id);
+            $this->redis->sAdd('driver_order_no', $d_id);
         } else {
             if ($this->checkNoCompleteOrder($d_id)) {
                 throw new UpdateException(['您还有订单进行中，不能下线']);
             }
 
-            $redis->sRem('driver_order_ing', $d_id);
-            $redis->sRem('driver_order_no', $d_id);
-            $redis->sRem('driver_order_receive', $d_id);
+            $this->redis->sRem('driver_order_ing', $d_id);
+            $this->redis->sRem('driver_order_no', $d_id);
+            $this->redis->sRem('driver_order_receive', $d_id);
         }
 
 
@@ -86,9 +93,7 @@ class DriverService
 
     public function checkDriverOrderNo($d_id)
     {
-        $redis = new \Redis();
-        $redis->connect('127.0.0.1', 6379, 60);
-        $ret = $redis->sIsMember('driver_order_no', $d_id);
+        $ret = $this->redis->sIsMember('driver_order_no', $d_id);
         return $ret;
 
     }
@@ -99,10 +104,8 @@ class DriverService
      */
     public function handelDriveStateByComplete($d_id)
     {
-        $redis = new \Redis();
-        $redis->connect('127.0.0.1', 6379, 60);
-        $redis->sRem('driver_order_receive', $d_id);
-        $redis->sAdd('driver_order_no', $d_id);
+        $this->redis->sRem('driver_order_receive', $d_id);
+        $this->redis->sAdd('driver_order_no', $d_id);
 
     }
 
@@ -112,10 +115,8 @@ class DriverService
      */
     public function handelDriveStateByReceive($d_id)
     {
-        $redis = new \Redis();
-        $redis->connect('127.0.0.1', 6379, 60);
-        $redis->sRem('driver_order_no', $d_id);
-        $redis->sAdd('driver_order_receive', $d_id);
+        $this->redis->sRem('driver_order_no', $d_id);
+        $this->redis->sAdd('driver_order_receive', $d_id);
     }
 
     /**
@@ -124,10 +125,8 @@ class DriverService
      */
     public function handelDriveStateByING($d_id)
     {
-        $redis = new \Redis();
-        $redis->connect('127.0.0.1', 6379, 60);
-        $redis->sRem('driver_order_no', $d_id);
-        $redis->sAdd('driver_order_ing', $d_id);
+        $this->redis->sRem('driver_order_no', $d_id);
+        $this->redis->sAdd('driver_order_ing', $d_id);
     }
 
     /**
@@ -136,11 +135,9 @@ class DriverService
      */
     public function handelDriveStateByCancel($d_id)
     {
-        $redis = new \Redis();
-        $redis->connect('127.0.0.1', 6379, 60);
-        $redis->sRem('driver_order_ing', $d_id);
-        $redis->sRem('driver_order_receive', $d_id);
-        $redis->sAdd('driver_order_no', $d_id);
+        $this->redis->sRem('driver_order_ing', $d_id);
+        $this->redis->sRem('driver_order_receive', $d_id);
+        $this->redis->sAdd('driver_order_no', $d_id);
     }
 
     public function acceptableOrder()
@@ -182,10 +179,9 @@ class DriverService
 
     private function getDriversWithLocation($lng = "114", $lat = "30", $km = "30000")
     {
-        $redis = new \Redis();
-        $redis->connect('127.0.0.1', 6379, 60);
+
         //查询所有司机并按距离排序（包括在线和不在线）
-        $list = $redis->rawCommand('georadius',
+        $list = $this->redis->rawCommand('georadius',
             'drivers_tongling', $lng, $lat, $km, 'km', 'WITHCOORD');
         return $list;
     }
@@ -236,8 +232,7 @@ class DriverService
 
     private function getDriverOrderNo()
     {
-        $redis = new Redis();
-        return $redis->sMembers('driver_order_no');
+        return $this->redis->sMembers('driver_order_no');
     }
 
 
