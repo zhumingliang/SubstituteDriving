@@ -146,7 +146,7 @@ class OrderService
 
             ]
         ];
-        (new GatewayService())->sendToClient($d_id, $push_data);
+        (new GatewayService())->sendToClient('driver' . '-'.$d_id, $push_data);
         //通过短信推送给司机
         $driver = DriverT::where('id', $d_id)->find();
         $phone = $driver->phone;
@@ -322,7 +322,7 @@ class OrderService
                 'driver_name' => $order->driver->username,
                 'driver_phone' => $order->driver->phone,
                 'distance' => $this->getDriverDistance($order->start_lng, $order->start_lat, $d_id)];
-            Gateway::sendToUid($u_id, json_encode($send_data));
+            Gateway::sendToUid('mini' . '-' . $u_id, json_encode($send_data));
         }
 
     }
@@ -370,7 +370,7 @@ class OrderService
         //设置三个set: 司机未接单 driver_order_no；司机正在派单 driver_order_ing；司机已经接单 driver_order_receive
         foreach ($list as $k => $v) {
             $d_id = $v;
-            if (Gateway::isUidOnline($d_id) &&
+            if (Gateway::isUidOnline('driver' . '-' . $d_id) &&
                 $redis->sIsMember('driver_order_no', $d_id)) {
                 //将司机从'未接单'移除，添加到：正在派单
                 $redis->sRem('driver_order_no', $d_id);
@@ -396,7 +396,7 @@ class OrderService
 
                     ]
                 ];
-                (new GatewayService())->sendToClient($d_id, $push_data);
+                (new GatewayService())->sendToClient('driver' . '-'.$d_id, $push_data);
                 //通过短信推送给司机
                 $driver = DriverT::where('id', $d_id)->find();
                 $phone = $driver->phone;
@@ -598,7 +598,7 @@ class OrderService
             'name' => $order->name,
             'phone' => $order->phone,
             'create_time' => $order->create_time,
-            'state' =>$order->state,
+            'state' => $order->state,
             'distance' => $order->distance,
             'distance_money' => $order->distance_money,
             'money' => $order->money,
@@ -733,7 +733,7 @@ class OrderService
                 'distance_money' => $distance_info['distance_money']
             ]
         ];
-        (new GatewayService())->sendToClient($d_id, $push_data);
+        (new GatewayService())->sendToClient('driver' . '-'.$d_id, $push_data);
         //通过短信推送给司机
         $driver = DriverT::where('id', $d_id)->find();
         $phone = $driver->phone;
@@ -800,8 +800,8 @@ class OrderService
 
     public function driverOrder($id)
     {
-        $order=$this->getOrder($id);
-        $info=$this->prepareCompleteInfo($order);
+        $order = $this->getOrder($id);
+        $info = $this->prepareCompleteInfo($order);
         return $info;
     }
 

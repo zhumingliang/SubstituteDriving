@@ -202,7 +202,7 @@ class DriverService
         }
 
         foreach ($drivers as $k => $v) {
-            if (Gateway::isUidOnline($v[0])) {
+            if (Gateway::isUidOnline('driver' . '-' . $v[0])) {
 
                 $state = 2;//不可接单
                 if (in_array($v[0], $order_no_arr)) {

@@ -29,7 +29,8 @@ class Gateway extends BaseController
         $params = $this->request->param();
         $client_id = $params['client_id'];
         $u_id = \app\api\service\Token::getCurrentUid();
-        \GatewayClient\Gateway::bindUid($client_id, $u_id);
+        $grade = \app\api\service\Token::getCurrentTokenVar('type');
+        \GatewayClient\Gateway::bindUid($client_id, $grade.'-'.$u_id);
         return json(new SuccessMessage());
 
     }
