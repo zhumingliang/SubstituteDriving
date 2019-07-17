@@ -8,6 +8,12 @@ use think\Model;
 
 class WalletRecordV extends Model
 {
+    public function getTypeAttr($value)
+    {
+        $state = [1 => "保险费用", 2 => "订单服务费", 3 => "账户余额充值"];
+        return $state[$value];
+    }
+
     public static function drivers($page, $size, $time_begin, $time_end, $username, $account, $online)
     {
         $list = self::where(function ($query) use ($username) {
@@ -33,6 +39,27 @@ class WalletRecordV extends Model
             })
             ->field('d_id,account,username,phone,sum(money) as money,state,create_time')
             ->group('d_id')
+            ->order('create_time desc')
+            ->paginate($size, false, ['page' => $page]);
+        return $list;
+
+    }
+
+
+    public static function recordsToDriver($page, $size, $d_id)
+    {
+        $list = self::where('d_id', $d_id)
+            ->field('money,type,create_time')
+            ->order('create_time desc')
+            ->paginate($size, false, ['page' => $page]);
+        return $list;
+
+    }
+
+    public static function recordsToManager($page, $size)
+    {
+        $list = self::where('type', 3)
+            ->field('d_id,money,username,create_time')
             ->order('create_time desc')
             ->paginate($size, false, ['page' => $page]);
         return $list;

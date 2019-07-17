@@ -6,6 +6,7 @@ namespace app\api\service;
 
 use app\api\model\DriverT;
 use app\api\model\RechargeT;
+use app\api\model\WalletRecordV;
 use app\api\validate\Driver;
 use app\lib\enum\CommonEnum;
 use app\lib\exception\AuthException;
@@ -36,9 +37,9 @@ class WalletService
 
     }
 
-    public function driverRecharges($page, $size,$d_id)
+    public function driverRecharges($page, $size, $d_id)
     {
-        $list = RechargeT::rechargesForDriver($page, $size,$d_id);
+        $list = RechargeT::rechargesForDriver($page, $size, $d_id);
         return $list;
 
     }
@@ -53,5 +54,21 @@ class WalletService
         if ($driver->state == CommonEnum::STATE_IS_FAIL) {
             throw new SaveException(['msg' => '司机状态异常']);
         }
+    }
+
+    public function records($page, $size)
+    {
+        $grade = "manager";//Token::getCurrentTokenVar('type');
+        if ($grade == "driver") {
+            $d_id = 1;//Token::getCurrentUid();
+            $records = WalletRecordV::recordsToDriver($page, $size, $d_id);
+
+        } elseif ($grade == "manager") {
+            $records = WalletRecordV::recordsToManager($page, $size);
+        } else {
+            throw  new AuthException();
+        }
+        return $records;
+
     }
 }

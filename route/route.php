@@ -71,6 +71,7 @@ Route::get('api/:version/notices/cms', 'api/:version.Notice/CMSNotices');
 Route::post('api/:version/recharge/save', 'api/:version.Wallet/saveRecharge');
 Route::get('api/:version/recharges', 'api/:version.Wallet/recharges');
 Route::get('api/:version/driver/recharges', 'api/:version.Wallet/driverRecharges');
+Route::get('api/:version/wallet/records', 'api/:version.Wallet/records');
 
 
 Route::post('api/:version/sms/register', 'api/:version.SendSMS/sendCodeToMINI');
