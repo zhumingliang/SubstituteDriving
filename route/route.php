@@ -89,8 +89,7 @@ Route::get('api/:version/orders/mini', 'api/:version.Order/miniOrders');
 Route::get('api/:version/orders/driver', 'api/:version.Order/driverOrders');
 Route::get('api/:version/order/mini', 'api/:version.Order/miniOrder');
 Route::get('api/:version/order/end', 'api/:version.Order/driverOrderWithEnd');
-Route::get('api/:version/order/driver/complete', 'api/:version.Order/orderComplete');
-
+Route::post('api/:version/order/driver/complete', 'api/:version.Order/orderComplete');
 Route::get('api/:version/messages', 'api/:version.Message/messages');
 Route::post('api/:version/message/save', 'api/:version.Message/save');
 

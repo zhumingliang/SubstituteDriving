@@ -8,9 +8,11 @@ use app\api\model\DriverT;
 use app\api\model\FarStateT;
 use app\api\model\LogT;
 use app\api\model\OrderListT;
+use app\api\model\OrderMoneyT;
 use app\api\model\OrderPushT;
 use app\api\model\OrderT;
 use app\api\model\StartPriceT;
+use app\api\model\SystemOrderChargeT;
 use app\api\model\TicketT;
 use app\api\model\TimeIntervalT;
 use app\api\model\WaitPriceT;
@@ -316,10 +318,14 @@ class OrderService
 
         if ($u_id) {
             $send_data = [
-                'id' => $order->id,
-                'driver_name' => $order->driver->username,
-                'driver_phone' => $order->driver->phone,
-                'distance' => $this->getDriverDistance($order->start_lng, $order->start_lat, $d_id)];
+                'type' => 'order',
+                'data' => [
+                    'id' => $order->id,
+                    'driver_name' => $order->driver->username,
+                    'driver_phone' => $order->driver->phone,
+                    'distance' => $this->getDriverDistance($order->start_lng, $order->start_lat, $d_id)
+                ]
+            ];
             GatewayService::sendToMiniClient($u_id, json_encode($send_data));
         }
 
@@ -534,7 +540,7 @@ class OrderService
                 $ticket_money = $order->ticket->money;
                 $money -= $ticket_money;
                 //处理优惠券
-                $t_res = TicketT::update(['state' => CommonEnum::STATE_IS_FAIL], ['id' => $ticket->id]);
+                $t_res = TicketT::update(['state' => CommonEnum::STATE_IS_FAIL], ['id' => $order->ticket->id]);
                 if (!$t_res) {
                     Db::rollback();
                     throw new SaveException(['msg' => '保存处理优惠券失败']);
@@ -554,7 +560,7 @@ class OrderService
                 throw new SaveException(['msg' => '保存结算数据失败']);
             }
             //处理抽成
-            if (!$this->prefixOrderCharge($money, $ticket_money)) {
+            if (!$this->prefixOrderCharge($id, $order->d_id, $money, $ticket_money)) {
                 Db::rollback();
                 throw new SaveException(['msg' => '订单抽成失败']);
             }
@@ -569,9 +575,29 @@ class OrderService
 
     }
 
-    public function prefixOrderCharge($money)
+    public function prefixOrderCharge($o_id, $d_id, $money, $ticket_money)
     {
-        return false;
+
+        $orderCharge = SystemOrderChargeT::find();
+        $insurance = $orderCharge->insurance;
+        $order = $orderCharge->order;
+        $order_money = ($money - $ticket_money) * $order;
+        $data = [
+            [
+                'o_id' => $o_id,
+                'd_id' => $d_id,
+                'money' => $insurance,
+                'type' => 1,
+
+            ], [
+                'o_id' => $o_id,
+                'd_id' => $d_id,
+                'money' => $order_money,
+                'type' => 2,
+            ]
+        ];
+        $res = (new OrderMoneyT())->saveAll($data);
+        return $res;
 
     }
 

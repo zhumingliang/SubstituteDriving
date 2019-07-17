@@ -161,7 +161,7 @@ class UserInfo
         if ($current_code != $params['phone'] . '-' . $params['code']) {
             throw new UpdateException(['errorCode' => '10002', 'msg' => '验证码不正确']);
         }
-        $res = UserModel::update(['phone' => $params['phone']], ['id' => 1]);
+        $res = UserModel::update(['phone' => $params['phone']], ['id' => Token::getCurrentUid()]);
         if (!$res) {
             throw new UpdateException(['msg' => '绑定手机用户手机号失败']);
         }
