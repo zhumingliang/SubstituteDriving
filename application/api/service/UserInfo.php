@@ -152,6 +152,7 @@ class UserInfo
     public function bindPhone($params)
     {
         $current_code = Session::get('register_code', 'register');
+        LogService::save($current_code . '-' . $params['phone'] . '-' . $params['code']);
         if ($current_code != $params['phone'] . '-' . $params['code']) {
             throw new UpdateException(['errorCode' => '10002', 'msg' => '验证码不正确']);
         }

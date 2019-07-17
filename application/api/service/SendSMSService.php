@@ -4,6 +4,7 @@
 namespace app\api\service;
 
 
+use app\api\model\LogT;
 use app\lib\exception\SaveException;
 use zml\tp_aliyun\SendSms;
 
@@ -33,10 +34,10 @@ class SendSMSService
             throw new SaveException(['msg' => '短信服务出错']);
         }
         $res = SendSms::instance()->send($phone, $params, 'driver');
-        print_r($res);
         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
             return true;
         }
+        LogService::save(json_encode($res));
         $num++;
         $this->sendOrderSMS($phone, $params, $num);
 
