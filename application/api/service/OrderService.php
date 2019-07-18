@@ -6,6 +6,7 @@ namespace app\api\service;
 
 use app\api\model\DriverT;
 use app\api\model\FarStateT;
+use app\api\model\LocationT;
 use app\api\model\LogT;
 use app\api\model\OrderListT;
 use app\api\model\OrderMoneyT;
@@ -288,6 +289,8 @@ class OrderService
             } else if ($push_type == "transfer") {
                 //释放转单司机
                 $this->prefixPushRefuse($push->f_d_id);
+                //处理原订单状态
+                //由触发器解决
             }
 
 
@@ -422,6 +425,7 @@ class OrderService
 
         $order->state = OrderEnum::ORDER_CANCEL;
         $order->cancel_remark = $params['remark'];
+        $order->cancel_type = Token::getCurrentTokenVar('type');
         $res = $order->save();
         //处理司机状态
         (new DriverService())->handelDriveStateByCancel($params['id']);
@@ -481,7 +485,7 @@ class OrderService
             ];
 
         } else if ($order->state == OrderEnum::ORDER_COMPLETE) {
-            $info = $this->prepareCompleteInfo($order);
+            $info = $this->prepareOrderInfo($order);
         } else {
             $driver_location = $this->getDriverLocation($order->d_id);
             $info = [
@@ -512,7 +516,7 @@ class OrderService
             $wait_time = $params['wait_time'];
             $order = $this->getOrder($id);
             if ($order->state == OrderEnum::ORDER_COMPLETE) {
-                return $this->prepareCompleteInfo($order);
+                return $this->prepareOrderInfo($order);
             }
 
             /*  //处理 订单距离/距离产生的价格
@@ -550,6 +554,7 @@ class OrderService
             $order->state = OrderEnum::ORDER_COMPLETE;
             $order->distance = $distance;
             $order->distance_money = $distance_money;
+            $order->ticket_money = $ticket_money;
             $order->wait_time = $wait_time;
             $order->wait_money = $wait_money;
             $order->weather_money = $weather_money;
@@ -566,7 +571,7 @@ class OrderService
             }
             Db::commit();
             (new DriverService())->handelDriveStateByComplete($id);
-            return $this->prepareCompleteInfo($order);
+            return $this->prepareOrderInfo($order);
 
         } catch (Exception $e) {
             Db::rollback();
@@ -581,7 +586,7 @@ class OrderService
         $orderCharge = SystemOrderChargeT::find();
         $insurance = $orderCharge->insurance;
         $order = $orderCharge->order;
-        $order_money = ($money - $ticket_money) * $order;
+        $order_money = ($money + $ticket_money) * $order;
         $data = [
             [
                 'o_id' => $o_id,
@@ -625,31 +630,49 @@ class OrderService
 
     }
 
-    private function prepareCompleteInfo($order)
+    private function prepareOrderInfo($order)
     {
 
-        $info = [
-            'driver_name' => $order->driver->username,
-            'start' => $order->start,
-            'end' => $order->end,
-            'name' => $order->name,
-            'phone' => $order->phone,
-            'create_time' => $order->create_time,
-            'state' => $order->state,
-            'distance' => $order->distance,
-            'distance_money' => $order->distance_money,
-            'money' => $order->money,
-            'far_distance' => $order->far_distance,
-            'far_money' => $order->far_money,
-            'ticket_money' => $order->ticket ? $order->ticket->money : 0,
-            'wait_time' => $order->wait_time,
-            'wait_money' => $order->wait_money,
-            'weather_money' => $order->weather_money,
+        if ($order->state == OrderEnum::ORDER_COMPLETE) {
+            $info = [
+                'driver_name' => $order->driver->username,
+                'driver_phone' => $order->driver->phone,
+                'start' => $order->start,
+                'end' => $order->end,
+                'from' => $order->from,
+                'name' => $order->name,
+                'phone' => $order->phone,
+                'create_time' => $order->create_time,
+                'state' => $order->state,
+                'distance' => $order->distance,
+                'distance_money' => $order->distance_money,
+                'money' => $order->money,
+                'far_distance' => $order->far_distance,
+                'far_money' => $order->far_money,
+                'ticket_money' => $order->ticket_money,
+                'wait_time' => $order->wait_time,
+                'wait_money' => $order->wait_money,
+                'weather_money' => $order->weather_money,
 
-        ];
+            ];
+        } else {
+            $info = [
+                'driver_name' => $order->driver->username,
+                'driver_phone' => $order->driver->phone,
+                'start' => $order->start,
+                'end' => $order->end,
+                'from' => $order->from,
+                'name' => $order->name,
+                'phone' => $order->phone,
+                'create_time' => $order->create_time,
+                'state' => $order->state
+            ];
+        }
+
         return $info;
 
     }
+
 
     public function getDriverLocation($u_id)
     {
@@ -827,19 +850,101 @@ class OrderService
         ];
     }
 
-    public function driverOrders($page, $size)
+    public function driverOrders($page, $size, $time_begin, $time_end)
     {
         $d_id = Token::getCurrentUid();
-        $orders = OrderT::getDriverOrders($d_id, $page, $size);
+        $orders = OrderT::getDriverOrders($d_id, $page, $size, $time_begin, $time_end);
+        $orders['data'] = $this->prefixTransferInfo($orders['data']);
+        $orders['statistic'] = $this->getDriverOrdersStatistic($d_id, $time_begin, $time_end);
         return $orders;
 
     }
 
-    public function driverOrder($id)
+    public function orderInfo($id)
     {
         $order = $this->getOrder($id);
-        $info = $this->prepareCompleteInfo($order);
+        $info = $this->prepareOrderInfo($order);
         return $info;
+    }
+
+    public function managerOrders($page, $size, $driver, $time_begin, $time_end)
+    {
+        $orders = OrderT::managerOrders($page, $size, $driver, $time_begin, $time_end);
+        $orders['data'] = $this->prefixTransferInfo($orders['data']);
+        $orders['statistic'] = $this->getManagerOrdersStatistic($driver, $time_begin, $time_end);
+        return $orders;
+
+
+    }
+
+    private function getDriverOrdersStatistic($d_id, $time_begin, $time_end)
+    {
+        $ordersMoney = OrderT::driverOrdersMoney($d_id, $time_begin, $time_end);
+        return [
+            'orders_count' => OrderT::driverOrderCount($d_id, $time_begin, $time_end),
+            'all_money' => $ordersMoney['all_money'],
+            'ticket_money' => $ordersMoney['ticket_money'],
+        ];
+
+    }
+
+
+    private function getManagerOrdersStatistic($driver, $time_begin, $time_end)
+    {
+        $ordersMoney = OrderT::ordersMoney($driver, $time_begin, $time_end);
+        return [
+            'members' => OrderT::members($driver, $time_begin, $time_end),
+            'orders_count' => OrderT::orderCount($driver, $time_begin, $time_end),
+            'all_money' => $ordersMoney['all_money'],
+            'ticket_money' => $ordersMoney['ticket_money'],
+        ];
+
+    }
+
+    private function prefixTransferInfo($data)
+    {
+        if (!count($data)) {
+            return $data;
+        }
+
+        foreach ($data as $k => $v) {
+
+            if ($v['superior_id']) {
+                $data[$k]['transfer'] = 1;
+                $data[$k]['superior'] = DriverT::field('username')
+                    ->where('id', $v['superior_id'])->find()
+                    ->toArray();
+            }
+            unset($data[$k]['superior_id']);
+        }
+        return $data;
+
+    }
+
+    public function recordsOfConsumption($page, $size, $phone)
+    {
+        $list = OrderT::recordsOfConsumption($page, $size, $phone);
+        $list['statistic'] = $this->recordsOfConsumptionStatistic($phone);
+        return $list;
+    }
+
+    private function recordsOfConsumptionStatistic($phone)
+    {
+        return [
+            'count' => OrderT::ConsumptionCount($phone),
+            'money' => OrderT::ConsumptionMoney($phone),
+
+        ];
+
+    }
+
+    public function orderLocations($id)
+    {
+        $locations = LocationT::where('o_id', $id)
+            ->where('begin',CommonEnum::STATE_IS_OK)
+            ->field('lat,lng')
+            ->select();
+        return $locations;
     }
 
 
