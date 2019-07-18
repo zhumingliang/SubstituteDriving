@@ -70,8 +70,9 @@ Route::get('api/:version/notices/cms', 'api/:version.Notice/CMSNotices');
 
 Route::post('api/:version/recharge/save', 'api/:version.Wallet/saveRecharge');
 Route::get('api/:version/recharges', 'api/:version.Wallet/recharges');
-Route::get('api/:version/driver/recharges', 'api/:version.Wallet/driverRecharges');
-Route::get('api/:version/wallet/records', 'api/:version.Wallet/records');
+Route::get('api/:version/recharges/driver', 'api/:version.Wallet/driverRecharges');
+Route::get('api/:version/wallet/records/driver', 'api/:version.Wallet/driverRecords');
+Route::get('api/:version/wallet/records/manager', 'api/:version.Wallet/managerRecords');
 
 
 Route::post('api/:version/sms/register', 'api/:version.SendSMS/sendCodeToMINI');

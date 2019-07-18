@@ -66,4 +66,32 @@ class WalletRecordV extends Model
 
     }
 
+    public static function managerRecords($page, $size, $driver, $time_begin, $time_end)
+    {
+        $list = self::where(function ($query) use ($driver) {
+            if (strlen($driver)) {
+                $query->where('username', 'like', '%' . $driver . '%');
+            }
+        })
+            ->where(function ($query) use ($time_begin, $time_end) {
+                if (strlen($time_begin) && strlen($time_end)) {
+                    $query->whereBetweenTime('create_time', $time_begin, $time_end);
+
+                }
+            })
+            ->field('d_id,username, money,create_time')
+            ->group('d_id')
+            ->order('create_time desc')
+            ->paginate($size, false, ['page' => $page]);
+        return $list;
+    }
+
+    public static function driverBalance($d_id)
+    {
+        $balance = self::where('d_id', $d_id)
+            ->sum('money');
+        return $balance;
+
+    }
+
 }

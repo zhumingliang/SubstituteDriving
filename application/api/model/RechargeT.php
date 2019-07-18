@@ -21,6 +21,7 @@ class RechargeT extends Model
                 $query->field('id,username');
             }])
             ->field('id,money,d_id,create_time')
+            ->order('create_time desc')
             ->paginate($size, false, ['page' => $page]);
         return $list;
 
@@ -31,6 +32,7 @@ class RechargeT extends Model
         $list = self::where('d_id', $d_id)
             ->where('state', CommonEnum::STATE_IS_OK)
             ->field('id,money,create_time')
+            ->order('create_time desc')
             ->paginate($size, false, ['page' => $page]);
         return $list;
 

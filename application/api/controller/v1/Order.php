@@ -400,7 +400,6 @@ class Order extends BaseController
 
     }
 
-
     /**
      * @api {GET} /api/v1/orders/driver Android司机端-获取订单列表
      * @apiGroup  Android
@@ -461,6 +460,11 @@ class Order extends BaseController
         $id = $this->request->param('id');
         $order = (new OrderService())->driverOrder($id);
         return json(new SuccessMessageWithData(['data' => $order]));
+    }
+
+    public function managerOrders($page = 1, $size = 10, $driver = '', $time_begin = '', $time_end = '')
+    {
+
     }
 
 }

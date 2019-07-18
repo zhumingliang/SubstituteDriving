@@ -56,15 +56,35 @@ class WalletService
         }
     }
 
-    public function records($page, $size)
+    public function driverRecords($page, $size)
     {
-        $grade = "manager";//Token::getCurrentTokenVar('type');
+        $grade = Token::getCurrentTokenVar('type');
         if ($grade == "driver") {
-            $d_id = 1;//Token::getCurrentUid();
+            $d_id = Token::getCurrentUid();
             $records = WalletRecordV::recordsToDriver($page, $size, $d_id);
 
-        } elseif ($grade == "manager") {
-            $records = WalletRecordV::recordsToManager($page, $size);
+            return [
+                'records' => $records,
+                'balance' => $this->driverBalance($d_id)
+            ];
+        } else {
+            throw  new AuthException();
+        }
+    }
+
+    private function driverBalance($d_id)
+    {
+        $balance = WalletRecordV::driverBalance($d_id);
+        return $balance;
+
+    }
+
+    public function managerRecords($page, $size, $driver, $time_begin, $time_end)
+    {
+        $grade = Token::getCurrentTokenVar('type');
+        if ($grade == "manager") {
+            $records = WalletRecordV::managerRecords($page, $size, $driver, $time_begin, $time_end);
+
         } else {
             throw  new AuthException();
         }
