@@ -221,5 +221,18 @@ class OrderT extends Model
 
     }
 
+    public static function currentOrders($page, $size)
+    {
+        $list = self::whereIn('state', OrderEnum::ORDER_NO . "," . OrderEnum::ORDER_ING)
+            ->with(['driver'=>function ($query) {
+                $query->field('id,username');
+            }])
+            ->field('id,d_id,superior_id,null as superior,2 as transfer ,from,state,start,end,name,create_time')
+            ->order('create_time desc')
+            ->paginate($size, false, ['page' => $page])->toArray();
+        return $list;
+
+    }
+
 
 }

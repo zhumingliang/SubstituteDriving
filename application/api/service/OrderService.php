@@ -519,6 +519,39 @@ class OrderService
                 return $this->prepareOrderInfo($order);
             }
 
+            if ($order->type === 2) {
+                $money = $order->money;
+                $ticket_money = 0;
+            } else {
+                $distance_money = $params['distance_money'];
+                $wait_money = $params['wait_money'];
+                $distance = $params['distance'];
+                //处理恶劣天气费用
+                $weather_money = $this->prefixWeather($distance_money);
+
+                //处理订单金额
+                $money = $distance_money + $wait_money + $weather_money + $order->far_money;
+
+                $ticket_money = 0;
+                if ($order->ticket) {
+                    $ticket_money = $order->ticket->money;
+                    $money -= $ticket_money;
+                    //处理优惠券
+                    $t_res = TicketT::update(['state' => CommonEnum::STATE_IS_FAIL], ['id' => $order->ticket->id]);
+                    if (!$t_res) {
+                        Db::rollback();
+                        throw new SaveException(['msg' => '保存处理优惠券失败']);
+                    }
+                }
+                $order->distance = $distance;
+                $order->distance_money = $distance_money;
+                $order->ticket_money = $ticket_money;
+                $order->wait_time = $wait_time;
+                $order->wait_money = $wait_money;
+                $order->weather_money = $weather_money;
+                $order->money = $money;
+            }
+
             /*  //处理 订单距离/距离产生的价格
               $redis = new Redis();
               $distance = $redis->zScore('order:distance', $id);
@@ -530,35 +563,7 @@ class OrderService
 
               //处理等待费用
               $wait_money = $this->prefixWait($wait_time);*/
-            $distance_money = $params['distance_money'];
-            $wait_money = $params['wait_money'];
-            $distance = $params['distance'];
-            //处理恶劣天气费用
-            $weather_money = $this->prefixWeather($distance_money);
-
-            //处理订单金额
-            $money = $distance_money + $wait_money + $weather_money + $order->far_money;
-
-            $ticket_money = 0;
-            if ($order->ticket) {
-                $ticket_money = $order->ticket->money;
-                $money -= $ticket_money;
-                //处理优惠券
-                $t_res = TicketT::update(['state' => CommonEnum::STATE_IS_FAIL], ['id' => $order->ticket->id]);
-                if (!$t_res) {
-                    Db::rollback();
-                    throw new SaveException(['msg' => '保存处理优惠券失败']);
-                }
-            }
-
             $order->state = OrderEnum::ORDER_COMPLETE;
-            $order->distance = $distance;
-            $order->distance_money = $distance_money;
-            $order->ticket_money = $ticket_money;
-            $order->wait_time = $wait_time;
-            $order->wait_money = $wait_money;
-            $order->weather_money = $weather_money;
-            $order->money = $money;
             $res = $order->save();
             if (!$res) {
                 Db::rollback();
@@ -941,10 +946,16 @@ class OrderService
     public function orderLocations($id)
     {
         $locations = LocationT::where('o_id', $id)
-            ->where('begin',CommonEnum::STATE_IS_OK)
+            ->where('begin', CommonEnum::STATE_IS_OK)
             ->field('lat,lng')
             ->select();
         return $locations;
+    }
+
+    public function current($page, $size)
+    {
+        $orders = OrderT::currentOrders($page, $size);
+        return $orders;
     }
 
 

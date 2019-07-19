@@ -90,6 +90,7 @@ Route::post('api/:version/order/arriving', 'api/:version.Order/orderArriving');
 Route::get('api/:version/orders/mini', 'api/:version.Order/miniOrders');
 Route::get('api/:version/orders/driver', 'api/:version.Order/driverOrders');
 Route::get('api/:version/orders/manager', 'api/:version.Order/managerOrders');
+Route::get('api/:version/orders/current', 'api/:version.Order/current');
 Route::get('api/:version/order/info', 'api/:version.Order/orderInfo');
 Route::get('api/:version/order/mini', 'api/:version.Order/miniOrder');
 Route::get('api/:version/order/end', 'api/:version.Order/driverOrderWithEnd');

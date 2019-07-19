@@ -325,7 +325,8 @@ class Order extends BaseController
      *       "phone":"18956225230",
      *       "name":"詹先生",
      *       "d_id":1,
-     *       "type":1
+     *       "type":1,
+     *       "money":1000,
      *     }
      * @apiParam (请求参数说明) {String} start  出发地
      * @apiParam (请求参数说明) {String} start_lat  出发地纬度
@@ -337,6 +338,7 @@ class Order extends BaseController
      * @apiParam (请求参数说明) {String} name  乘客姓名
      * @apiParam (请求参数说明) {int} d_id  司机id
      * @apiParam (请求参数说明) {int} type  订单金额类别：1|非固定金额订单；2|固定金额订单
+     * @apiParam (请求参数说明) {int} money 固定金额 非固定金额订单为0
      * @apiSuccessExample {json} 返回样例:
      *{"id":1,"errorCode":0,"data":{"id":1}}
      * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误
@@ -571,5 +573,42 @@ class Order extends BaseController
         $id = $this->request->param('id');
         $locations = (new OrderService())->orderLocations($id);
         return json(new SuccessMessageWithData(['data' => $locations]));
+    }
+
+    /**
+     * @api {GET} /api/v1/orders/current Android管理端-获取实时订单列表
+     * @apiGroup  Android
+     * @apiVersion 1.0.1
+     * @apiDescription    Android管理端-获取实时订单列表
+     * @apiExample {get}  请求样例:
+     * https://tonglingok.com/api/v1/orders/current?page=1&size=10
+     * @apiParam (请求参数说明) {int} page 当前页码
+     * @apiParam (请求参数说明) {int} size 每页多少条数据
+     * @apiSuccessExample {json} 返回样例:
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"total":2,"per_page":10,"current_page":1,"last_page":1,"data":[{"id":7,"d_id":1,"superior_id":2,"superior":null,"transfer":2,"from":"小程序下单","state":1,"start":"安徽省铜陵市铜官区谢垅路","end":"东山苑小区","name":"先生\/女士","create_time":"2019-07-17 16:12:08","driver":{"id":1,"username":"朱明良"}},{"id":4,"d_id":0,"superior_id":0,"superior":null,"transfer":2,"from":"小程序下单","state":1,"start":"广东省江门市蓬江区建设二路18号","end":"新会万达广场","name":"先生\/女士","create_time":"2019-07-17 02:43:56","driver":null}]}}
+     * @apiSuccess (返回参数说明) {Obj} orders 订单列表
+     * @apiSuccess (返回参数说明) {int} total 数据总数
+     * @apiSuccess (返回参数说明) {int} per_page 每页多少条数据
+     * @apiSuccess (返回参数说明) {int} current_page 当前页码
+     * @apiSuccess (返回参数说明) {int} last_page 最后页码
+     * @apiSuccess (返回参数说明) {int} id 订单id
+     * @apiSuccess (返回参数说明) {int} d_id 司机ID
+     * @apiSuccess (返回参数说明) {int} transfer 是否为转单订单：1|是；2|否
+     * @apiSuccess (返回参数说明) {Obj} superior 转单上级信息
+     * @apiSuccess (返回参数说明) {String} superior-username 上级司机姓名
+     * @apiSuccess (返回参数说明) {Obj} driver接单司机信息
+     * @apiSuccess (返回参数说明) {String} driver-username 司机姓名
+     * @apiSuccess (返回参数说明) {String} start 出发点
+     * @apiSuccess (返回参数说明) {String} end 目的地
+     * @apiSuccess (返回参数说明) {String} name 乘客姓名
+     * @apiSuccess (返回参数说明) {String} from 下单来源
+     * @apiSuccess (返回参数说明) {String}  create_time 创建时间
+     * @apiSuccess (返回参数说明) {int} state 订单状态：1|未派单；2|派单未接单
+     */
+    public function current($page = 1, $size = 10)
+    {
+        $orders = (new OrderService())->current($page, $size);
+        return json(new SuccessMessageWithData(['data' => $orders]));
+
     }
 }
