@@ -205,8 +205,8 @@ class DriverService
         if (!$order) {
             throw new ParameterException(['msg' => '订单不存在']);
         }
-        $start_lng = $order->lng;
-        $start_lat = $order->lat;
+        $start_lng = $order->start_lng;
+        $start_lat = $order->start_lat;
 
         $list = $this->redis->rawCommand('georadius',
             'drivers_tongling', $start_lng, $start_lat, 100000, 'km', 'WITHDIST');
