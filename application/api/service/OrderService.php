@@ -21,6 +21,7 @@ use app\api\model\WaitPriceT;
 use app\api\model\WeatherT;
 use app\lib\enum\CommonEnum;
 use app\lib\enum\OrderEnum;
+use app\lib\enum\TicketEnum;
 use app\lib\exception\SaveException;
 use app\lib\exception\UpdateException;
 use think\Db;
@@ -48,6 +49,9 @@ class OrderService
             $params['far_money'] = $far['far_money'];
             $order = $this->saveOrder($params);
             $this->saveOrderList($order->id, OrderEnum::ORDER_LIST_NO);
+            if (key_exists('t_id', $params) && $params['t_id']) {
+                (new TicketService())->prefixTicketHandel($params['t_id'], TicketEnum::STATE_ING);
+            }
             return $order->id;
         } catch (Exception $e) {
             LogT::create(['msg' => 'save_order_mini:' . $e->getMessage()]);
@@ -65,7 +69,7 @@ class OrderService
                 throw  new SaveException(['msg' => '创建订单失败,已有未完成的订单']);
             }
             if (key_exists('phone', $params) && strlen($params['phone'])) {
-                $params['u_id'] = (new UserInfo('', ''))->checkUserByPhone($params['phone'], $params['name'], 3,Token::getCurrentTokenVar('username'));
+                $params['u_id'] = (new UserInfo('', ''))->checkUserByPhone($params['phone'], $params['name'], 3, Token::getCurrentTokenVar('username'));
             }
             if (key_exists('name', $params) && !strlen($params['name'])) {
                 $params['name'] = '先生/女士';
@@ -100,7 +104,7 @@ class OrderService
                 throw new SaveException(['msg' => '该司机已有订单，不能重复接单']);
             }
             if (key_exists('phone', $params) && strlen($params['phone'])) {
-                $params['u_id'] = (new UserInfo('', ''))->checkUserByPhone($params['phone'], $params['name'], 4,"管理员");
+                $params['u_id'] = (new UserInfo('', ''))->checkUserByPhone($params['phone'], $params['name'], 4, "管理员");
             }
             if (key_exists('name', $params) && !strlen($params['name'])) {
                 $params['name'] = '先生/女士';
@@ -354,6 +358,7 @@ class OrderService
         return $order;
     }
 
+
     private function saveOrderList($o_id, $state)
     {
         $data = [
@@ -430,6 +435,12 @@ class OrderService
         $order->cancel_remark = $params['remark'];
         $order->cancel_type = $grade;
         $res = $order->save();
+        if (!$res) {
+            throw new UpdateException();
+        }
+        if ($order->t_id) {
+            (new TicketService())->prefixTicketHandel($order->t_id, TicketEnum::STATE_NO);
+        }
         if ($grade == 'manager') {
             //管理员撤单时已经回滚司机和订单状态
             return true;
@@ -442,9 +453,7 @@ class OrderService
         OrderListT::update(['state' => OrderEnum::ORDER_LIST_CANCEL],
             ['o_id' => $params['id']]);
 
-        if (!$res) {
-            throw new UpdateException();
-        }
+
     }
 
     public function orderBegin($params)
@@ -540,11 +549,11 @@ class OrderService
                 $money = $distance_money + $wait_money + $weather_money + $order->far_money;
 
                 $ticket_money = 0;
-                if ($order->ticket) {
+                if ($order->t_id) {
                     $ticket_money = $order->ticket->money;
                     $money -= $ticket_money;
                     //处理优惠券
-                    $t_res = TicketT::update(['state' => CommonEnum::STATE_IS_FAIL], ['id' => $order->ticket->id]);
+                    $t_res = (new TicketService())->prefixTicketHandel($order->t_id, TicketEnum::STATE_USED);;
                     if (!$t_res) {
                         Db::rollback();
                         throw new SaveException(['msg' => '保存处理优惠券失败']);
