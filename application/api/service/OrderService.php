@@ -12,6 +12,7 @@ use app\api\model\OrderListT;
 use app\api\model\OrderMoneyT;
 use app\api\model\OrderPushT;
 use app\api\model\OrderT;
+use app\api\model\OrderV;
 use app\api\model\StartPriceT;
 use app\api\model\SystemOrderChargeT;
 use app\api\model\TicketT;
@@ -885,7 +886,7 @@ class OrderService
 
     public function managerOrders($page, $size, $driver, $time_begin, $time_end)
     {
-        $orders = OrderT::managerOrders($page, $size, $driver, $time_begin, $time_end);
+        $orders = OrderV::managerOrders($page, $size, $driver, $time_begin, $time_end);
         $orders['data'] = $this->prefixTransferInfo($orders['data']);
         $orders['statistic'] = $this->getManagerOrdersStatistic($driver, $time_begin, $time_end);
         return $orders;
@@ -907,10 +908,10 @@ class OrderService
 
     private function getManagerOrdersStatistic($driver, $time_begin, $time_end)
     {
-        $ordersMoney = OrderT::ordersMoney($driver, $time_begin, $time_end);
+        $ordersMoney = OrderV::ordersMoney($driver, $time_begin, $time_end);
         return [
-            'members' => OrderT::members($driver, $time_begin, $time_end),
-            'orders_count' => OrderT::orderCount($driver, $time_begin, $time_end),
+            'members' => OrderV::members($driver, $time_begin, $time_end),
+            'orders_count' => OrderV::orderCount($driver, $time_begin, $time_end),
             'all_money' => $ordersMoney['all_money'],
             'ticket_money' => $ordersMoney['ticket_money'],
         ];
@@ -996,6 +997,24 @@ class OrderService
             $push->state = OrderEnum::ORDER_PUSH_WITHDRAW;
             $push->save();
         }
+
+
+    }
+
+    public function CMSManagerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from)
+    {
+        $orders = OrderV::CMSManagerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from);
+        $orders['statistic'] = $this->getManagerOrdersStatistic($driver, $time_begin, $time_end);
+        return $orders;
+
+
+    }
+
+    public function CMSInsuranceOrders($page, $size, $time_begin, $time_end)
+    {
+        $orders = OrderV::CMSInsuranceOrders($page, $size, $time_begin, $time_end);
+        $orders['statistic'] = OrderV::orderCount('', $time_begin, $time_end);
+        return $orders;
 
 
     }

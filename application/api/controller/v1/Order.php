@@ -634,4 +634,82 @@ class Order extends BaseController
         (new OrderService())->withdraw($id);
         return json(new SuccessMessage());
     }
+
+    /**
+     * @api {GET} /api/v1/orders/manager/cms CMS管理端-获取订单列表
+     * @apiGroup  CMS
+     * @apiVersion 1.0.1
+     * @apiDescription   CMS管理端-获取订单列表
+     * @apiExample {get}  请求样例:
+     * https://tonglingok.com/api/v1/orders/manager/cms?page=1&size=10&driver=''&time_begin=''&time_end=''&order_state=1&order_from=1
+     * @apiParam (请求参数说明) {int} page 当前页码
+     * @apiParam (请求参数说明) {int} size 每页多少条数据
+     * @apiParam (请求参数说明) {int} driver 司机名称
+     * @apiParam (请求参数说明) {int} time_begin 查询开始时间
+     * @apiParam (请求参数说明) {int} time_end 查询结束时间
+     * @apiParam (请求参数说明) {int} order_state 订单状态：1|未接单；2|已接单；4|完成；5|已经撤销；6|全部
+     * @apiParam (请求参数说明) {int} order_from 订单来源：1|小程序下单；2|司机自主建单;3|管理员自主建单；4|公众号下单；5|全部
+     * @apiSuccessExample {json} 返回样例:
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"total":8,"per_page":10,"current_page":1,"last_page":1,"data":[{"id":8,"d_id":1,"from":"小程序下单","driver":"朱明良","money":0,"state":5,"create_time":"2019-07-17 20:15:01","name":"先生\/女士","phone":"18956225230"},{"id":7,"d_id":1,"from":"小程序下单","driver":"朱明良","money":0,"state":1,"create_time":"2019-07-17 16:12:08","name":"先生\/女士","phone":"1"},{"id":6,"d_id":1,"from":"小程序下单","driver":"朱明良","money":0,"state":5,"create_time":"2019-07-17 16:08:39","name":"先生\/女士","phone":"18956225230"},{"id":5,"d_id":1,"from":"小程序下单","driver":"朱明良","money":0,"state":5,"create_time":"2019-07-17 15:45:57","name":"先生\/女士","phone":"18956225230"},{"id":4,"d_id":0,"from":"小程序下单","driver":null,"money":0,"state":1,"create_time":"2019-07-17 02:43:56","name":"先生\/女士","phone":"134"},{"id":3,"d_id":0,"from":"小程序下单","driver":null,"money":0,"state":5,"create_time":"2019-07-14 23:41:49","name":"","phone":"134"},{"id":2,"d_id":0,"from":"小程序下单","driver":null,"money":80,"state":4,"create_time":"2019-07-14 23:37:23","name":"","phone":"134"},{"id":1,"d_id":1,"from":"小程序下单","driver":"朱明良","money":136,"state":4,"create_time":"2019-07-11 01:30:00","name":"","phone":""}],"statistic":{"members":2,"orders_count":2,"all_money":224,"ticket_money":8}}}
+     * @apiSuccess (返回参数说明) {Obj} orders 订单列表
+     * @apiSuccess (返回参数说明) {int} total 数据总数
+     * @apiSuccess (返回参数说明) {int} per_page 每页多少条数据
+     * @apiSuccess (返回参数说明) {int} current_page 当前页码
+     * @apiSuccess (返回参数说明) {int} last_page 最后页码
+     * @apiSuccess (返回参数说明) {int} id 订单id
+     * @apiSuccess (返回参数说明) {int} d_id 司机ID
+     * @apiSuccess (返回参数说明) {String} driver 司机名称
+     * @apiSuccess (返回参数说明) {String} name 乘客姓名
+     * @apiSuccess (返回参数说明) {String} phone 乘客手机号
+     * @apiSuccess (返回参数说明) {Float} money 订单金额
+     * @apiSuccess (返回参数说明) {String} from 下单来源
+     * @apiSuccess (返回参数说明) {String}  create_time 创建时间
+     * @apiSuccess (返回参数说明) {int} state 订单状态：1|未接单；2|已接单；4|完成；5|已经撤销
+     * @apiSuccess (返回参数说明) {Obj} statistic 统计信息
+     * @apiSuccess (返回参数说明) {int} statistic-members 代驾人数
+     * @apiSuccess (返回参数说明) {int} statistic-orders_count 订单数
+     * @apiSuccess (返回参数说明) {Float} statistic-all_money 订单总金额
+     * @apiSuccess (返回参数说明) {Float} statistic-ticket_money 使用优惠券总金额
+     */
+    public function CMSManagerOrders($page = 1, $size = 10, $driver = '', $time_begin = '', $time_end = '', $order_state = 6, $order_from = 5)
+    {
+        $data = (new OrderService())->CMSManagerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from);
+        return json(new SuccessMessageWithData(['data' => $data]));
+    }
+
+    /**
+     * @api {GET} /api/v1/orders/insurance/cms CMS管理端-保险公司-获取订单列表
+     * @apiGroup  CMS
+     * @apiVersion 1.0.1
+     * @apiDescription  CMS管理端-保险公司-获取订单列表
+     * @apiExample {get}  请求样例:
+     * https://tonglingok.com/api/v1/orders/insurance/cms?page=1&size=10&time_begin=''&time_end=''
+     * @apiParam (请求参数说明) {int} page 当前页码
+     * @apiParam (请求参数说明) {int} size 每页多少条数据
+     * @apiParam (请求参数说明) {int} driver 司机名称
+     * @apiParam (请求参数说明) {int} time_begin 查询开始时间
+     * @apiParam (请求参数说明) {int} time_end 查询结束时间
+     * @apiSuccessExample {json} 返回样例:
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"total":2,"per_page":10,"current_page":1,"last_page":1,"data":[{"id":2,"d_id":0,"from":"小程序下单","driver":null,"money":80,"state":4,"create_time":"2019-07-14 23:37:23","name":""},{"id":1,"d_id":1,"from":"小程序下单","driver":"朱明良","money":136,"state":4,"create_time":"2019-07-11 01:30:00","name":""}],"statistic":2}}
+     * @apiSuccess (返回参数说明) {Obj} orders 订单列表
+     * @apiSuccess (返回参数说明) {int} total 数据总数
+     * @apiSuccess (返回参数说明) {int} per_page 每页多少条数据
+     * @apiSuccess (返回参数说明) {int} current_page 当前页码
+     * @apiSuccess (返回参数说明) {int} last_page 最后页码
+     * @apiSuccess (返回参数说明) {int} id 订单id
+     * @apiSuccess (返回参数说明) {int} d_id 司机ID
+     * @apiSuccess (返回参数说明) {String} driver 司机名称
+     * @apiSuccess (返回参数说明) {String} name 乘客姓名
+     * @apiSuccess (返回参数说明) {Float} money 订单金额
+     * @apiSuccess (返回参数说明) {String} from 下单来源
+     * @apiSuccess (返回参数说明) {String}  create_time 创建时间
+     * @apiSuccess (返回参数说明) {int} state 订单状态：1|未接单；2|已接单；4|完成；5|已经撤销
+     * @apiSuccess (返回参数说明) {int} statistic 订单数
+     */
+    public function CMSInsuranceOrders($page = 1, $size = 10, $time_begin = '', $time_end = '')
+    {
+        $data = (new OrderService())->CMSInsuranceOrders($page, $size, $time_begin, $time_end);
+        return json(new SuccessMessageWithData(['data' => $data]));
+    }
+
 }

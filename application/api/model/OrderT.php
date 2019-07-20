@@ -78,66 +78,10 @@ class OrderT extends Model
         return $list;
     }
 
-    public static function managerOrders($page, $size, $driver, $time_begin, $time_end)
-    {
-        $list = self::whereIn('state', '4,5')
-            ->where(function ($query) use ($driver) {
-                if (strlen($driver)) {
-                    $query->where('username', 'like', '%' . $driver . '%');
-                }
-            })
-            ->where(function ($query) use ($time_begin, $time_end) {
-                if (strlen($time_begin) && strlen($time_end)) {
-                    $query->whereBetweenTime('create_time', $time_begin, $time_end);
-                }
-            })
-            ->field('id,d_id,superior_id,null as superior,2 as transfer ,from,state,start,end,name,money,cancel_type,cancel_remark,create_time')
-            ->order('create_time desc')
-            ->paginate($size, false, ['page' => $page])->toArray();
-        return $list;
-    }
 
 
-    public static function members($driver, $time_begin, $time_end)
-    {
-        $members = $list = self::where('state', OrderEnum::ORDER_COMPLETE)
-            ->where(function ($query) use ($driver) {
-                if (strlen($driver)) {
-                    $query->where('username', 'like', '%' . $driver . '%');
-                }
-            })
-            ->where(function ($query) use ($time_begin, $time_end) {
-                if (strlen($time_begin) && strlen($time_end)) {
-                    $query->whereBetweenTime('create_time', $time_begin, $time_end);
-                }
-            })
-            ->group('phone')
-            ->count('phone');
-
-        return $members;
 
 
-    }
-
-    public static function orderCount($driver, $time_begin, $time_end)
-    {
-        $counts = $list = self::where('state', OrderEnum::ORDER_COMPLETE)
-            ->where(function ($query) use ($driver) {
-                if (strlen($driver)) {
-                    $query->where('username', 'like', '%' . $driver . '%');
-                }
-            })
-            ->where(function ($query) use ($time_begin, $time_end) {
-                if (strlen($time_begin) && strlen($time_end)) {
-                    $query->whereBetweenTime('create_time', $time_begin, $time_end);
-                }
-            })
-            ->count('phone');
-
-        return $counts;
-
-
-    }
 
     public static function driverOrderCount($d_id, $time_begin, $time_end)
     {
@@ -155,25 +99,7 @@ class OrderT extends Model
 
     }
 
-    public static function ordersMoney($driver, $time_begin, $time_end)
-    {
-        $money = $list = self::where('state', OrderEnum::ORDER_COMPLETE)
-            ->where(function ($query) use ($driver) {
-                if (strlen($driver)) {
-                    $query->where('username', 'like', '%' . $driver . '%');
-                }
-            })
-            ->where(function ($query) use ($time_begin, $time_end) {
-                if (strlen($time_begin) && strlen($time_end)) {
-                    $query->whereBetweenTime('create_time', $time_begin, $time_end);
-                }
-            })
-            ->field('sum(money+ticket_money) as all_money,sum(ticket_money) as ticket_money ')
-            ->find();
 
-        return $money;
-
-    }
 
     public static function driverOrdersMoney($d_id, $time_begin, $time_end)
     {
@@ -224,7 +150,7 @@ class OrderT extends Model
     public static function currentOrders($page, $size)
     {
         $list = self::whereIn('state', OrderEnum::ORDER_NO . "," . OrderEnum::ORDER_ING)
-            ->with(['driver'=>function ($query) {
+            ->with(['driver' => function ($query) {
                 $query->field('id,username');
             }])
             ->field('id,d_id,superior_id,null as superior,2 as transfer ,from,state,start,end,begin,name,create_time')

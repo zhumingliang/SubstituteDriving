@@ -91,6 +91,8 @@ Route::post('api/:version/order/arriving', 'api/:version.Order/orderArriving');
 Route::get('api/:version/orders/mini', 'api/:version.Order/miniOrders');
 Route::get('api/:version/orders/driver', 'api/:version.Order/driverOrders');
 Route::get('api/:version/orders/manager', 'api/:version.Order/managerOrders');
+Route::get('api/:version/orders/manager/cms', 'api/:version.Order/CMSManagerOrders');
+Route::get('api/:version/orders/insurance/cms', 'api/:version.Order/CMSInsuranceOrders');
 Route::get('api/:version/orders/current', 'api/:version.Order/current');
 Route::get('api/:version/order/info', 'api/:version.Order/orderInfo');
 Route::get('api/:version/order/mini', 'api/:version.Order/miniOrder');
