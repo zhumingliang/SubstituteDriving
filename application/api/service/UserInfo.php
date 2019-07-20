@@ -10,6 +10,7 @@ namespace app\api\service;
 
 
 use app\api\model\UserT;
+use app\api\model\UserV;
 use app\lib\exception\TokenException;
 use app\lib\exception\UpdateException;
 use app\lib\exception\UserInfoException;
@@ -17,7 +18,6 @@ use app\lib\exception\WeChatException;
 use think\facade\Cache;
 use think\facade\Request;
 use app\api\model\UserT as UserModel;
-use think\facade\Session;
 use zml\tp_tools\Redis;
 
 class UserInfo
@@ -106,6 +106,7 @@ class UserInfo
         $save_res = UserModel::where('id', '=', $this->user_id)
             ->update([
                 'nickName' => $user_info['nickName'],
+                'parent_name' => $user_info['nickName'],
                 'avatarUrl' => $user_info['avatarUrl'],
                 'gender' => $user_info['gender'],
                 'province' => $user_info['province'],
@@ -178,6 +179,25 @@ class UserInfo
         }
         return $user->id;
     }
+
+    public function checkUserByPhone($phone, $username, $source, $name)
+    {
+        $user = UserT::where('phone', $phone)
+            ->find();
+        if (!$user) {
+            $user = UserT::create([
+                'phone' => $phone,
+                'username' => $username,
+                'parent_name' => $name,
+                'nickName' => $username,
+                'source' => $source
+            ]);
+        }
+
+        return $user->id;
+
+    }
+
 
 
 }

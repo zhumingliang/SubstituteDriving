@@ -34,15 +34,6 @@ class UserToken extends Token
     }
 
 
-    /**
-     * @return array
-     * @throws TokenException
-     * @throws WeChatException
-     * @throws \app\lib\exception\RedException
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     */
     public function get()
     {
         $result = Curl::get($this->wxLoginUrl);
@@ -80,7 +71,7 @@ class UserToken extends Token
 
         if (!$user) {
             $u_id = $this->newUser($openid);
-              TicketService::userTicketSave(TicketEnum::MINI_FIRST_LOGIN, $u_id);
+            TicketService::userTicketSave(TicketEnum::MINI_FIRST_LOGIN, $u_id);
         } else {
             $u_id = $user->id;
         }
@@ -167,7 +158,7 @@ class UserToken extends Token
         $cachedValue['gender'] = $user['gender'];
         $cachedValue['province'] = $user['province'];
         $cachedValue['nickName'] = $user['nickName'];
-      //  $cachedValue['name_sub'] = $user['name_sub'];
+        //  $cachedValue['name_sub'] = $user['name_sub'];
         $cachedValue['avatarUrl'] = $user['avatarUrl'];
         $cachedValue['type'] = 'mini';
         return $cachedValue;
@@ -180,7 +171,8 @@ class UserToken extends Token
     private function newUser($openid)
     {
         $data = [
-            'openId' => $openid
+            'openId' => $openid,
+            'source' => 1
         ];
         $user = UserT::create($data);
         return $user->id;

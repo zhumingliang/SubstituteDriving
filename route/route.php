@@ -21,6 +21,7 @@ Route::get('api/:version/token/login/out', 'api/:version.Token/loginOut');
 Route::post('api/:version/user/info', 'api/:version.User/userInfo');
 Route::post('api/:version/user/bindPhone', 'api/:version.User/bindPhone');
 Route::get('api/:version/user/login/out', 'api/:version.User/loginOut');
+Route::get('api/:version/users', 'api/:version.User/users');
 
 Route::post('api/:version/gateway/bind', 'api/:version.Gateway/bind');
 

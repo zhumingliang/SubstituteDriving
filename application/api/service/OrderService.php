@@ -65,7 +65,7 @@ class OrderService
                 throw  new SaveException(['msg' => '创建订单失败,已有未完成的订单']);
             }
             if (key_exists('phone', $params) && strlen($params['phone'])) {
-                $params['u_id'] = (new UserInfo('', ''))->getUserByPhone($params['phone']);
+                $params['u_id'] = (new UserInfo('', ''))->checkUserByPhone($params['phone'], $params['name'], 3,Token::getCurrentTokenVar('username'));
             }
             if (key_exists('name', $params) && !strlen($params['name'])) {
                 $params['name'] = '先生/女士';
@@ -100,7 +100,7 @@ class OrderService
                 throw new SaveException(['msg' => '该司机已有订单，不能重复接单']);
             }
             if (key_exists('phone', $params) && strlen($params['phone'])) {
-                $params['u_id'] = (new UserInfo('', ''))->getUserByPhone($params['phone']);
+                $params['u_id'] = (new UserInfo('', ''))->checkUserByPhone($params['phone'], $params['name'], 4,"管理员");
             }
             if (key_exists('name', $params) && !strlen($params['name'])) {
                 $params['name'] = '先生/女士';
