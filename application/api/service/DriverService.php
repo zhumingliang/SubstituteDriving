@@ -209,7 +209,7 @@ class DriverService
         $start_lat = $order->start_lat;
 
         $list = $this->redis->rawCommand('georadius',
-            'drivers_tongling', $start_lng, $start_lat, 100000, 'km', 'WITHDIST','WITHHCOORD');
+            'drivers_tongling', $start_lng, $start_lat, 100000, 'km', 'WITHDIST','WITHCOORD');
 
         $redis = new Redis();
         $driver_ids = $redis->sMembers('driver_order_no');
