@@ -227,7 +227,7 @@ class OrderT extends Model
             ->with(['driver'=>function ($query) {
                 $query->field('id,username');
             }])
-            ->field('id,d_id,superior_id,null as superior,2 as transfer ,from,state,start,end,name,create_time')
+            ->field('id,d_id,superior_id,null as superior,2 as transfer ,from,state,start,end,begin,name,create_time')
             ->order('create_time desc')
             ->paginate($size, false, ['page' => $page])->toArray();
         return $list;

@@ -353,7 +353,7 @@ class Order extends BaseController
     }
 
     /**
-     * @api {POST} /api/v1/order/transferOrder/driver  Android司机端-转单
+     * @api {POST} /api/v1/order/transfer  Android司机端/Android管理端-转单
      * @apiGroup   Android
      * @apiVersion 1.0.1
      * @apiDescription   Android司机端-转单
@@ -585,7 +585,7 @@ class Order extends BaseController
      * @apiParam (请求参数说明) {int} page 当前页码
      * @apiParam (请求参数说明) {int} size 每页多少条数据
      * @apiSuccessExample {json} 返回样例:
-     * {"msg":"ok","errorCode":0,"code":200,"data":{"total":2,"per_page":10,"current_page":1,"last_page":1,"data":[{"id":7,"d_id":1,"superior_id":2,"superior":null,"transfer":2,"from":"小程序下单","state":1,"start":"安徽省铜陵市铜官区谢垅路","end":"东山苑小区","name":"先生\/女士","create_time":"2019-07-17 16:12:08","driver":{"id":1,"username":"朱明良"}},{"id":4,"d_id":0,"superior_id":0,"superior":null,"transfer":2,"from":"小程序下单","state":1,"start":"广东省江门市蓬江区建设二路18号","end":"新会万达广场","name":"先生\/女士","create_time":"2019-07-17 02:43:56","driver":null}]}}
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"total":2,"per_page":10,"current_page":1,"last_page":1,"data":[{"id":7,"d_id":1,"superior_id":2,"superior":null,"transfer":2,"from":"小程序下单","state":1,"start":"安徽省铜陵市铜官区谢垅路","end":"东山苑小区","begin":2,"name":"先生\/女士","create_time":"2019-07-17 16:12:08","driver":{"id":1,"username":"朱明良"}},{"id":4,"d_id":0,"superior_id":0,"superior":null,"transfer":2,"from":"小程序下单","state":1,"start":"广东省江门市蓬江区建设二路18号","end":"新会万达广场","begin":2,"name":"先生\/女士","create_time":"2019-07-17 02:43:56","driver":null}]}}
      * @apiSuccess (返回参数说明) {Obj} orders 订单列表
      * @apiSuccess (返回参数说明) {int} total 数据总数
      * @apiSuccess (返回参数说明) {int} per_page 每页多少条数据
@@ -601,6 +601,7 @@ class Order extends BaseController
      * @apiSuccess (返回参数说明) {String} start 出发点
      * @apiSuccess (返回参数说明) {String} end 目的地
      * @apiSuccess (返回参数说明) {String} name 乘客姓名
+     * @apiSuccess (返回参数说明) {int} begin 是否开始出发：1|开始出发；2|未开始出发
      * @apiSuccess (返回参数说明) {String} from 下单来源
      * @apiSuccess (返回参数说明) {String}  create_time 创建时间
      * @apiSuccess (返回参数说明) {int} state 订单状态：1|未派单；2|派单未接单
@@ -610,5 +611,27 @@ class Order extends BaseController
         $orders = (new OrderService())->current($page, $size);
         return json(new SuccessMessageWithData(['data' => $orders]));
 
+    }
+
+    /**
+     * @api {POST} /api/v1/order/withdraw  Android管理端-撤回没有开始出发的订单（未接单/接单未出发）
+     * @apiGroup   Android
+     * @apiVersion 1.0.1
+     * @apiDescription   Android管理端-撤回没有开始出发的订单（未接单/接单未出发）
+     * @apiExample {post}  请求样例:
+     *    {
+     *       "id": 1
+     *     }
+     * @apiParam (请求参数说明) {int} id  订单id
+     * @apiSuccessExample {json} 返回样例:
+     *{"msg":"ok","errorCode":0}
+     * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误
+     * @apiSuccess (返回参数说明) {String} msg 信息描述
+     */
+    public function withdraw()
+    {
+        $id = $this->request->param('id');
+        (new OrderService())->withdraw($id);
+        return json(new SuccessMessage());
     }
 }

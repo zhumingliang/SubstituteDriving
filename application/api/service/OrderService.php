@@ -23,6 +23,7 @@ use app\lib\enum\OrderEnum;
 use app\lib\exception\SaveException;
 use app\lib\exception\UpdateException;
 use think\Db;
+use think\db\Where;
 use think\Exception;
 use zml\tp_tools\CalculateUtil;
 
@@ -423,10 +424,15 @@ class OrderService
             throw new UpdateException(['msg' => '订单已经开始，不能撤销']);
         }
 
+        $grade = Token::getCurrentTokenVar('type');
         $order->state = OrderEnum::ORDER_CANCEL;
         $order->cancel_remark = $params['remark'];
-        $order->cancel_type = Token::getCurrentTokenVar('type');
+        $order->cancel_type = $grade;
         $res = $order->save();
+        if ($grade == 'manager') {
+            //管理员撤单时已经回滚司机和订单状态
+            return true;
+        }
         //处理司机状态
         (new DriverService())->handelDriveStateByCancel($params['id']);
 
@@ -716,15 +722,20 @@ class OrderService
             throw new UpdateException(['msg' => '订单不存在']);
         }
         $grade = Token::getCurrentTokenVar('type');
-        if ($grade == 'driver') {
-            $field_id = $order->d_id;
+        if ($grade == 'manager') {
+            return $order;
         } else {
-            $field_id = $order->u_id;
+            if ($grade == 'driver') {
+                $field_id = $order->d_id;
+            } else {
+                $field_id = $order->u_id;
+            }
+            if (Token::getCurrentUid() != $field_id) {
+                throw new UpdateException(['msg' => '无权限操作此订单']);
+            }
+            return $order;
         }
-        if (Token::getCurrentUid() != $field_id) {
-            throw new UpdateException(['msg' => '无权限操作此订单']);
-        }
-        return $order;
+
     }
 
     public function transferOrder($params)
@@ -956,6 +967,37 @@ class OrderService
     {
         $orders = OrderT::currentOrders($page, $size);
         return $orders;
+    }
+
+    /**
+     * 撤回订单
+     */
+    public function withdraw($o_id)
+    {
+
+        $order = $this->getOrder($o_id);
+
+        //1.检测订单是否被接单
+        //2.修改司机状态
+        //3.修改订单状态
+        if ($order->begin == CommonEnum::STATE_IS_OK) {
+            throw new UpdateException(['msg' => '订单已开始出发，不能被撤回']);
+        }
+        if ($order->d_id) {
+            (new DriverService())->handelDriveStateByCancel($order->d_id);
+        }
+        //修改推送表状态
+        $push = OrderPushT::where('o_id', $o_id)
+            ->order('create_time desc')
+            ->find();
+        if ($push) {
+            //触发器修改订单状态
+            //将订单派送列表中订单状态改为撤销状态
+            $push->state = OrderEnum::ORDER_PUSH_WITHDRAW;
+            $push->save();
+        }
+
+
     }
 
 

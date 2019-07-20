@@ -85,6 +85,7 @@ Route::post('api/:version/order/list/handel', 'api/:version.Order/orderListHande
 Route::post('api/:version/order/push/handel', 'api/:version.Order/orderPushHandel');
 Route::post('api/:version/order/push/no/handel', 'api/:version.Order/handelDriverNoAnswer');
 Route::post('api/:version/order/cancel', 'api/:version.Order/orderCancel');
+Route::post('api/:version/order/withdraw', 'api/:version.Order/withdraw');
 Route::post('api/:version/order/begin', 'api/:version.Order/orderBegin');
 Route::post('api/:version/order/arriving', 'api/:version.Order/orderArriving');
 Route::get('api/:version/orders/mini', 'api/:version.Order/miniOrders');
@@ -97,6 +98,7 @@ Route::get('api/:version/order/end', 'api/:version.Order/driverOrderWithEnd');
 Route::get('api/:version/order/consumption/records', 'api/:version.Order/recordsOfConsumption');
 Route::get('api/:version/order/locations', 'api/:version.Order/orderLocations');
 Route::post('api/:version/order/driver/complete', 'api/:version.Order/orderComplete');
+Route::post('api/:version/order/transfer', 'api/:version.Order/transferOrder');
 
 
 Route::get('api/:version/messages', 'api/:version.Message/messages');

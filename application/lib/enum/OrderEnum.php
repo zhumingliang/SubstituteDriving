@@ -50,5 +50,7 @@ class OrderEnum
 
     const ORDER_PUSH_INVALID = 4;
 
+    const ORDER_PUSH_WITHDRAW = 5;
+
 
 }

@@ -140,7 +140,7 @@ class DriverService
         $this->redis->sAdd('driver_order_no', $d_id);
     }
 
-    public function acceptableOrder()
+    public function acceptableOrder($o_id)
     {
 
         $redis = new Redis();
@@ -151,6 +151,7 @@ class DriverService
 
         $d_ids = implode(',', $driver_ids);
         $drivers = DriverT::field('id,username')->whereIn('id', $d_ids)->select();
+
         return $drivers;
     }
 

@@ -140,12 +140,13 @@ class Driver extends BaseController
     }
 
     /**
-     * @api {GET} /api/v1/driver/acceptableOrder Android司机端/小程序端-获取当前接单司机列表
-     * @apiGroup  COMMON
+     * @api {GET} /api/v1/driver/acceptableOrder Android司机端/Android管理端-转单时获取当前可接单司机列表
+     * @apiGroup  Android
      * @apiVersion 1.0.1
-     * @apiDescription  Android司机端/小程序端-获取当前接单司机列表
+     * @apiDescription  Android司机端/Android管理端-转单时获取当前可接单司机列表
      * @apiExample {get}  请求样例:
-     * https://tonglingok.com/api/v1/driver/acceptableOrde
+     * https://tonglingok.com/api/v1/driver/acceptableOrder?id=1
+     * @apiParam (请求参数说明) {int} id 需转单订单id
      * @apiSuccessExample {json} 返回样例:
      * {"msg":"ok","errorCode":0,"code":200,"data":[{"id":1,"username":"朱明良"}]}
      * @apiSuccess (返回参数说明) {int} id 司机ID
@@ -153,7 +154,8 @@ class Driver extends BaseController
      */
     public function acceptableOrder()
     {
-        $drivers = (new DriverService())->acceptableOrder();
+        $o_id = $this->request->param('id');
+        $drivers = (new DriverService())->acceptableOrder($o_id);
         return json(new SuccessMessageWithData(['data' => $drivers]));
 
     }
