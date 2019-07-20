@@ -213,7 +213,7 @@ class DriverService
 
         $redis = new Redis();
         $driver_ids = $redis->sMembers('driver_order_no');
-        if (!$driver_ids) {
+        if (!$driver_ids||!count($list)) {
             return array();
         }
 
@@ -227,7 +227,7 @@ class DriverService
                     'distance' => $v[1],
                     'name' => $driver->username,
                     'phone' => $driver->phone,
-                    'location'=>$v[3]
+                    'location'=>$v[2]
                 ];
                 array_push($return_data, $data);
             }
