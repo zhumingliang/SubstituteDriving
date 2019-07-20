@@ -209,7 +209,7 @@ class DriverService
         $start_lat = $order->start_lat;
 
         $list = $this->redis->rawCommand('georadius',
-            'drivers_tongling', $start_lng, $start_lat, 100000, 'km', 'WITHDIST');
+            'drivers_tongling', $start_lng, $start_lat, 100000, 'km', 'WITHDIST','WITHHCOORD');
 
         $redis = new Redis();
         $driver_ids = $redis->sMembers('driver_order_no');
@@ -225,7 +225,9 @@ class DriverService
                 $data = [
                     'id' => $d_id,
                     'distance' => $v[1],
-                    'name' => $driver->username
+                    'name' => $driver->username,
+                    'phone' => $driver->phone,
+                    'location'=>$v[3]
                 ];
                 array_push($return_data, $data);
             }
