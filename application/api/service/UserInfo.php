@@ -32,7 +32,7 @@ class UserInfo
         $this->iv = $iv;
         $this->encryptedData = $encryptedData;
         $this->wxAppID = config('wx.app_id');
-        $this->user_id = 1;//Token::getCurrentUid();
+        $this->user_id = Token::getCurrentUid();
     }
 
 
@@ -110,8 +110,7 @@ class UserInfo
                 'gender' => $user_info['gender'],
                 'province' => $user_info['province'],
                 'city' => $user_info['city'],
-                'country' => $user_info['country'],
-                'update_time' => date("Y-m-d H:i:s", time()),
+                'country' => $user_info['country']
             ]);
         if (!$save_res) {
             throw new UpdateException(['msg' => '更新用户信息失败']);
