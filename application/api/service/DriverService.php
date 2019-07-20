@@ -13,6 +13,7 @@ use app\lib\enum\CommonEnum;
 use app\lib\enum\DriverEnum;
 use app\lib\enum\OrderEnum;
 use app\lib\exception\AuthException;
+use app\lib\exception\ParameterException;
 use app\lib\exception\SaveException;
 use app\lib\exception\UpdateException;
 use GatewayClient\Gateway;
@@ -200,16 +201,40 @@ class DriverService
     public function acceptableOrder($o_id)
     {
 
+        $order = OrderT::get($o_id);
+        if (!$order) {
+            throw new ParameterException(['msg' => '订单不存在']);
+        }
+        $start_lng = $order->lng;
+        $start_lat = $order->lat;
+
+        $list = $this->redis->rawCommand('georadius',
+            'drivers_tongling', $start_lng, $start_lat, 100000, 'km', 'WITHDIST');
+
         $redis = new Redis();
         $driver_ids = $redis->sMembers('driver_order_no');
         if (!$driver_ids) {
             return array();
         }
 
-        $d_ids = implode(',', $driver_ids);
-        $drivers = DriverT::field('id,username')->whereIn('id', $d_ids)->select();
+        $return_data = [];
+        foreach ($list as $k => $v) {
+            $d_id = $v[0];
+            if (in_array($d_id, $driver_ids)) {
+                $driver = DriverT::get($d_id);
+                $data = [
+                    'id' => $d_id,
+                    'distance' => $v[1],
+                    'name' => $driver->username
+                ];
+                array_push($return_data, $data);
+            }
+        }
 
-        return $drivers;
+        /* $d_ids = implode(',', $driver_ids);
+         $drivers = DriverT::field('id,username')->whereIn('id', $d_ids)->select();*/
+
+        return $return_data;
     }
 
     /**
