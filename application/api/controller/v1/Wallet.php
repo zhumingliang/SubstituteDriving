@@ -38,10 +38,10 @@ class Wallet extends BaseController
     }
 
     /**
-     * @api {GET} /api/v1/recharges Android管理端-余额充值-司机充值列表
-     * @apiGroup  Android
+     * @api {GET} /api/v1/recharges Android管理端/CMS管理端-余额充值-司机充值列表
+     * @apiGroup  COMMON
      * @apiVersion 1.0.1
-     * @apiDescription
+     * @apiDescription Android管理端/CMS管理端-余额充值-司机充值列表
      * @apiExample {get}  请求样例:
      * https://tonglingok.com/api/v1/recharges?page=1&size=10
      * @apiParam (请求参数说明) {int} page 当前页码

@@ -5,6 +5,8 @@ namespace app\api\service;
 
 
 use app\api\model\DriverT;
+use app\api\model\OnlineRecordT;
+use app\api\model\OnlineRecordV;
 use app\api\model\OrderT;
 use app\api\model\WalletRecordV;
 use app\lib\enum\CommonEnum;
@@ -14,6 +16,9 @@ use app\lib\exception\AuthException;
 use app\lib\exception\SaveException;
 use app\lib\exception\UpdateException;
 use GatewayClient\Gateway;
+use think\console\command\make\Model;
+use think\Db;
+use think\Exception;
 use zml\tp_tools\Redis;
 
 class DriverService
@@ -49,17 +54,43 @@ class DriverService
 
     public function online($params)
     {
-        $type = Token::getCurrentTokenVar('type');
-        if ($type !== "driver") {
-            throw new AuthException();
-        }
-        $id = Token::getCurrentUid();
-        $this->prefixDriverState($params['online'], $id);
-        $res = DriverT::update(['online' => $params['online']], ['id' => $id]);
-        if (!$res) {
-            throw new UpdateException();
-        }
+        try {
 
+            Db::startTrans();
+            $type = Token::getCurrentTokenVar('type');
+            if ($type !== "driver") {
+                throw new AuthException();
+            }
+            $id = Token::getCurrentUid();
+            $driver = DriverT::get($id);
+            if ($driver->online == $params['online']) {
+                Db::commit();
+                return true;
+            }
+            $online_begin = $driver->last_online_time;
+            $driver->online = $params['online'];
+            if ($params['online'] == DriverEnum::ONLINE) {
+                $driver->last_online_time = date('Y-m-d H:i:s');
+            } else {
+                $driver->online_time = $driver->online_time + (time() - strtotime($online_begin));
+                if (!$this->saveOnlineRecord($id, $online_begin, date('Y-m-d H:i:s'))) {
+                    Db::rollback();
+                    throw new UpdateException();
+                }
+            }
+
+            $res = $driver->save();
+            if (!$res) {
+                Db::rollback();
+                throw new UpdateException();
+            }
+
+            $this->prefixDriverState($params['online'], $id);
+            Db::commit();
+        } catch (Exception $e) {
+            Db::rollback();
+            throw $e;
+        }
     }
 
     public function checkNoCompleteOrder($id)
@@ -71,20 +102,46 @@ class DriverService
 
     }
 
+    private function saveOnlineRecord($d_id, $online_begin, $online_end)
+    {
+        $money = OrderT::where('d_id', $d_id)
+            ->whereBetweenTime('create_time', $online_begin, $online_end)
+            ->where('state', OrderEnum::ORDER_COMPLETE)
+            ->sum('money');
+        $count = OrderT::where('d_id', $d_id)
+            ->whereBetweenTime('create_time', $online_begin, $online_end)
+            ->where('state', OrderEnum::ORDER_COMPLETE)
+            ->count('id');
+
+        $data = [
+            'd_id' => $d_id,
+            'state' => CommonEnum::STATE_IS_OK,
+            'online_begin' => $online_begin,
+            'online_end' => $online_end,
+            'money' => $money,
+            'count' => $count
+        ];
+        return OnlineRecordT::create($data);
+
+    }
+
+
     private function prefixDriverState($line_type, $d_id)
     {
         //处理司机状态
         //1.上线-添加进入未接单
         //2.下线-需要检测当前时候否有进行中的订单；清除接单三大状态
         if ($line_type == DriverEnum::ONLINE) {
+            $this->redis->sRem('driver_order_ing', $d_id);
+            $this->redis->sRem('driver_order_receive', $d_id);
             $this->redis->sAdd('driver_order_no', $d_id);
+
         } else {
             if ($this->checkNoCompleteOrder($d_id)) {
                 throw new UpdateException(['您还有订单进行中，不能下线']);
             }
-
-            $this->redis->sRem('driver_order_ing', $d_id);
             $this->redis->sRem('driver_order_no', $d_id);
+            $this->redis->sRem('driver_order_ing', $d_id);
             $this->redis->sRem('driver_order_receive', $d_id);
         }
 
@@ -236,5 +293,10 @@ class DriverService
         return $this->redis->sMembers('driver_order_no');
     }
 
+    public function onlineRecord($page, $size, $time_begin, $time_end, $online, $driver, $account)
+    {
+        $list = OnlineRecordV::records($page, $size, $time_begin, $time_end, $online, $driver, $account);
+        return $list;
+    }
 
 }

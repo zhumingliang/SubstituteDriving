@@ -160,7 +160,6 @@ class Driver extends BaseController
 
     }
 
-
     /**
      * @api {GET} /api/v1/drivers/nearby  Android司机端/Android管理端-获取附近司机列表
      * @apiGroup  Android
@@ -182,6 +181,43 @@ class Driver extends BaseController
         $drivers = (new DriverService())->nearbyDrivers();
         return json(new SuccessMessageWithData(['data' => $drivers]));
 
+    }
+
+    /**
+     * @api {GET} /api/v1/driver/online/records CMS管理端-获取司机在线统计列表
+     * @apiGroup  CMS
+     * @apiVersion 1.0.1
+     * @apiDescription CMS管理端-获取司机在线统计列表
+     * @apiExample {get}  请求样例:
+     * https://tonglingok.com/api/v1/driver/online/records?time_begin=2019-06-28&time_end=2019-06-29&page=1&size=10&online=1&account="a"&driver="占三"
+     * @apiParam (请求参数说明) {int} page 当前页码
+     * @apiParam (请求参数说明) {int} size 每页多少条数据
+     * @apiParam (请求参数说明) {String} time_begin 查询开始时间
+     * @apiParam (请求参数说明) {String} time_end 查询开始时间
+     * @apiParam (请求参数说明) {String} online 启用状态：1 | 在线；2 | 下线;3 | 不限制
+     * @apiParam (请求参数说明) {String} username  司机名称
+     * @apiParam (请求参数说明) {String} account 账号
+     * @apiSuccessExample {json} 返回样例:
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"total":2,"per_page":10,"current_page":1,"last_page":1,"data":[{"id":2,"account":"18956225230","username":"朱明良","phone":"18956225230","count":0,"money":0,"online_time":4,"online":2,"last_online_time":"2019-07-20 15:52:17","create_time":"2019-07-20 15:52:21"},{"id":1,"account":"18956225230","username":"朱明良","phone":"18956225230","count":0,"money":0,"online_time":3372,"online":2,"last_online_time":"2019-07-20 15:52:17","create_time":"2019-07-20 15:50:42"}]}}
+     * @apiSuccess (返回参数说明) {int} total 数据总数
+     * @apiSuccess (返回参数说明) {int} per_page 每页多少条数据
+     * @apiSuccess (返回参数说明) {int} current_page 当前页码
+     * @apiSuccess (返回参数说明) {int} last_page 最后页码
+     * @apiSuccess (返回参数说明) {int} id 记录id
+     * @apiSuccess (返回参数说明) {String} account 司机账号
+     * @apiSuccess (返回参数说明) {String} username  司机名称
+     * @apiSuccess (返回参数说明) {String} phone司机手机号
+     * @apiSuccess (返回参数说明) {int} count 任务数
+     * @apiSuccess (返回参数说明) {Float} money 收入总计
+     * @apiSuccess (返回参数说明) {int} online 状态：1 | 正常；2 | 停用
+     * @apiSuccess (返回参数说明) {int} online_time 在线时长：单位秒
+     * @apiSuccess (返回参数说明) {String} last_online_time 上线时间
+     */
+    public function onlineRecords($page = 1, $size = 10, $time_begin = '', $time_end = '', $online = 3, $driver = '', $account = '')
+    {
+        $list = (new DriverService())->onlineRecord($page, $size, $time_begin, $time_end, $online, $driver, $account);
+
+        return json(new SuccessMessageWithData(['data' => $list]));
     }
 
 }

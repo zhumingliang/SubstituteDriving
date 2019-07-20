@@ -446,10 +446,10 @@ class Order extends BaseController
     }
 
     /**
-     * @api {GET} /api/v1/order/info Android司机端/Android管理端-获取订单详情
-     * @apiGroup  Android
+     * @api {GET} /api/v1/order/info Android司机端/Android管理端/CMS管理端-获取订单详情
+     * @apiGroup  COMMON
      * @apiVersion 1.0.1
-     * @apiDescription   Android司机端/Android管理端-获取订单详情
+     * @apiDescription   Android司机端/Android管理端/CMS管理端-获取订单详情
      * @apiExample {get}  请求样例:
      * https://tonglingok.com/api/v1/order/info?id=1
      * @apiParam (请求参数说明) {int} id 订单id
@@ -564,7 +564,10 @@ class Order extends BaseController
      * https://tonglingok.com/api/v1/order/locations?id=1
      * @apiParam (请求参数说明) {int} id 订单id
      * @apiSuccessExample {json} 返回样例:
-     * {"msg":"ok","errorCode":0,"code":200,"data":[{"lat":"40.584459","lng":"115.793844"},{"lat":"40.584459","lng":"115.793844"},{"lat":"40.584459","lng":"115.793844"},{"lat":"39.948933","lng":"115.056232"},{"lat":"27.474563","lng":"114.173822"},{"lat":"25.518178","lng":"111.341648"},{"lat":"31.60487","lng":"103.901761"}]}
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"start":"长江路","end":"高速地产","locations":[{"lat":"40.584459","lng":"115.793844"},{"lat":"40.584459","lng":"115.793844"},{"lat":"40.584459","lng":"115.793844"},{"lat":"39.948933","lng":"115.056232"},{"lat":"27.474563","lng":"114.173822"},{"lat":"25.518178","lng":"111.341648"},{"lat":"31.60487","lng":"103.901761"}]}}
+     * @apiSuccess (返回参数说明) {String} start 起点
+     * @apiSuccess (返回参数说明) {String} end 终点
+     * @apiSuccess (返回参数说明) {Obj} locations 地理位置坐标
      * @apiSuccess (返回参数说明) {String} lat 纬度
      * @apiSuccess (返回参数说明) {String} lng 经度
      */

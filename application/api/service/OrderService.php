@@ -957,11 +957,16 @@ class OrderService
 
     public function orderLocations($id)
     {
+        $order = OrderT::get($id);
         $locations = LocationT::where('o_id', $id)
             ->where('begin', CommonEnum::STATE_IS_OK)
             ->field('lat,lng')
             ->select();
-        return $locations;
+        return [
+            'start' => $order->start,
+            'end' => $order->end,
+            'locations' => $locations
+        ];
     }
 
     public function current($page, $size)
