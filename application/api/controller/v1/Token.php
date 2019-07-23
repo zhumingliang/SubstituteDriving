@@ -39,7 +39,7 @@ class Token extends Controller
      * @apiParam (请求参数说明) {String} phone    用户手机号
      * @apiParam (请求参数说明) {String} pwd   用户密码
      * @apiSuccessExample {json} 返回样例:
-     * {"token":"b9c1b6b884c2fc6c53048972eaf785a7","grade":1}
+     *{"msg":"ok","errorCode":0,"data":{{"token":"b9c1b6b884c2fc6c53048972eaf785a7","grade":1}}
      * @apiSuccess (返回参数说明) {String} grade 用户等级:1 | 管理员；2 | 保险公司
      * @apiSuccess (返回参数说明) {String} token 口令令牌，每次请求接口需要传入，有效期 2 hours
      */
@@ -68,7 +68,7 @@ class Token extends Controller
      * @apiParam (请求参数说明) {String} code   安卓手机唯一识别码
      * @apiParam (请求参数说明) {String} type  当前登录用户类别：driver|司机；manager|管理员
      * @apiSuccessExample {json} 返回样例:
-     * {"username":"朱明良","online":1,"token":"d3fd8533d1a7c032e08e77e8c8fb3bb9"}
+      *{"msg":"ok","errorCode":0,"data":{{"username":"朱明良","online":1,"token":"d3fd8533d1a7c032e08e77e8c8fb3bb9"}}
      * @apiSuccess (返回参数说明) {String} username 用户名
      * @apiSuccess (返回参数说明) {int} online 司机在线状态：1 | 在线；2 | 下线
      * @apiSuccess (返回参数说明) {String} token 口令令牌，每次请求接口需要传入，有效期 24 hours
@@ -111,7 +111,7 @@ class Token extends Controller
      * https://tonglingok.com/api/v1/token/user?code=mdksk
      * @apiParam (请求参数说明) {String} code    小程序code
      * @apiSuccessExample {json} 返回样例:
-     *{"token":"f4ad56e55cad93833180186f22586a08","type":1,"phone":"18956225230"}
+     *{"msg":"ok","errorCode":0,"data":{"token":"f4ad56e55cad93833180186f22586a08","type":1,"phone":"18956225230"}}
      * @apiSuccess (返回参数说明) {Sting} token 口令令牌，每次请求接口需要传入，有效期 2 hours
      * @apiSuccess (返回参数说明) {Sting} phone 手机号
      * @apiSuccess (返回参数说明) {int} type 数据库是否存储小程序用户信息:1 | 已存储；2 | 未存储,需要请求userInfo接口
