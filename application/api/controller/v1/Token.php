@@ -18,6 +18,7 @@ use app\api\service\UserToken;
 use app\api\validate\TokenGet;
 use app\lib\enum\CommonEnum;
 use app\lib\exception\SuccessMessage;
+use app\lib\exception\SuccessMessageWithData;
 use app\lib\exception\TokenException;
 use think\Controller;
 use think\facade\Cache;
@@ -47,7 +48,7 @@ class Token extends Controller
         $params = $this->request->param();
         $at = new AdminToken($params['account'], $params['pwd']);
         $token = $at->get();
-        return json($token);
+        return json(new SuccessMessageWithData(['data' => $token]));
     }
 
     /**
@@ -77,7 +78,7 @@ class Token extends Controller
         $params = $this->request->param();
         $at = new DriverToken($params['account'], $params['pwd'], $params['code'], $params['type']);
         $token = $at->get();
-        return json($token);
+        return json(new SuccessMessageWithData(['data' => $token]));
     }
 
     /**
@@ -120,7 +121,7 @@ class Token extends Controller
         $code = $this->request->param('code');
         $ut = new UserToken($code);
         $token = $ut->get();
-        return json($token);
+        return json(new SuccessMessageWithData(['data' => $token]));
 
     }
 

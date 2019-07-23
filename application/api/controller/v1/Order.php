@@ -34,7 +34,7 @@ class Order extends BaseController
      * @apiParam (请求参数说明) {String} end_lng  目的地经度
      * @apiParam (请求参数说明) {int} t_id  优惠id
      * @apiSuccessExample {json} 返回样例:
-     *{"id":1,"errorCode":0,"data":{"id":1}}
+     *{"msg":"ok","errorCode":0,"data":{"id":1}}
      * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误
      * @apiSuccess (返回参数说明) {String} msg 信息描述
      * @apiSuccess (返回参数说明) {int} id 订单id

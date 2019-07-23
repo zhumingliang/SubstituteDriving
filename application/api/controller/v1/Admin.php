@@ -4,9 +4,9 @@
 namespace app\api\controller\v1;
 
 
-use think\Model;
+use app\api\controller\BaseController;
 
-class Admin extends Model
+class Admin extends BaseController
 {
 
 
