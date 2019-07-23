@@ -109,8 +109,8 @@ class Ticket extends BaseController
      * @apiParam (请求参数说明) {int} id 优惠券id
      * @apiParam (请求参数说明) {int} state 状态 1 | 启用；2 | 停用；3 | 删除
      * @apiSuccessExample {json} 返回样例:
-     * {"msg": "ok","error_code": 0}
-     * @apiSuccess (返回参数说明) {int} error_code 错误代码 0 表示没有错误
+     * {"msg": "ok","errorCode": 0}
+     * @apiSuccess (返回参数说明) {int} errorCode 错误代码 0 表示没有错误
      * @apiSuccess (返回参数说明) {String} msg 操作结果描述
      *
      */
@@ -138,8 +138,8 @@ class Ticket extends BaseController
      * @apiParam (请求参数说明) {String} u_id 用户id，多个用户用逗号分隔
      * @apiParam (请求参数说明) {int} t_id 优惠券ID
      * @apiSuccessExample {json} 返回样例:
-     * {"msg": "ok","error_code": 0}
-     * @apiSuccess (返回参数说明) {int} error_code 错误代码 0 表示没有错误
+     * {"msg": "ok","errorCode": 0}
+     * @apiSuccess (返回参数说明) {int} errorCode 错误代码 0 表示没有错误
      * @apiSuccess (返回参数说明) {String} msg 操作结果描述
      *
      */

@@ -98,8 +98,8 @@ class Driver extends BaseController
      * @apiParam (请求参数说明) {int} d_id 司机ID
      * @apiParam (请求参数说明) {int} state 状态：1 | 正常；2 | 停用
      * @apiSuccessExample {json} 返回样例:
-     * {"msg": "ok","error_code": 0}
-     * @apiSuccess (返回参数说明) {int} error_code 错误代码 0 表示没有错误
+     * {"msg": "ok","errorCode": 0}
+     * @apiSuccess (返回参数说明) {int} errorCode 错误代码 0 表示没有错误
      * @apiSuccess (返回参数说明) {String} msg 操作结果描述
      *
      */
@@ -125,8 +125,8 @@ class Driver extends BaseController
      * }
      * @apiParam (请求参数说明) {int} online 上下线状态：1 | 上线；2 | 下线
      * @apiSuccessExample {json} 返回样例:
-     * {"msg": "ok","error_code": 0}
-     * @apiSuccess (返回参数说明) {int} error_code 错误代码 0 表示没有错误
+     * {"msg": "ok","errorCode": 0}
+     * @apiSuccess (返回参数说明) {int} errorCode 错误代码 0 表示没有错误
      * @apiSuccess (返回参数说明) {String} msg 操作结果描述
      *
      */

@@ -85,7 +85,7 @@ class User extends BaseController
      * https://tonglingok.com/api/v1/user/login/out
      * @apiSuccessExample {json} 返回样例:
      *{"msg":"ok","errorCode":0}
-     * @apiSuccess (返回参数说明) {int} error_code 错误码： 0表示操作成功无错误
+     * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误
      * @apiSuccess (返回参数说明) {String} msg 信息描述
      *
      */
