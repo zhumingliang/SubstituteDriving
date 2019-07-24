@@ -55,6 +55,7 @@ class OrderService
             return $order->id;
         } catch (Exception $e) {
             LogT::create(['msg' => 'save_order_mini:' . $e->getMessage()]);
+            throw  $e;
         }
     }
 
@@ -66,7 +67,7 @@ class OrderService
         try {
             $d_id = Token::getCurrentUid();
             if ((new DriverService())->checkNoCompleteOrder($d_id)) {
-                throw  new SaveException(['msg' => '创建订单失败,已有未完成的订单']);
+                throw new SaveException(['msg' => '创建订单失败,已有未完成的订单']);
             }
             if (key_exists('phone', $params) && strlen($params['phone'])) {
                 $params['u_id'] = (new UserInfo('', ''))->checkUserByPhone($params['phone'], $params['name'], 3, Token::getCurrentTokenVar('username'));
@@ -90,6 +91,7 @@ class OrderService
             return $o_id;
         } catch (Exception $e) {
             LogT::create(['msg' => 'save_order_driver:' . $e->getMessage()]);
+            throw  $e;
         }
     }
 
@@ -126,6 +128,7 @@ class OrderService
             return $o_id;
         } catch (Exception $e) {
             LogT::create(['msg' => 'save_order__manager:' . $e->getMessage()]);
+            throw  $e;
         }
     }
 
