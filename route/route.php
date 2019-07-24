@@ -29,6 +29,7 @@ Route::post('api/:version/driver/save', 'api/:version.Driver/save');
 Route::post('api/:version/driver/send', 'api/:version.Driver/send');
 Route::get('api/:version/drivers', 'api/:version.Driver/drivers');
 Route::get('api/:version/drivers/nearby', 'api/:version.Driver/nearbyDrivers');
+Route::get('api/:version/driver/order/check', 'api/:version.Driver/checkDriverHasUnCompleteOrder');
 Route::post('api/:version/driver/handel', 'api/:version.Driver/handel');
 Route::post('api/:version/driver/online', 'api/:version.Driver/online');
 Route::get('api/:version/driver/online/records', 'api/:version.Driver/onlineRecords');

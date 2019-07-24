@@ -223,4 +223,35 @@ class Driver extends BaseController
         return json(new SuccessMessageWithData(['data' => $list]));
     }
 
+
+    /**
+     * @api {GET} /api/v1/driver/order/check Android司机端-检测是否有未完成的订单，有则返回数据
+     * @apiGroup  Android
+     * @apiVersion 1.0.1
+     * @apiDescription    Android司机端-检测是否有未完成的订单，有则返回数据
+     * @apiExample {get}  请求样例:
+     * https://tonglingok.com/api/v1/driver/order/check
+     * @apiParam (请求参数说明) {int} id 订单id
+     * @apiSuccessExample {json} 订单未被接单返回样例:
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"id":10,"state":2,"start":"肯德基(宁德万达餐厅)","end":"肯德基(蕉城餐厅)","begin":2,"name":"李师傅","phone":"18814184025","create_time":"2019-07-23 16:31:35","arriving_time":null,"receive_time":null,"start_lng":"119.54611","start_lat":"26.658681","end_lng":"119.531554","end_lat":"26.666172"}}
+     * @apiSuccess (返回参数说明) {int}  id 订单id
+     * @apiSuccess (返回参数说明) {String}  start起点
+     * @apiSuccess (返回参数说明) {String}  end 目的地
+     * @apiSuccess (返回参数说明) {String}  name 乘客名称
+     * @apiSuccess (返回参数说明) {String}  phone 乘客手机号
+     * @apiSuccess (返回参数说明) {String}  end 目的地
+     * @apiSuccess (返回参数说明) {String}  create_time 订单创建时间
+     * @apiSuccess (返回参数说明) {int}  state 订单状态
+     * @apiSuccess (返回参数说明) {String} start_lat  出发地纬度
+     * @apiSuccess (返回参数说明) {String} start_lng  出发地经度
+     * @apiSuccess (返回参数说明) {String} end_lat  目的地纬度
+     * @apiSuccess (返回参数说明) {String} end_lng  目的地经度
+     */
+    public function checkDriverHasUnCompleteOrder()
+    {
+        $info = (new DriverService())->checkDriverHasUnCompleteOrder();
+        return json(new SuccessMessageWithData(['data' => $info]));
+    }
+
+
 }

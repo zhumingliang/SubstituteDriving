@@ -209,11 +209,11 @@ class DriverService
         $start_lat = $order->start_lat;
 
         $list = $this->redis->rawCommand('georadius',
-            'drivers_tongling', $start_lng, $start_lat, 100000, 'km', 'WITHDIST','WITHCOORD');
+            'drivers_tongling', $start_lng, $start_lat, 100000, 'km', 'WITHDIST', 'WITHCOORD');
 
         $redis = new Redis();
         $driver_ids = $redis->sMembers('driver_order_no');
-        if (!$driver_ids||!count($list)) {
+        if (!$driver_ids || !count($list)) {
             return array();
         }
 
@@ -227,7 +227,7 @@ class DriverService
                     'distance' => $v[1],
                     'name' => $driver->username,
                     'phone' => $driver->phone,
-                    'location'=>$v[2]
+                    'location' => $v[2]
                 ];
                 array_push($return_data, $data);
             }
@@ -324,6 +324,35 @@ class DriverService
     {
         $list = OnlineRecordV::records($page, $size, $time_begin, $time_end, $online, $driver, $account);
         return $list;
+    }
+
+    public function checkDriverHasUnCompleteOrder()
+    {
+        $d_id = Token::getCurrentUid();
+        $info = [];
+        $order = OrderT::where('d_id', $d_id)
+            ->whereIn('state', OrderEnum::ORDER_ING)
+            ->find();
+        if ($order) {
+            $info = [
+                'id' => $order->id,
+                'state' => $order->state,
+                'start' => $order->start,
+                'end' => $order->end,
+                'begin' => $order->begin,
+                'name' => $order->name,
+                'phone' => $order->phone,
+                'create_time' => $order->create_time,
+                'arriving_time' => $order->arriving_time,
+                'receive_time' => $order->receive_time,
+                'start_lng' => $order->start_lng,
+                'start_lat' => $order->start_lat,
+                'end_lng' => $order->end_lng,
+                'end_lat' => $order->end_lat
+            ];
+
+        }
+        return $info;
     }
 
 }
