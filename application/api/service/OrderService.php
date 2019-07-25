@@ -37,7 +37,7 @@ class OrderService
     public function saveMiniOrder($params)
     {
         try {
-            $far = $this->prefixFar($params);
+          //  $far = $this->prefixFar($params);
             $params['u_id'] = Token::getCurrentUid();
             $params['name'] = '先生/女士';
             $params['phone'] = Token::getCurrentTokenVar('phone');
@@ -45,8 +45,8 @@ class OrderService
             $params['type'] = OrderEnum::NOT_FIXED_MONEY;
             $params['state'] = OrderEnum::ORDER_NO;
             $params['order_num'] = time();
-            $params['far_distance'] = $far['far_distance'];
-            $params['far_money'] = $far['far_money'];
+           // $params['far_distance'] = $far['far_distance'];
+           // $params['far_money'] = $far['far_money'];
             $order = $this->saveOrder($params);
             $this->saveOrderList($order->id, OrderEnum::ORDER_LIST_NO);
             if (key_exists('t_id', $params) && $params['t_id']) {
