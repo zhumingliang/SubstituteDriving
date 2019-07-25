@@ -265,6 +265,7 @@ class OrderService
         }
         //查找司机并推送
         $this->findDriverToPush($order);
+        echo 1;
 
     }
 

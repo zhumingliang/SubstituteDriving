@@ -52,9 +52,8 @@ class Order extends BaseController
      */
     public function orderListHandel()
     {
-        (LogService::save('111'));
         (new OrderService())->orderListHandel();
-
+        return json(new SuccessMessage());
     }
 
     /**
@@ -63,6 +62,7 @@ class Order extends BaseController
     public function handelDriverNoAnswer()
     {
         (new OrderService())->handelDriverNoAnswer();
+        return json(new SuccessMessage());
     }
 
     /**
