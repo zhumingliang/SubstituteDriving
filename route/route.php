@@ -84,9 +84,7 @@ Route::post('api/:version/sms/login', 'api/:version.SendSMS/sendCodeToAndroid');
 Route::post('api/:version/order/mini/save', 'api/:version.Order/saveMiniOrder');
 Route::post('api/:version/order/drive/save', 'api/:version.Order/saveDriverOrder');
 Route::post('api/:version/order/manager/save', 'api/:version.Order/saveManagerOrder');
-Route::post('api/:version/order/list/handel', 'api/:version.Order/orderListHandel');
 Route::post('api/:version/order/push/handel', 'api/:version.Order/orderPushHandel');
-Route::post('api/:version/order/push/no/handel', 'api/:version.Order/handelDriverNoAnswer');
 Route::post('api/:version/order/cancel', 'api/:version.Order/orderCancel');
 Route::post('api/:version/order/withdraw', 'api/:version.Order/withdraw');
 Route::post('api/:version/order/begin', 'api/:version.Order/orderBegin');
@@ -108,4 +106,8 @@ Route::post('api/:version/order/transfer', 'api/:version.Order/transferOrder');
 
 Route::get('api/:version/messages', 'api/:version.Message/messages');
 Route::post('api/:version/message/save', 'api/:version.Message/save');
+
+
+Route::rule('api/:version/order/list/handel', 'api/:version.Order/orderListHandel');
+Route::rule('api/:version/order/push/no/handel', 'api/:version.Order/handelDriverNoAnswer');
 
