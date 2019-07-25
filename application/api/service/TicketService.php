@@ -81,7 +81,7 @@ class TicketService
 
     public function prefixTicketHandel($id, $state)
     {
-        $ticket = TicketT::get($id);
+        $ticket = TicketUserT::get($id);
         $ticket->state = $state;
         $res = $ticket->save();
         return $res;
