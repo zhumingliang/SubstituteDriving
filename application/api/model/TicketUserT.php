@@ -16,7 +16,7 @@ class TicketUserT extends Model
             ->where('state', CommonEnum::STATE_IS_OK)
             ->whereTime('time_begin', '<=', $now)
             ->whereTime('time_end', '>=', $now)
-            ->field('t_id as id,name,money,time_begin,time_end')
+            ->field('id,name,money,time_begin,time_end')
             ->select();
         return $tickets;
 
