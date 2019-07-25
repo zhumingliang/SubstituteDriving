@@ -37,7 +37,7 @@ class OrderService
     public function saveMiniOrder($params)
     {
         try {
-          //  $far = $this->prefixFar($params);
+            //  $far = $this->prefixFar($params);
             $params['u_id'] = Token::getCurrentUid();
             $params['name'] = '先生/女士';
             $params['phone'] = Token::getCurrentTokenVar('phone');
@@ -45,8 +45,7 @@ class OrderService
             $params['type'] = OrderEnum::NOT_FIXED_MONEY;
             $params['state'] = OrderEnum::ORDER_NO;
             $params['order_num'] = time();
-           // $params['far_distance'] = $far['far_distance'];
-           // $params['far_money'] = $far['far_money'];
+
             $order = $this->saveOrder($params);
             $this->saveOrderList($order->id, OrderEnum::ORDER_LIST_NO);
             if (key_exists('t_id', $params) && $params['t_id']) {
@@ -163,12 +162,10 @@ class OrderService
         (new SendSMSService())->sendOrderSMS($phone, ['code' => '*****' . substr($order->order_num, 5), 'order_time' => date('H:i', strtotime($order->create_time))]);
     }
 
-    private function prefixFar($params)
+    private function prefixFar($start_lng, $start_lat, $driver_lng, $driver_lat)
     {
         //计算距离
-        $far_distance = CalculateUtil::GetDistance($params['start_lng'],
-            $params['start_lat'], $params['end_lng'],
-            $params['end_lat']);
+        $far_distance = CalculateUtil::GetDistance($start_lng, $start_lat, $driver_lng, $driver_lat);
 
         //检查远程接驾是否开启
         $far_state = FarStateT::find();
@@ -265,7 +262,6 @@ class OrderService
         }
         //查找司机并推送
         $this->findDriverToPush($order);
-        echo 1;
 
     }
 
@@ -296,6 +292,9 @@ class OrderService
             if ($push_type == "normal") {
                 $this->prefixPushAgree($push->d_id);
                 $this->sendToMini($push);
+                //处理远程接驾费用
+                $this->prefixFarDistance($push->o_id, $push->d_id);
+
             } else if ($push_type == "transfer") {
                 //释放转单司机
                 $this->prefixPushRefuse($push->f_d_id);
@@ -308,6 +307,17 @@ class OrderService
             $this->prefixPushRefuse($push->d_id);
         }
 
+    }
+
+    private function prefixFarDistance($o_id, $d_id)
+    {
+        $order = $this->getOrder($o_id);
+        $location = $this->getDriverLocation($d_id);
+        $far = $this->prefixFar($order->start_lng, $order->start_lat, $location['lng'], $location['lat']);
+
+        $order->far_distance = $far['far_distance'];
+        $order->far_money = $far['far_money'];
+        $order->save();
     }
 
 
