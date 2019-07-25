@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by 七月.
- * Author: 七月
- * Date: 2017/5/19
- * Time: 18:27
- */
 
 namespace app\api\service;
 
