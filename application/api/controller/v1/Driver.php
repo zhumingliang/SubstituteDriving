@@ -223,7 +223,6 @@ class Driver extends BaseController
         return json(new SuccessMessageWithData(['data' => $list]));
     }
 
-
     /**
      * @api {GET} /api/v1/driver/order/check Android司机端-检测是否有未完成的订单，有则返回数据
      * @apiGroup  Android
@@ -252,5 +251,28 @@ class Driver extends BaseController
         return json(new SuccessMessageWithData(['data' => $info]));
     }
 
+    /**
+     * @api {GET} /api/v1/driver/income Android司机端-获取昨日/今日收入
+     * @apiGroup  Android
+     * @apiVersion 1.0.1
+     * @apiDescription    Android司机端-获取昨日/今日收入
+     * @apiExample {get}  请求样例:
+     * https://tonglingok.com/api/v1/driver/income
+     * @apiSuccessExample {json} 返回样例:
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"yesterday":51.5,"today":0,"today_orders":[{"id":1,"create_time":"2019-07-27 23:07:13","start":"广东省江门市蓬江区建设二路18号","end":"蓬江区人民政府","money":51.5}]}
+     * @apiSuccess (返回参数说明) {float} yesterday 昨日收入
+     * @apiSuccess (返回参数说明) {float} today 今日收入
+     * @apiSuccess (返回参数说明) {obj} today_orders 今日收入列表
+     * @apiSuccess (返回参数说明) {int} today_orders|id 订单id
+     * @apiSuccess (返回参数说明) {string} today_orders|create_time 订单时间
+     * @apiSuccess (返回参数说明) {string} today_orders|start 开始位置
+     * @apiSuccess (返回参数说明) {string} today_orders|end 结束位置
+     * @apiSuccess (返回参数说明) {float} today_orders|money 订单收入
+     */
+    public function income()
+    {
+        $income = (new DriverService())->income();
 
+        return json(new SuccessMessageWithData(['data' => $income]));
+    }
 }

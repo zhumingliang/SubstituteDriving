@@ -45,6 +45,11 @@ class OrderT extends Model
         return $this->belongsTo('DriverT', 'd_id', 'id');
     }
 
+    public function cost()
+    {
+        return $this->hasMany('OrderMoneyT', 'o_id', 'id');
+    }
+
     public static function getOrder($o_id)
     {
         $order = self::where('id', $o_id)
@@ -79,10 +84,6 @@ class OrderT extends Model
     }
 
 
-
-
-
-
     public static function driverOrderCount($d_id, $time_begin, $time_end)
     {
         $counts = $list = self::where('state', OrderEnum::ORDER_COMPLETE)
@@ -98,7 +99,6 @@ class OrderT extends Model
 
 
     }
-
 
 
     public static function driverOrdersMoney($d_id, $time_begin, $time_end)
@@ -159,6 +159,8 @@ class OrderT extends Model
         return $list;
 
     }
+
+
 
 
 }

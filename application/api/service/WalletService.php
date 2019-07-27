@@ -28,6 +28,16 @@ class WalletService
         if (!$recharge) {
             throw new SaveException();
         }
+        //发送短信通知
+
+        $driver = DriverT::where('id', $params['d_id'])->find();
+        $phone = $driver->phone;
+        $data = [
+            'username' => $driver->username,
+            'money' => $params['money'],
+            'balance' => $this->driverBalance($params['d_id'])
+        ];
+        (new SendSMSService())->sendOrderSMS($phone, $data);
     }
 
     public function recharges($page, $size)
@@ -90,5 +100,20 @@ class WalletService
         }
         return $records;
 
+    }
+
+    public function checkDriverBalance($d_id)
+    {
+
+        $balance = $this->driverBalance($d_id);
+        if ($balance < config('setting.balance_limit')) {
+            (new DriverService())->online(['state' => 2]);
+            $push_data = [
+                'type' => 'online'
+            ];
+            GatewayService::sendToDriverClient($d_id, $push_data);
+            return true;
+        }
+        return false;
     }
 }

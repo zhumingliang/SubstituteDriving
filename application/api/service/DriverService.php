@@ -4,6 +4,7 @@
 namespace app\api\service;
 
 
+use app\api\model\DriverIncomeV;
 use app\api\model\DriverT;
 use app\api\model\OnlineRecordT;
 use app\api\model\OnlineRecordV;
@@ -28,8 +29,8 @@ class DriverService
 
     public function __construct()
     {
-        $this->redis = new \Redis();
-        $this->redis->connect('127.0.0.1', 6379, 60);
+        // $this->redis = new \Redis();
+        // $this->redis->connect('127.0.0.1', 6379, 60);
 
     }
 
@@ -71,6 +72,11 @@ class DriverService
             $online_begin = $driver->last_online_time;
             $driver->online = $params['online'];
             if ($params['online'] == DriverEnum::ONLINE) {
+                if ((new WalletService())->checkDriverBalance(Token::getCurrentUid())) {
+                    Db::rollback();
+                    throw new UpdateException(['msg'=>'余额不足,不能上线']);
+                }
+
                 $driver->last_online_time = date('Y-m-d H:i:s');
             } else {
                 $driver->online_time = $driver->online_time + (time() - strtotime($online_begin));
@@ -354,5 +360,21 @@ class DriverService
         }
         return $info;
     }
+
+    public function income()
+    {
+
+        $today = date('Y-m-d', time());
+        $yesterday = reduceDay(1, $today);
+        $d_id = 1;//Token::getCurrentUid();
+        $today_income = DriverIncomeV::income($d_id, $today);
+        $yesterday_income = DriverIncomeV::income($d_id, $yesterday);
+        return [
+            'yesterday' => $yesterday_income['money'],
+            'today' => $today_income['money'] ? $today_income['money'] : 0,
+            'today_orders' => DriverIncomeV::todayOrders($d_id)
+        ];
+    }
+
 
 }

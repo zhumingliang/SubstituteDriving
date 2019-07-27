@@ -21,6 +21,7 @@ class SendSms
     protected $TemplateLoginCode;
     protected $TemplateRegisterCode;
     protected $TemplateDriverCode;
+    protected $TemplateRechargeCode;
     protected $signName;
     protected $requestHost = "http://dysmsapi.aliyuncs.com";
     protected $requestUrl;
@@ -37,6 +38,7 @@ class SendSms
         isset($options["TemplateRegisterCode"]) && $this->TemplateRegisterCode = $options["TemplateRegisterCode"];
         isset($options["TemplateLoginCode"]) && $this->TemplateLoginCode = $options["TemplateLoginCode"];
         isset($options["TemplateDriverCode"]) && $this->TemplateDriverCode = $options["TemplateDriverCode"];
+        isset($options["TemplateRechargeCode"]) && $this->TemplateRechargeCode = $options["TemplateRechargeCode"];
         isset($options["SignName"]) && $this->signName = $options["SignName"];
     }
 
@@ -134,6 +136,8 @@ class SendSms
                 $templateCode = $this->TemplateRegisterCode;
             } else if ($type == 'login') {
                 $templateCode = $this->TemplateLoginCode;
+            } else if ($type == 'recharge') {
+                $templateCode = $this->TemplateRechargeCode;
             } else {
                 $templateCode = $this->TemplateDriverCode;
             }

@@ -55,10 +55,13 @@ class DriverToken extends Token
 
             // 获取缓存参数
             $cachedValue = $this->prepareCachedValue($admin);
-           //缓存数据
+            //缓存数据
             $token = $this->saveToCache('', $cachedValue);
-            return $token;
 
+            if ($this->type == 'driver') {
+                (new WalletService())->checkDriverBalance(Token::getCurrentUid());
+            }
+            return $token;
         } catch (Exception $e) {
             throw $e;
         }
@@ -99,10 +102,10 @@ class DriverToken extends Token
         $cachedValue = [
             'u_id' => $admin->id,
             'phone' => $this->type == 'driver' ? $admin->phone : '',
-            'username' =>$this->type == 'driver' ? $admin->username : '',
+            'username' => $this->type == 'driver' ? $admin->username : '',
             'account' => $admin->account,
-            'phone_code' =>$this->type == 'driver' ? $admin->phone_code : '',
-            'online' =>$this->type == 'driver' ? $admin->online : '',
+            'phone_code' => $this->type == 'driver' ? $admin->phone_code : '',
+            'online' => $this->type == 'driver' ? $admin->online : '',
             'type' => $this->type,
         ];
         return $cachedValue;

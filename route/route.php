@@ -34,6 +34,7 @@ Route::post('api/:version/driver/handel', 'api/:version.Driver/handel');
 Route::post('api/:version/driver/online', 'api/:version.Driver/online');
 Route::get('api/:version/driver/online/records', 'api/:version.Driver/onlineRecords');
 Route::get('api/:version/driver/acceptableOrder', 'api/:version.Driver/acceptableOrder');
+Route::get('api/:version/driver/income', 'api/:version.Driver/income');
 
 Route::post('api/:version/ticket/save', 'api/:version.Ticket/save');
 Route::post('api/:version/ticket/update', 'api/:version.Ticket/update');
@@ -91,6 +92,7 @@ Route::post('api/:version/order/begin', 'api/:version.Order/orderBegin');
 Route::post('api/:version/order/arriving', 'api/:version.Order/orderArriving');
 Route::get('api/:version/orders/mini', 'api/:version.Order/miniOrders');
 Route::get('api/:version/orders/driver', 'api/:version.Order/driverOrders');
+Route::get('api/:version/orders/today', 'api/:version.Order/todayOrders');
 Route::get('api/:version/orders/manager', 'api/:version.Order/managerOrders');
 Route::get('api/:version/orders/manager/cms', 'api/:version.Order/CMSManagerOrders');
 Route::get('api/:version/orders/insurance/cms', 'api/:version.Order/CMSInsuranceOrders');

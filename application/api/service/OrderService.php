@@ -4,6 +4,7 @@
 namespace app\api\service;
 
 
+use app\api\model\DriverIncomeV;
 use app\api\model\DriverT;
 use app\api\model\FarStateT;
 use app\api\model\LocationT;
@@ -606,6 +607,7 @@ class OrderService
             }
             Db::commit();
             (new DriverService())->handelDriveStateByComplete($id);
+            (new WalletService())->checkDriverBalance(Token::getCurrentUid());
             return $this->prepareOrderInfo($order);
 
         } catch (Exception $e) {
@@ -837,7 +839,9 @@ class OrderService
         //通过短信推送给司机
         $driver = DriverT::where('id', $d_id)->find();
         $phone = $driver->phone;
-        (new SendSMSService())->sendOrderSMS($phone, ['code' => '*****' . substr($order->order_num, 5), 'order_time' => date('H:i', strtotime($order->create_time))]);
+        (new SendSMSService())->sendOrderSMS($phone, ['code' => '*****' . substr($order->order_num, 5),
+            'order_time' => date('H:i',
+                strtotime($order->create_time))]);
     }
 
     public function choiceDriverByManager($params)
@@ -1044,8 +1048,6 @@ class OrderService
         $orders['statistic'] = OrderV::orderCount('', $time_begin, $time_end);
         return $orders;
 
-
     }
-
 
 }
