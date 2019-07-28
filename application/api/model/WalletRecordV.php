@@ -88,7 +88,7 @@ class WalletRecordV extends Model
 
     public static function driverBalance($d_id)
     {
-        $balance = self::where('d_id', $d_id)
+        $balance = self::where('id', $d_id)
             ->sum('money');
         return $balance;
 
