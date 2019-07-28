@@ -26,26 +26,6 @@ class OrderV extends Model
 
     }
 
-
-    public static function managerOrders($page, $size, $driver, $time_begin, $time_end)
-    {
-        $list = self::whereIn('state', '4,5')
-            ->where(function ($query) use ($driver) {
-                if (strlen($driver)) {
-                    $query->where('driver', 'like', '%' . $driver . '%');
-                }
-            })
-            ->where(function ($query) use ($time_begin, $time_end) {
-                if (strlen($time_begin) && strlen($time_end)) {
-                    $query->whereBetweenTime('create_time', $time_begin, $time_end);
-                }
-            })
-            ->field('id,d_id,superior_id,null as superior,2 as transfer ,from,state,start,end,name,money,cancel_type,cancel_remark,create_time')
-            ->order('create_time desc')
-            ->paginate($size, false, ['page' => $page])->toArray();
-        return $list;
-    }
-
     public static function CMSManagerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from)
     {
         $list = self::where(function ($query) use ($order_state) {
@@ -144,8 +124,39 @@ class OrderV extends Model
 
         return $members;
 
+    }
+
+
+    public static function currentOrders($page, $size)
+    {
+        $list = self::whereIn('state', OrderEnum::ORDER_NO . "," . OrderEnum::ORDER_ING)
+            ->field('id,d_id,superior_id,null as superior,2 as transfer ,from,state,start,end,name,money,cancel_type,cancel_remark,create_time')
+            ->order('create_time desc')
+            ->paginate($size, false, ['page' => $page])->toArray();
+        return $list;
 
     }
+
+
+    public static function managerOrders($page, $size, $driver, $time_begin, $time_end)
+    {
+        $list = self::whereIn('state', '4,5')
+            ->where(function ($query) use ($driver) {
+                if (strlen($driver)) {
+                    $query->where('driver', 'like', '%' . $driver . '%');
+                }
+            })
+            ->where(function ($query) use ($time_begin, $time_end) {
+                if (strlen($time_begin) && strlen($time_end)) {
+                    $query->whereBetweenTime('create_time', $time_begin, $time_end);
+                }
+            })
+            ->field('id,d_id,superior_id,null as superior,2 as transfer ,from,state,start,end,name,money,cancel_type,cancel_remark,create_time')
+            ->order('create_time desc')
+            ->paginate($size, false, ['page' => $page])->toArray();
+        return $list;
+    }
+
 
 
 }
