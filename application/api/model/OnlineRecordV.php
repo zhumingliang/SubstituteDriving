@@ -23,7 +23,7 @@ class OnlineRecordV extends Model
             })
             ->where(function ($query) use ($driver) {
                 if (strlen($driver)) {
-                    $query->where('name', 'like', '%' . $driver . '%');
+                    $query->where('username', 'like', '%' . $driver . '%');
                 }
             })
             ->where(function ($query) use ($account) {
