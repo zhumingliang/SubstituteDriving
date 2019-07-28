@@ -59,7 +59,7 @@ class DriverToken extends Token
             $token = $this->saveToCache('', $cachedValue);
 
             if ($this->type == 'driver') {
-                (new WalletService())->checkDriverBalance(Token::getCurrentUid());
+                (new WalletService())->checkDriverBalance($admin->id);
             }
             return $token;
         } catch (Exception $e) {
