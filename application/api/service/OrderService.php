@@ -694,8 +694,8 @@ class OrderService
             ];
         } else {
             $info = [
-                'driver_name' => $order->driver->username,
-                'driver_phone' => $order->driver->phone,
+                'driver_name' => $order->driver ? $order->driver->username : '',
+                'driver_phone' => $order->driver ? $order->driver->phone : '',
                 'start' => $order->start,
                 'end' => $order->end,
                 'from' => $order->from,
