@@ -67,7 +67,7 @@ class Ticket extends BaseController
      * @api {GET} /api/v1/ticket  Android管理端-获取指定优惠券信息
      * @apiGroup  Android
      * @apiVersion 1.0.1
-     * @apiDescription  Android管理端/CMS管理端-新增优惠券
+     * @apiDescription  Android管理端-获取指定优惠券信息
      * @apiExample {get}  请求样例:
      * https://tonglingok.com/api/v1/ticket?id=1
      * @apiParam (请求参数说明) {int} id 优惠券id
