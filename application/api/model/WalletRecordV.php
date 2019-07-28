@@ -27,7 +27,7 @@ class WalletRecordV extends Model
                 }
             })
             ->where(function ($query) use ($online) {
-                if ($online !== 3) {
+                if ($online != 3) {
                     $query->where('online', '=', $online);
                 }
             })
@@ -40,7 +40,7 @@ class WalletRecordV extends Model
             ->field('id ,account,username,phone,sum(money) as money,state,create_time')
             ->group('id')
             ->order('create_time desc')
-            ->paginate($size, false, ['page' => $page]);
+           ->paginate($size, false, ['page' => $page]);
         return $list;
 
     }
