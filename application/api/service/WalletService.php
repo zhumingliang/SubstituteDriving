@@ -9,6 +9,7 @@ use app\api\model\RechargeT;
 use app\api\model\WalletRecordV;
 use app\api\validate\Driver;
 use app\lib\enum\CommonEnum;
+use app\lib\enum\DriverEnum;
 use app\lib\exception\AuthException;
 use app\lib\exception\SaveException;
 
@@ -107,7 +108,7 @@ class WalletService
 
         $balance = $this->driverBalance($d_id);
         if ($balance < config('setting.balance_limit')) {
-            (new DriverService())->online(['state' => 2]);
+            DriverT::update(['online' => DriverEnum::OFFLINE], ['id' => $d_id]);
             $push_data = [
                 'type' => 'online'
             ];

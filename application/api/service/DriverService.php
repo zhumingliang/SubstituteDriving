@@ -74,7 +74,7 @@ class DriverService
             if ($params['online'] == DriverEnum::ONLINE) {
                 if ((new WalletService())->checkDriverBalance(Token::getCurrentUid())) {
                     Db::rollback();
-                    throw new UpdateException(['msg'=>'余额不足,不能上线']);
+                    throw new UpdateException(['msg' => '余额不足,不能上线']);
                 }
 
                 $driver->last_online_time = date('Y-m-d H:i:s');
@@ -99,6 +99,7 @@ class DriverService
             throw $e;
         }
     }
+
 
     public function checkNoCompleteOrder($id)
     {
