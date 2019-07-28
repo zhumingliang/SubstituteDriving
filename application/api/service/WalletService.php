@@ -38,7 +38,7 @@ class WalletService
             'money' => $params['money'],
             'balance' => $this->driverBalance($params['d_id'])
         ];
-        (new SendSMSService())->sendOrderSMS($phone, $data);
+        (new SendSMSService())->sendRechargeSMS($phone, $data);
     }
 
     public function recharges($page, $size)
