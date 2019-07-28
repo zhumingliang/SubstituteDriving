@@ -52,7 +52,8 @@ class SendSMSService
     {
 
         if ($num > 3) {
-            throw new SaveException(['msg' => '短信服务出错']);
+            return false;
+           // throw new SaveException(['msg' => '短信服务出错']);
         }
         $res = SendSms::instance()->send($phone, $params, 'recharge');
         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
