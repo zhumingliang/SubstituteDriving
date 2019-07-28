@@ -55,7 +55,7 @@ class Driver extends BaseController
      * @apiVersion 1.0.1
      * @apiDescription CMS管理端-获取司机列表
      * @apiExample {get}  请求样例:
-     * https://tonglingok.com/api/v1/drivers/cms?time_begin=2019-06-28&time_end=2019-06-29&page=1&size=10&online=1&account="a"&username="占三"
+     * https://tonglingok.com/api/v1/drivers?time_begin=2019-06-28&time_end=2019-06-29&page=1&size=10&online=1&account="a"&username="占三"
      * @apiParam (请求参数说明) {int} page 当前页码
      * @apiParam (请求参数说明) {int} size 每页多少条数据
      * @apiParam (请求参数说明) {String} time_begin 查询开始时间
@@ -69,7 +69,7 @@ class Driver extends BaseController
      * @apiSuccess (返回参数说明) {int} per_page 每页多少条数据
      * @apiSuccess (返回参数说明) {int} current_page 当前页码
      * @apiSuccess (返回参数说明) {int} last_page 最后页码
-     * @apiSuccess (返回参数说明) {int} d_id 司机id
+     * @apiSuccess (返回参数说明) {int} id 司机id
      * @apiSuccess (返回参数说明) {String} account 司机账号
      * @apiSuccess (返回参数说明) {String} username  司机名称
      * @apiSuccess (返回参数说明) {String} phone司机手机号
@@ -198,7 +198,7 @@ class Driver extends BaseController
      * @apiParam (请求参数说明) {String} time_begin 查询开始时间
      * @apiParam (请求参数说明) {String} time_end 查询开始时间
      * @apiParam (请求参数说明) {String} online 启用状态：1 | 在线；2 | 下线;3 | 不限制
-     * @apiParam (请求参数说明) {String} username  司机名称
+     * @apiParam (请求参数说明) {String} driver  司机名称
      * @apiParam (请求参数说明) {String} account 账号
      * @apiSuccessExample {json} 返回样例:
      * {"msg":"ok","errorCode":0,"code":200,"data":{"total":2,"per_page":10,"current_page":1,"last_page":1,"data":[{"id":2,"account":"18956225230","username":"朱明良","phone":"18956225230","count":0,"money":0,"online_time":4,"online":2,"last_online_time":"2019-07-20 15:52:17","create_time":"2019-07-20 15:52:21"},{"id":1,"account":"18956225230","username":"朱明良","phone":"18956225230","count":0,"money":0,"online_time":3372,"online":2,"last_online_time":"2019-07-20 15:52:17","create_time":"2019-07-20 15:50:42"}]}}

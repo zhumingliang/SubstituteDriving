@@ -37,8 +37,8 @@ class WalletRecordV extends Model
 
                 }
             })
-            ->field('d_id,account,username,phone,sum(money) as money,state,create_time')
-            ->group('d_id')
+            ->field('id ,account,username,phone,sum(money) as money,state,create_time')
+            ->group('id')
             ->order('create_time desc')
             ->paginate($size, false, ['page' => $page]);
         return $list;

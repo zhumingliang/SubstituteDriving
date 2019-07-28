@@ -386,7 +386,7 @@ class Order extends BaseController
      * @apiExample {post}  请求样例:
      *    {
      *       "id": 1,
-     *       "d_id":1,
+     *       "d_id":1
      *     }
      * @apiParam (请求参数说明) {int} id  订单id
      * @apiParam (请求参数说明) {int} d_id  被转单司机id
