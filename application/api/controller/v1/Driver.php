@@ -7,6 +7,7 @@ namespace app\api\controller\v1;
 use app\api\controller\BaseController;
 use app\api\model\DriverT;
 use app\api\service\DriverService;
+use app\lib\exception\SaveException;
 use app\lib\exception\SuccessMessage;
 use app\lib\exception\SuccessMessageWithData;
 use app\lib\exception\UpdateException;
@@ -22,7 +23,7 @@ class Driver extends BaseController
     }
 
     /**
-     * @api {POST} /api/v1/drive/save CMS管理端-新增司机
+     * @api {POST} /api/v1/driver/save CMS管理端-新增司机
      * @apiGroup   CMS
      * @apiVersion 1.0.1
      * @apiDescription   CMS管理端-新增司机
@@ -46,6 +47,40 @@ class Driver extends BaseController
     {
         $params = $this->request->param();
         (new DriverService())->save($params);
+        return json(new SuccessMessage());
+    }
+
+    /**
+     * @api {POST} /api/v1/driver/update CMS管理端-修改司机
+     * @apiGroup   CMS
+     * @apiVersion 1.0.1
+     * @apiDescription   CMS管理端-新增司机
+     * @apiExample {post}  请求样例:
+     *    {
+     *       "id": 1,
+     *       "username": "张三",
+     *       "account": "账号",
+     *       "phone": "18956225230",
+     *       "pwd": "a111111",
+     *     }
+     * @apiParam (请求参数说明) {int} id  司机id
+     * @apiParam (请求参数说明) {String} username  司机名称
+     * @apiParam (请求参数说明) {String} account  司机账号
+     * @apiParam (请求参数说明) {String} phone  手机号码
+     * @apiParam (请求参数说明) {String} pwd  密码
+     * @apiSuccessExample {json} 返回样例:
+     *{"msg":"ok","errorCode":0}
+     * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误
+     * @apiSuccess (返回参数说明) {String} msg 信息描述
+     */
+    public function update()
+    {
+        $params = $this->request->param();
+        $res = DriverT::update($params);
+        if (!$res){
+            throw new UpdateException();
+
+        }
         return json(new SuccessMessage());
     }
 

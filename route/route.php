@@ -26,6 +26,7 @@ Route::get('api/:version/users', 'api/:version.User/users');
 Route::post('api/:version/gateway/bind', 'api/:version.Gateway/bind');
 
 Route::post('api/:version/driver/save', 'api/:version.Driver/save');
+Route::post('api/:version/driver/update', 'api/:version.Driver/update');
 Route::post('api/:version/driver/send', 'api/:version.Driver/send');
 Route::get('api/:version/drivers', 'api/:version.Driver/drivers');
 Route::get('api/:version/drivers/nearby', 'api/:version.Driver/nearbyDrivers');
