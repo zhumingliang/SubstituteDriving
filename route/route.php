@@ -40,6 +40,7 @@ Route::post('api/:version/ticket/save', 'api/:version.Ticket/save');
 Route::post('api/:version/ticket/update', 'api/:version.Ticket/update');
 Route::post('api/:version/ticket/handel', 'api/:version.Ticket/handel');
 Route::get('api/:version/tickets/manage', 'api/:version.Ticket/ManageTickets');
+Route::get('api/:version/ticket', 'api/:version.Ticket/ticket');
 Route::get('api/:version/tickets/user', 'api/:version.Ticket/userTickets');
 
 Route::post('api/:version/SystemPrice/interval/save', 'api/:version.SystemPrice/intervalSave');

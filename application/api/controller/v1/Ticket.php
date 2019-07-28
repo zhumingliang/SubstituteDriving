@@ -36,7 +36,7 @@ class Ticket extends BaseController
      * @apiParam (请求参数说明) {String} time_begin  有效开始时间
      * @apiParam (请求参数说明) {String} time_end   有效结束时间
      * @apiParam (请求参数说明) {String} count   优惠券数量
-     * @apiParam (请求参数说明) {int} scene   应用场景（暂定）：1 | 新用户优惠券
+     * @apiParam (请求参数说明) {int} scene   应用场景（暂定）：1 | 新用户优惠券；2|首次关注公众号优惠券
      * @apiParam (请求参数说明) {int} source   操作来源：1 | CMS；2 | Android
      *
      * @apiSuccessExample {json} 返回样例:
@@ -49,11 +49,46 @@ class Ticket extends BaseController
         $params = $this->request->param();
         $params['state'] = CommonEnum::STATE_IS_OK;
         $params['u_id'] = \app\api\service\Token::getCurrentUid();
-        $ticket = TicketT::create($params);
+        if (key_exists('id', $params)) {
+            $ticket = TicketT::update($params);
+        } else {
+            $ticket = TicketT::create($params);
+
+        }
         if (!$ticket) {
             throw new SaveException();
         }
         return json(new SuccessMessage());
+
+    }
+
+
+    /**
+     * @api {GET} /api/v1/ticket  Android管理端-获取指定优惠券信息
+     * @apiGroup  Android
+     * @apiVersion 1.0.1
+     * @apiDescription  Android管理端/CMS管理端-新增优惠券
+     * @apiExample {get}  请求样例:
+     * https://tonglingok.com/api/v1/ticket?id=1
+     * @apiParam (请求参数说明) {int} id 优惠券id
+     * @apiSuccessExample {json} 返回样例:
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"id":1,"name":"新用户优惠券","price":5,"time_begin":"2019-06-22 00:00:00","time_end":"2019-10-01 00:00:00","count":100,"u_id":1,"create_time":"2019-06-28 22:05:51","state":2,"scene":1}}
+     * @apiSuccess (返回参数说明) {int} id 卡券id
+     * @apiSuccess (返回参数说明) {String} name 卡券名称
+     * @apiSuccess (返回参数说明) {int} price 卡券面值
+     * @apiSuccess (返回参数说明) {int} count 数量
+     * @apiSuccess (返回参数说明) {String} time_begin 有效期开始时间
+     * @apiSuccess (返回参数说明) {String} time_end 有效期结束时间
+     * @apiSuccess (返回参数说明) {int} state 状态：1 | 正常；2 | 停用
+     * @apiParam (请求参数说明) {int} scene   应用场景（暂定）：1 | 新用户优惠券;2|首次关注公众号优惠券
+     * @apiSuccess (返回参数说明) {String} create_time 创建时间
+     */
+    public function ticket()
+    {
+        $id = $this->request->param('id');
+        $ticket = TicketT::where('id', $id)->hidden(['update_time', 'source'])
+            ->find();
+        return json(new SuccessMessageWithData(['data' => $ticket]));
 
     }
 
