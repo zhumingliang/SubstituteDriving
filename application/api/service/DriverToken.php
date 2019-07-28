@@ -58,9 +58,6 @@ class DriverToken extends Token
             //缓存数据
             $token = $this->saveToCache('', $cachedValue);
 
-            if ($this->type == 'driver') {
-                (new WalletService())->checkDriverBalance($admin->id);
-            }
             return $token;
         } catch (Exception $e) {
             throw $e;

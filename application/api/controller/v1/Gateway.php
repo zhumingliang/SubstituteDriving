@@ -5,6 +5,7 @@ namespace app\api\controller\v1;
 
 
 use app\api\controller\BaseController;
+use app\api\service\WalletService;
 use app\lib\exception\SuccessMessage;
 
 class Gateway extends BaseController
@@ -30,7 +31,10 @@ class Gateway extends BaseController
         $client_id = $params['client_id'];
         $u_id = \app\api\service\Token::getCurrentUid();
         $grade = \app\api\service\Token::getCurrentTokenVar('type');
-        \GatewayClient\Gateway::bindUid($client_id, $grade.'-'.$u_id);
+        \GatewayClient\Gateway::bindUid($client_id, $grade . '-' . $u_id);
+        //检测余额
+        (new WalletService())->checkDriverBalance($u_id);
+
         return json(new SuccessMessage());
 
     }
