@@ -23,6 +23,8 @@ use app\api\model\WeatherT;
 use app\lib\enum\CommonEnum;
 use app\lib\enum\OrderEnum;
 use app\lib\enum\TicketEnum;
+use app\lib\enum\UserEnum;
+use app\lib\exception\AuthException;
 use app\lib\exception\SaveException;
 use app\lib\exception\UpdateException;
 use think\Db;
@@ -913,6 +915,10 @@ class OrderService
 
     public function managerOrders($page, $size, $driver, $time_begin, $time_end)
     {
+        $grade = Token::getCurrentTokenVar('type');
+        if ($grade != 'manager') {
+            throw new AuthException();
+        }
         $orders = OrderV::managerOrders($page, $size, $driver, $time_begin, $time_end);
         $orders['data'] = $this->prefixTransferInfo($orders['data']);
         $orders['statistic'] = $this->getManagerOrdersStatistic($driver, $time_begin, $time_end);

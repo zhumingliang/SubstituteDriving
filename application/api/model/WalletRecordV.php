@@ -10,7 +10,7 @@ class WalletRecordV extends Model
 {
     public function getTypeAttr($value)
     {
-        $state = [1 => "保险费用", 2 => "订单服务费", 3 => "账户余额充值",4=>"初始化"];
+        $state = [1 => "保险费用", 2 => "订单服务费", 3 => "账户余额充值", 4 => "初始化"];
         return $state[$value];
     }
 
@@ -40,7 +40,7 @@ class WalletRecordV extends Model
             ->field('id ,account,username,phone,sum(money) as money,state,create_time')
             ->group('id')
             ->order('create_time desc')
-           ->paginate($size, false, ['page' => $page]);
+            ->paginate($size, false, ['page' => $page]);
         return $list;
 
     }
@@ -68,6 +68,7 @@ class WalletRecordV extends Model
 
     public static function managerRecords($page, $size, $driver, $time_begin, $time_end)
     {
+        $time_end = addDay(1, $time_end);
         $list = self::where(function ($query) use ($driver) {
             if (strlen($driver)) {
                 $query->where('username', 'like', '%' . $driver . '%');
@@ -79,8 +80,8 @@ class WalletRecordV extends Model
 
                 }
             })
-            ->field('d_id,username, money,create_time')
-            ->group('d_id')
+            ->where('type', '<', 4)
+            ->field('id as d_id,username, money,create_time')
             ->order('create_time desc')
             ->paginate($size, false, ['page' => $page]);
         return $list;

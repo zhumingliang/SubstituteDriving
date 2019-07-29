@@ -93,12 +93,12 @@ class WalletService
     public function managerRecords($page, $size, $driver, $time_begin, $time_end)
     {
         $grade = Token::getCurrentTokenVar('type');
-        if ($grade == "manager") {
-            $records = WalletRecordV::managerRecords($page, $size, $driver, $time_begin, $time_end);
-
-        } else {
+        if ($grade != "manager") {
             throw  new AuthException();
+
         }
+        $records = WalletRecordV::managerRecords($page, $size, $driver, $time_begin, $time_end);
+
         return $records;
 
     }
