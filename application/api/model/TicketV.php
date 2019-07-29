@@ -24,7 +24,8 @@ class TicketV extends Model
 
                 }
             })
-            ->hidden(['u_id','scene','source'])
+            ->hidden(['u_id','source'])
+            ->order('create_time desc')
             ->paginate($size, false, ['page' => $page]);
         return $list;
     }

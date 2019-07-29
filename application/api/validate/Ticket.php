@@ -9,7 +9,7 @@ class Ticket extends BaseValidate
     protected $rule = [
         'id' => 'require|isPositiveInteger',
         'name' => 'require|isNotEmpty',
-        'price' => 'require|isPositiveInteger',
+        'price' => 'require',
         'time_begin' => 'require|isNotEmpty',
         'time_end' => 'require|isNotEmpty',
         'count' => 'require|isPositiveInteger',
