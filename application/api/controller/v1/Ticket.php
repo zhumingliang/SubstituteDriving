@@ -152,7 +152,7 @@ class Ticket extends BaseController
     public function handel()
     {
         $params = $this->request->param();
-        $id = TicketT::update(['state' => CommonEnum::STATE_IS_FAIL], ['id' => $params['id']]);
+        $id = TicketT::update(['state' =>$params['state']], ['id' => $params['id']]);
         if (!$id) {
             throw new UpdateException();
         }

@@ -13,7 +13,7 @@ class Ticket extends BaseValidate
         'time_begin' => 'require|isNotEmpty',
         'time_end' => 'require|isNotEmpty',
         'count' => 'require|isPositiveInteger',
-        'scene' => 'require|in:1',
+        'scene' => 'require|in:1,2',
         'source' => 'require|in:1,2',
         'state' => 'require|in:1,2,3',
         'u_id' => 'require|isNotEmpty',
@@ -21,7 +21,7 @@ class Ticket extends BaseValidate
     ];
 
     protected $scene = [
-        'save' => ['name', 'price', 'time_begin', 'time_end', 'count', 'scene', 'source'],
+        'save' => ['name', 'price', 'time_begin', 'time_end', 'count', 'scene'],
         'handel' => ['id', 'state'],
         'update' => ['id'],
         'send' => ['u_id', 't_id'],
