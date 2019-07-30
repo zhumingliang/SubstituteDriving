@@ -49,9 +49,10 @@ class Ticket extends BaseController
         $params = $this->request->param();
         $params['state'] = CommonEnum::STATE_IS_OK;
         $params['u_id'] = \app\api\service\Token::getCurrentUid();
-        if (key_exists('id', $params)&&strlen($params['id'])) {
+        if (key_exists('id', $params) && strlen($params['id'])) {
             $ticket = TicketT::update($params);
         } else {
+            unset($params['id']);
             $ticket = TicketT::create($params);
 
         }
@@ -152,7 +153,7 @@ class Ticket extends BaseController
     public function handel()
     {
         $params = $this->request->param();
-        $id = TicketT::update(['state' =>$params['state']], ['id' => $params['id']]);
+        $id = TicketT::update(['state' => $params['state']], ['id' => $params['id']]);
         if (!$id) {
             throw new UpdateException();
         }
