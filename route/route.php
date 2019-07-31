@@ -74,6 +74,7 @@ Route::post('api/:version/notice/update', 'api/:version.Notice/update');
 Route::post('api/:version/notice/handel', 'api/:version.Notice/handel');
 Route::get('api/:version/notices/android', 'api/:version.Notice/AndroidNotices');
 Route::get('api/:version/notices/cms', 'api/:version.Notice/CMSNotices');
+Route::get('api/:version/notice', 'api/:version.Notice/notice');
 
 Route::post('api/:version/recharge/save', 'api/:version.Wallet/saveRecharge');
 Route::get('api/:version/recharges', 'api/:version.Wallet/recharges');

@@ -170,4 +170,27 @@ class Notice extends BaseController
     }
 
 
+    /**
+     * @api {GET} /api/v1/notice CMS管理端/Android管理端/Android司机端-获取通知公详情
+     * @apiGroup  CMS
+     * @apiVersion 1.0.1
+     * @apiDescription
+     * @apiExample {get}  请求样例:
+     * https://tonglingok.com/api/v1/notice?id=1
+     * @apiParam (请求参数说明) {int} id 通知公告id
+     * @apiSuccessExample {json} 返回样例:
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"id":1,"title":"1234","content":"测试修改","create_time":"2019-07-04 11:16:16"}}
+     * @apiSuccess (返回参数说明) {int} id 通知id
+     * @apiSuccess (返回参数说明) {String} title 标题
+     * @apiSuccess (返回参数说明) {String} content  内容
+     * @apiSuccess (返回参数说明) {String} create_time 创建时间
+     */
+    public function notice()
+    {
+        $id = $this->request->param('id');
+        $info = NoticeT::where('id', $id)->field('id,title,content,create_time')->find();
+        return json(new SuccessMessageWithData(['data' => $info]));
+    }
+
+
 }
