@@ -178,7 +178,10 @@ class SystemPrice extends BaseController
      */
     public function startUpdate()
     {
-        $info = $this->request->param('info');
+       /* $info = $this->request->param('info');
+        (new SystemPriceService())->startUpdate($info);
+        return json(new SuccessMessage());*/
+        $params = $this->request->param();
         (new SystemPriceService())->startUpdate($info);
         return json(new SuccessMessage());
 
