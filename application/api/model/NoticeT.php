@@ -17,7 +17,7 @@ class NoticeT extends Model
 
     public static function noticesForManager($page, $size)
     {
-        $list = self::whereIn('state', ['1,2'])
+        $list = self::where('state', '<', 3)
             ->field('id,title,content,state,create_time')
             ->paginate($size, false, ['page' => $page]);
         return $list;
