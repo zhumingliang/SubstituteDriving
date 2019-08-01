@@ -125,6 +125,7 @@ class Notice extends BaseController
      * @apiSuccess (返回参数说明) {int} id 通知id
      * @apiSuccess (返回参数说明) {String} title 标题
      * @apiSuccess (返回参数说明) {String} content  内容
+     * @apiSuccess (返回参数说明) {String} create_time  创建时间
      * @apiSuccess (返回参数说明) {String} state 状态：管理端返回该字段
      */
     public function AndroidNotices($page = 1, $size = 10)

@@ -18,7 +18,7 @@ class NoticeT extends Model
     public static function noticesForManager($page, $size)
     {
         $list = self::whereIn('state', ['1,2'])
-            ->field('id,title,content,state')
+            ->field('id,title,content,state,create_time')
             ->paginate($size, false, ['page' => $page]);
         return $list;
 
@@ -27,7 +27,7 @@ class NoticeT extends Model
     public static function noticesForDriver($page, $size)
     {
         $list = self::where('state', CommonEnum::NOTICE_RELEASED)
-            ->field('id,title,content')
+            ->field('id,title,content,create_time')
             ->paginate($size, false, ['page' => $page]);
         return $list;
 
