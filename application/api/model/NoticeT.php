@@ -52,7 +52,8 @@ class NoticeT extends Model
                 }
             })
             ->hidden(['u_id', 'scene', 'source'])
-            ->paginate($size, false, ['page' => $page]);
+            ->paginate($size, false, ['page' => $page])
+            ->toArray();
         return $list;
 
     }

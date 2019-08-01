@@ -27,6 +27,14 @@ class NoticeService
     public function CMSNotices($page, $size, $time_begin, $time_end, $type, $area, $key)
     {
         $notices = NoticeT::CMSNotices($page, $size, $time_begin, $time_end, $type, $area, $key);
+
+        $data = $notices['data'];
+        if (count($data)) {
+            foreach ($data as $k => $v) {
+                $data[$k]['state'] = $v['state'] == 1 ? "未发布" : "已发布";
+            }
+        }
+        $notices['data'] = $data;
         return $notices;
     }
 
