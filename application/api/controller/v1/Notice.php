@@ -61,7 +61,7 @@ class Notice extends BaseController
      * "state":2
      * }
      * @apiParam (请求参数说明) {int} id 公告id
-     * @apiParam (请求参数说明) {int} state 状态：1 | 未发布；2 | 发布
+     * @apiParam (请求参数说明) {int} state 状态：1 | 未发布；2 | 发布；3|删除
      * @apiSuccessExample {json} 返回样例:
      * {"msg": "ok","errorCode": 0}
      * @apiSuccess (返回参数说明) {int} errorCode 错误代码 0 表示没有错误

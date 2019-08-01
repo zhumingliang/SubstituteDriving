@@ -15,17 +15,6 @@ class NoticeT extends Model
         return $this->belongsTo('AdminT', 'admin_id', 'id');
     }
 
-    public function getStateAttr($value)
-    {
-        $status = [
-            1 => '未发布',
-            2 => '已发布'
-        ];
-        return $status[$value];
-
-
-    }
-
     public static function noticesForManager($page, $size)
     {
         $list = self::whereIn('state', ['1,2'])
@@ -50,6 +39,7 @@ class NoticeT extends Model
         $list = self::with(['admin' => function ($query) use ($key) {
             $query->field('id,username');
         }])
+            ->where('state', '<', '3')
             ->where(function ($query) use ($key) {
                 if (strlen($key)) {
                     $query->where('title', 'like', '%' . $key . '%');

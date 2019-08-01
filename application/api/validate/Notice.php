@@ -12,7 +12,7 @@ class Notice extends BaseValidate
         'title' => 'require|isNotEmpty',
         'content' => 'require|isNotEmpty',
         'from' => 'require|in:android,pc',
-        'state' => 'require|in:1,2'
+        'state' => 'require|in:1,2,3'
     ];
 
     protected $scene = [
