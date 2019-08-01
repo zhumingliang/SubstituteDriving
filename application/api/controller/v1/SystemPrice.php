@@ -257,7 +257,7 @@ class SystemPrice extends BaseController
      * @apiExample {get}  请求样例:
      * https://tonglingok.com/api/v1/SystemPrice/interval
      * @apiSuccessExample {json} 返回样例:
-     * {"msg":"ok","errorCode":0,"code":200,"data":[{"id":1,"time_begin":"08:00:00","time_end":"18:00:00","price":18},{"id":2,"time_begin":"18:00:00","time_end":"00:00:00","price":18}]}
+     * {"msg":"ok","errorCode":0,"code":200,"data":[{"id":1,"time_begin":"08:00","time_end":"18:00","price":18},{"id":2,"time_begin":"18:00","time_end":"00:00","price":18}]}
      * @apiSuccess (返回参数说明) {int} id 设置id
      * @apiSuccess (返回参数说明) {float} price 价格
      * @apiSuccess (返回参数说明) {Strings} time_begin 开始时间
@@ -279,10 +279,12 @@ class SystemPrice extends BaseController
      * @apiDescription Android管理端-修改分时段计费设置
      * @apiExample {post}  请求样例:
      *    {
-     *       "info":[{"id":1,"price":30},{"id":2,"time_begin":"08:00","time_end":"18:00"}]
+     *       "id":1,
+     *       "price":8.0,
+     *       "time_begin": "09:00",
+     *       "time_end": "12:00"
      *     }
-     * @apiParam (请求参数说明) {Obj} info  更新信息：多条明细更新组装成json字符串
-     * @apiParam (请求参数说明) {int} id    明细ID
+     * @apiParam (请求参数说明) {int} id    设置ID
      * @apiParam (请求参数说明) {float} price    价格
      * @apiParam (请求参数说明) {String} time_begin   开始时间
      * @apiParam (请求参数说明) {String} time_end  截止时间
