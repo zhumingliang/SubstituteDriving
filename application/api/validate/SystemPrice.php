@@ -20,7 +20,7 @@ class SystemPrice extends BaseValidate
         'startSave' => ['distance', 'price', 'order', 'type'],
         'startHandel' => ['id'],
         'startPrice' => ['type'],
-        'startUpdate' => ['info'],
+        'startUpdate' => ['id'],
         'weatherUpdate' => ['id'],
         'waitUpdate' => ['id'],
         'startOpenHandel' => ['state'],

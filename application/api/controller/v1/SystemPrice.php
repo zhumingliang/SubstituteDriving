@@ -164,13 +164,15 @@ class SystemPrice extends BaseController
      * @apiDescription  Android管理端-修改起步价设置/新增远程接驾设置
      * @apiExample {post}  请求样例:
      *    {
-     *       "info":[{"id":1,"price":30},{"id":2,"distance":2.0}]
+     *       "id":8.0,
+     *       "distance":8.0,
+     *       "price": 18.0,
+     *       "order": 1
      *     }
-     * @apiParam (请求参数说明) {Obj} info  更新信息：多条明细更新组装成json字符串
-     * @apiParam (请求参数说明) {int} id    明细ID
+     * @apiParam (请求参数说明) {id} id    明细ID
+     * @apiParam (请求参数说明) {float} distance  距离
      * @apiParam (请求参数说明) {float} price    价格
-     * @apiParam (请求参数说明) {float} distance 里程
-     *
+     * @apiParam (请求参数说明) {int} order   价格设置排序：1 | 起步价，后面按序号排序*
      * @apiSuccessExample {json} 返回样例:
      *{"msg":"ok","errorCode":0}
      * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误
@@ -182,7 +184,7 @@ class SystemPrice extends BaseController
         (new SystemPriceService())->startUpdate($info);
         return json(new SuccessMessage());*/
         $params = $this->request->param();
-        (new SystemPriceService())->startUpdate($info);
+        (new SystemPriceService())->startUpdate($params);
         return json(new SuccessMessage());
 
     }
