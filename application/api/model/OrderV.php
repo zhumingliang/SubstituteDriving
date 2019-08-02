@@ -130,7 +130,7 @@ class OrderV extends Model
     public static function currentOrders($page, $size)
     {
         $list = self::whereIn('state', OrderEnum::ORDER_NO . "," . OrderEnum::ORDER_ING)
-            ->field('id,d_id,superior_id,null as superior,2 as transfer ,from,state,start,end,name,money,cancel_type,cancel_remark,create_time')
+           // ->field('id,d_id,superior_id,null as superior,2 as transfer ,from,state,start,end,name,money,cancel_type,cancel_remark,create_time')
             ->order('create_time desc')
             ->paginate($size, false, ['page' => $page])->toArray();
         return $list;

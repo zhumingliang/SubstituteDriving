@@ -600,8 +600,7 @@ class Order extends BaseController
      * @apiSuccess (返回参数说明) {int} transfer 是否为转单订单：1|是；2|否
      * @apiSuccess (返回参数说明) {Obj} superior 转单上级信息
      * @apiSuccess (返回参数说明) {String} superior-username 上级司机姓名
-     * @apiSuccess (返回参数说明) {Obj} driver接单司机信息
-     * @apiSuccess (返回参数说明) {String} driver-username 司机姓名
+     * @apiSuccess (返回参数说明) {String} driver 接单司机信息
      * @apiSuccess (返回参数说明) {String} start 出发点
      * @apiSuccess (返回参数说明) {String} end 目的地
      * @apiSuccess (返回参数说明) {String} name 乘客姓名
