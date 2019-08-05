@@ -108,6 +108,7 @@ Route::get('api/:version/order/consumption/records', 'api/:version.Order/records
 Route::get('api/:version/order/locations', 'api/:version.Order/orderLocations');
 Route::post('api/:version/order/driver/complete', 'api/:version.Order/orderComplete');
 Route::post('api/:version/order/transfer', 'api/:version.Order/transferOrder');
+Route::post('api/:version/order/transferOrder/manager', 'api/:version.Order/choiceDriverByManager');
 
 
 Route::get('api/:version/messages', 'api/:version.Message/messages');
