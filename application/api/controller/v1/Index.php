@@ -11,7 +11,7 @@ class Index
     {
         //(new SendSMSService())->sendOrderSMS('18956225230', ['code' => '*****' . substr('sajdlkjdsk21312', 5), 'order_time' => date('H:i', time())]);
 
-        $this->radius($lat, $lng, $type);
+        $this->initDriverStatus();
     }
 
     public function initDriverStatus()
