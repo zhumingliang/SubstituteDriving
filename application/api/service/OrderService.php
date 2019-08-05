@@ -774,7 +774,6 @@ class OrderService
             throw  new SaveException(['msg' => '订单已开始，不能转单']);
         }
         $d_id = $params['d_id'];
-
         //检查新司机状态是否有订单，修改司机状态
         if (!$this->updateDriverCanReceive($d_id)) {
             throw  new SaveException(['msg' => '该司机有订单派送中，暂时不能接单']);

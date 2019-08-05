@@ -2,6 +2,7 @@
 
 namespace app\api\controller\v1;
 
+use app\api\model\DriverT;
 use app\api\service\SendSMSService;
 
 class Index
@@ -11,6 +12,18 @@ class Index
         //(new SendSMSService())->sendOrderSMS('18956225230', ['code' => '*****' . substr('sajdlkjdsk21312', 5), 'order_time' => date('H:i', time())]);
 
         $this->radius($lat, $lng, $type);
+    }
+
+    public function initDriverStatus()
+    {
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1', 6379, 60);
+        $drivers = DriverT::all();
+        foreach ($drivers as $k => $v) {
+            $redis->sRem('driver_order_ing', $v['id']);
+            $redis->sAdd('driver_order_no', $v['id']);
+        }
+
     }
 
     public function send($client_id)
