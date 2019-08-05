@@ -866,8 +866,7 @@ class OrderService
             (new DriverService())->handelDriveStateByCancel($o_d_id);
         }
         //2.删除推送
-        $push->delete();
-
+        OrderPushT::where('o_id', $o_id)->delete();
         //推送给司机
         $d_id = $params['d_id'];
         $order = $this->getOrder($o_id);
