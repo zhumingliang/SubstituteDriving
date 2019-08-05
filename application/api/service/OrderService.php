@@ -773,7 +773,7 @@ class OrderService
         if ($order->state != OrderEnum::ORDER_NO) {
             throw  new SaveException(['msg' => '订单已开始，不能转单']);
         }
-        $d_id = $params['id'];
+        $d_id = $params['d_id'];
 
         //检查新司机状态是否有订单，修改司机状态
         if (!$this->updateDriverCanReceive($d_id)) {
@@ -793,8 +793,6 @@ class OrderService
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
 
-        $driver_ids = $redis->sMembers('driver_order_no');
-        var_dump($driver_ids);
         $exits = $redis->sIsMember('driver_order_no', "$d_id");
         var_dump($exits);
         if (!$exits) {
