@@ -607,7 +607,7 @@ class Order extends BaseController
      * @apiSuccess (返回参数说明) {int} begin 是否开始出发：1|开始出发；2|未开始出发
      * @apiSuccess (返回参数说明) {String} from 下单来源
      * @apiSuccess (返回参数说明) {String}  create_time 创建时间
-     * @apiSuccess (返回参数说明) {int} state 订单状态：1|未派单；2|派单未接单
+     * @apiSuccess (返回参数说明) {int} state 订单状态：1 | 未接单；2 | 已接单
      */
     public function current($page = 1, $size = 10)
     {

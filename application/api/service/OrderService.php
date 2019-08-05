@@ -792,6 +792,8 @@ class OrderService
         //检查新司机状态是否有订单，修改司机状态
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
+        $drivers = $redis->sIsMember('driver_order_no', $d_id);
+        var_dump($drivers);
         if (!$redis->sIsMember('driver_order_no', $d_id)) {
             return false;
         }
