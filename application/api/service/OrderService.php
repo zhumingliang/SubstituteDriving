@@ -795,7 +795,8 @@ class OrderService
 
         $driver_ids = $redis->sMembers('driver_order_no');
         var_dump($driver_ids);
-        $exits = $redis->sIsMember('driver_order_no', $d_id);
+        $exits = $redis->sIsMember('driver_order_no', "$d_id");
+        var_dump($exits);
         if (!$exits) {
             return false;
         }
