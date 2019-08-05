@@ -220,6 +220,7 @@ class DriverService
 
         $redis = new Redis();
         $driver_ids = $redis->sMembers('driver_order_no');
+        var_dump($driver_ids);
         if (!$driver_ids || !count($list)) {
             return array();
         }
