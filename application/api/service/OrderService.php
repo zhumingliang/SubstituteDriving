@@ -871,7 +871,7 @@ class OrderService
         $d_id = $params['d_id'];
         $order = $this->getOrder($o_id);
         $distance_info = $this->getDistanceInfoToPush($order);
-        $this->pushToDriverWithTransfer($d_id, $order, $distance_info);
+        $this->pushToDriverWithTransfer($d_id, $order, $distance_info, "manager");
 
     }
 
