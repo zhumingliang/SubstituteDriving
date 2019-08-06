@@ -16,6 +16,7 @@ use app\lib\enum\CommonEnum;
 use app\lib\exception\SuccessMessage;
 use app\lib\exception\SuccessMessageWithData;
 use app\lib\exception\UpdateException;
+use think\facade\Request;
 
 class SystemPrice extends BaseController
 {
@@ -183,7 +184,7 @@ class SystemPrice extends BaseController
        /* $info = $this->request->param('info');
         (new SystemPriceService())->startUpdate($info);
         return json(new SuccessMessage());*/
-        $params = $this->request->param();
+        $params = Request::only('id,distance,price,order');
         (new SystemPriceService())->startUpdate($params);
         return json(new SuccessMessage());
 
