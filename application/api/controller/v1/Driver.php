@@ -183,10 +183,15 @@ class Driver extends BaseController
      * https://tonglingok.com/api/v1/driver/acceptableOrder?id=1
      * @apiParam (请求参数说明) {int} id 需转单订单id
      * @apiSuccessExample {json} 返回样例:
-     * {"msg":"ok","errorCode":0,"code":200,"data":[{"id":"5","distance":"1351.4590","name":"zml5","phone":"18825999683","location":["103.90176326036453247","31.60486909089710394"]},{"id":"3","distance":"553.8218","name":"zml3","phone":"18825999681","location":["114.1738244891166687","27.47456377424472151"]},{"id":"2","distance":"1939.1864","name":"zml2","phone":"18825999680","location":["115.05623370409011841","39.94893288365195616"]},{"id":"1","distance":"2017.0671","name":"朱明良","phone":"18956225230","location":["115.79384654760360718","40.58445845049069334"]}]}
+     * {"msg":"ok","errorCode":0,"code":200,"data":[{"id":"5","distance":"1351.4590","name":"zml5","phone":"18825999683","citycode":"","city":"","street":"","addr":"","district":"","location":["103.90176326036453247","31.60486909089710394"]},{"id":"3","distance":"553.8218","name":"zml3","phone":"18825999681","location":["114.1738244891166687","27.47456377424472151"]},{"id":"2","distance":"1939.1864","name":"zml2","phone":"18825999680","location":["115.05623370409011841","39.94893288365195616"]},{"id":"1","distance":"2017.0671","name":"朱明良","phone":"18956225230","location":["115.79384654760360718","40.58445845049069334"]}]}
      * @apiSuccess (返回参数说明) {int} id 司机ID
      * @apiSuccess (返回参数说明) {String} name 司机姓名
      * @apiSuccess (返回参数说明) {String} phone 司机手机号
+     * @apiSuccess (返回参数说明) {String} citycode 城市编码
+     * @apiSuccess (返回参数说明) {String} city 城市
+     * @apiSuccess (返回参数说明) {String} district 区
+     * @apiSuccess (返回参数说明) {String} street 街道
+     * @apiSuccess (返回参数说明) {String} addr 地址信息
      * @apiSuccess (返回参数说明) {Float} distance 司机离出发位置距离
      * @apiSuccess (返回参数说明) {Obj} location 司机实时地理位置：经度-纬度
      */

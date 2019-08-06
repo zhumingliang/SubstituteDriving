@@ -385,10 +385,10 @@ class Order extends BaseController
      * @apiDescription    Android管理端-分配司机订单
      * @apiExample {post}  请求样例:
      *    {
-     *       "id": 1,
+     *       "o_id": 1,
      *       "d_id":1
      *     }
-     * @apiParam (请求参数说明) {int} id  订单id
+     * @apiParam (请求参数说明) {int} o_id  订单id
      * @apiParam (请求参数说明) {int} d_id  被转单司机id
      * @apiSuccessExample {json} 返回样例:
      *{"msg":"ok","errorCode":0}

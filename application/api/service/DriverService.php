@@ -29,8 +29,8 @@ class DriverService
 
     public function __construct()
     {
-         $this->redis = new \Redis();
-         $this->redis->connect('127.0.0.1', 6379, 60);
+        $this->redis = new \Redis();
+        $this->redis->connect('127.0.0.1', 6379, 60);
 
     }
 
@@ -228,12 +228,20 @@ class DriverService
         foreach ($list as $k => $v) {
             $d_id = $v[0];
             if (in_array($d_id, $driver_ids)) {
-                $driver = DriverT::get($d_id);
+                $driver = $redis->rPop("driver:$d_id:location");
+                if ($driver) {
+                    $driver = json_decode($driver, true);
+                }
                 $data = [
                     'id' => $d_id,
                     'distance' => $v[1],
-                    'name' => $driver->username,
-                    'phone' => $driver->phone,
+                    'name' => $driver ? $driver['username'] : '',
+                    'phone' => $driver ? $driver['phone'] : '',
+                    'citycode' => $driver ? $driver['citycode'] : '',
+                    'city' => $driver ? $driver['city'] : '',
+                    'district' => $driver ? $driver['district'] : '',
+                    'street' => $driver ? $driver['street'] : '',
+                    'addr' => $driver ? $driver['addr'] : '',
                     'location' => $v[2]
                 ];
                 array_push($return_data, $data);
