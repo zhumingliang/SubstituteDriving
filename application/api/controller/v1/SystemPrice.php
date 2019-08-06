@@ -297,8 +297,8 @@ class SystemPrice extends BaseController
      */
     public function intervalUpdate()
     {
-        $info = $this->request->param('info');
-        (new SystemPriceService())->intervalUpdate($info);
+        $params = $this->request->param();
+        (new SystemPriceService())->intervalUpdate($params);
         return json(new SuccessMessage());
 
     }
