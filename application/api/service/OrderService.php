@@ -826,8 +826,9 @@ class OrderService
         );
         //通过websocket推送给司机
         $push_data = [
-            'type' => $push_type,
+            'type' => 'transfer',
             'order_info' => [
+                'from_type' => $push_type == "transfer" ? 'driver' : 'manager',
                 'from' => $from_name,
                 'name' => $order->name,
                 'phone' => $order->phone,
