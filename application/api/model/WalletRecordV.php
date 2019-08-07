@@ -14,7 +14,7 @@ class WalletRecordV extends Model
         return $state[$value];
     }
 
-    public static function drivers($page, $size, $time_begin, $time_end, $username, $account, $online)
+    public static function drivers($page, $size, $time_begin, $time_end, $username, $account, $number,$online)
     {
         $list = self::where(function ($query) use ($username) {
             if (strlen($username)) {
@@ -24,6 +24,11 @@ class WalletRecordV extends Model
             ->where(function ($query) use ($account) {
                 if (strlen($account)) {
                     $query->where('account', 'like', '%' . $account . '%');
+                }
+            })
+            ->where(function ($query) use ($number) {
+                if (strlen($number)) {
+                    $query->where('number', 'like', '%' . $number . '%');
                 }
             })
             ->where(function ($query) use ($online) {
@@ -37,7 +42,7 @@ class WalletRecordV extends Model
 
                 }
             })
-            ->field('id ,account,username,phone,sum(money) as money,state,create_time')
+            ->field('id ,account,number,username,phone,sum(money) as money,state,create_time')
             ->group('id')
             ->order('create_time desc')
             ->paginate($size, false, ['page' => $page]);

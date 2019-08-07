@@ -29,8 +29,8 @@ class DriverService
 
     public function __construct()
     {
-        $this->redis = new \Redis();
-        $this->redis->connect('127.0.0.1', 6379, 60);
+       // $this->redis = new \Redis();
+        //$this->redis->connect('127.0.0.1', 6379, 60);
 
     }
 
@@ -46,10 +46,10 @@ class DriverService
 
     }
 
-    public function drivers($page, $size, $time_begin, $time_end, $username, $account, $online)
+    public function drivers($page, $size, $time_begin, $time_end, $username, $account, $number,$online)
     {
 
-        $drivers = WalletRecordV::drivers($page, $size, $time_begin, $time_end, $username, $account, $online);
+        $drivers = WalletRecordV::drivers($page, $size, $time_begin, $time_end, $username, $account, $number,$online);
         return $drivers;
 
     }

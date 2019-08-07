@@ -29,11 +29,13 @@ class Driver extends BaseController
      * @apiDescription   CMS管理端-新增司机
      * @apiExample {post}  请求样例:
      *    {
+     *       "number": "t123",
      *       "username": "张三",
      *       "account": "账号",
      *       "phone": "18956225230",
      *       "pwd": "a111111",
      *     }
+     * @apiParam (请求参数说明) {String} number  司机工号牌
      * @apiParam (请求参数说明) {String} username  司机名称
      * @apiParam (请求参数说明) {String} account  司机账号
      * @apiParam (请求参数说明) {String} phone  手机号码
@@ -59,12 +61,14 @@ class Driver extends BaseController
      *    {
      *       "id": 1,
      *       "username": "张三",
+     *       "number": "t123",
      *       "account": "账号",
      *       "phone": "18956225230",
      *       "pwd": "a111111",
      *     }
      * @apiParam (请求参数说明) {int} id  司机id
      * @apiParam (请求参数说明) {String} username  司机名称
+     * @apiParam (请求参数说明) {String} number  司机工号牌
      * @apiParam (请求参数说明) {String} account  司机账号
      * @apiParam (请求参数说明) {String} phone  手机号码
      * @apiParam (请求参数说明) {String} pwd  密码
@@ -77,7 +81,7 @@ class Driver extends BaseController
     {
         $params = $this->request->param();
         $res = DriverT::update($params);
-        if (!$res){
+        if (!$res) {
             throw new UpdateException();
 
         }
@@ -90,16 +94,17 @@ class Driver extends BaseController
      * @apiVersion 1.0.1
      * @apiDescription CMS管理端-获取司机列表
      * @apiExample {get}  请求样例:
-     * https://tonglingok.com/api/v1/drivers?time_begin=2019-06-28&time_end=2019-06-29&page=1&size=10&online=1&account="a"&username="占三"
+     * https://tonglingok.com/api/v1/drivers?time_begin=2019-06-28&time_end=2019-06-29&page=1&size=10&online=1&account="a"&number="t123"&username="占三"
      * @apiParam (请求参数说明) {int} page 当前页码
      * @apiParam (请求参数说明) {int} size 每页多少条数据
      * @apiParam (请求参数说明) {String} time_begin 查询开始时间
      * @apiParam (请求参数说明) {String} time_end 查询开始时间
      * @apiParam (请求参数说明) {String} online 启用状态：1 | 在线；2 | 下线;3 | 不限制
      * @apiParam (请求参数说明) {String} username  司机名称
+     * @apiParam (请求参数说明) {String} number  司机编号
      * @apiParam (请求参数说明) {String} account 账号
      * @apiSuccessExample {json} 返回样例:
-     * {"msg":"ok","errorCode":0,"code":200,"data":{"total":1,"per_page":10,"current_page":1,"last_page":1,"data":[{"d_id":1,"account":"18956225230","username":"朱明良","phone":"18956225230","money":100,"state":1,"create_time":"2019-06-26 23:50:08"}]}}
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"total":7,"per_page":10,"current_page":1,"last_page":1,"data":[{"id":7,"account":"18219112830","number":"","username":"fuzhao","phone":"18219112831","money":"20.00","state":1,"create_time":"2019-07-29 01:16:54"},{"id":5,"account":"12323223","number":"","username":"zml5","phone":"18825999683","money":"0.00","state":2,"create_time":"2019-07-17 03:01:20"},{"id":2,"account":"123","number":"","username":"zml2","phone":"18825999680","money":"0.00","state":1,"create_time":"2019-07-17 03:01:20"},{"id":6,"account":"123","number":"","username":"zml2","phone":"18825999680","money":"0.00","state":1,"create_time":"2019-07-17 03:01:20"},{"id":3,"account":"1234","number":"","username":"zml3","phone":"18825999681","money":"0.00","state":1,"create_time":"2019-07-17 03:01:20"},{"id":4,"account":"1235","number":"","username":"zml4","phone":"18825999682","money":"0.00","state":1,"create_time":"2019-07-17 03:01:20"},{"id":1,"account":"18956225230","number":"","username":"朱明良","phone":"18956225230","money":"172.50","state":1,"create_time":"2019-06-26 23:50:08"}]}}
      * @apiSuccess (返回参数说明) {int} total 数据总数
      * @apiSuccess (返回参数说明) {int} per_page 每页多少条数据
      * @apiSuccess (返回参数说明) {int} current_page 当前页码
@@ -107,15 +112,16 @@ class Driver extends BaseController
      * @apiSuccess (返回参数说明) {int} id 司机id
      * @apiSuccess (返回参数说明) {String} account 司机账号
      * @apiSuccess (返回参数说明) {String} username  司机名称
+     * @apiSuccess (返回参数说明) {String} number  司机工号牌
      * @apiSuccess (返回参数说明) {String} phone司机手机号
      * @apiSuccess (返回参数说明) {Float} money 账号金额
      * @apiSuccess (返回参数说明) {int} state 状态：1 | 正常；2 | 停用
      * @apiSuccess (返回参数说明) {int} online 状态：1 | 正常；2 | 停用
      * @apiSuccess (返回参数说明) {String} create_time 创建时间
      */
-    public function drivers($page = 1, $size = 10, $time_begin = '', $time_end = '', $username = '', $account = '', $online = 3)
+    public function drivers($page = 1, $size = 10, $time_begin = '', $time_end = '', $username = '', $account = '', $number = '', $online = 3)
     {
-        $drivers = (new DriverService())->drivers($page, $size, $time_begin, $time_end, $username, $account, $online);
+        $drivers = (new DriverService())->drivers($page, $size, $time_begin, $time_end, $username, $account, $number, $online);
         return json(new SuccessMessageWithData(['data' => $drivers]));
 
     }
