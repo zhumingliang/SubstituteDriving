@@ -110,7 +110,8 @@ class WalletService
         if ($balance < config('setting.balance_limit')) {
             DriverT::update(['online' => DriverEnum::OFFLINE], ['id' => $d_id]);
             $push_data = [
-                'type' => 'online'
+                'type' => 'online',
+                "order_info" => ['msg'=>'余额不足，请充值']
             ];
             GatewayService::sendToDriverClient($d_id, $push_data);
             return true;
