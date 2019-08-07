@@ -30,7 +30,7 @@ class GatewayService
         $data = [
             'errorCode' => 0,
             'msg' => 'success',
-            'data' => $message
+            $message['type'] => $message['order_info']
 
         ];
         return json_encode($data);
