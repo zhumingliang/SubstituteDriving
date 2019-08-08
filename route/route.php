@@ -93,6 +93,7 @@ Route::post('api/:version/order/push/handel', 'api/:version.Order/orderPushHande
 Route::post('api/:version/order/cancel', 'api/:version.Order/orderCancel');
 Route::post('api/:version/order/withdraw', 'api/:version.Order/withdraw');
 Route::post('api/:version/order/begin', 'api/:version.Order/orderBegin');
+Route::post('api/:version/order/begin/wait', 'api/:version.Order/beginWait');
 Route::post('api/:version/order/arriving', 'api/:version.Order/orderArriving');
 Route::get('api/:version/orders/mini', 'api/:version.Order/miniOrders');
 Route::get('api/:version/orders/driver', 'api/:version.Order/driverOrders');

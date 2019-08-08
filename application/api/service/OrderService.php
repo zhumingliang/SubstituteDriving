@@ -477,6 +477,18 @@ class OrderService
     {
         $order = $this->getOrder($params['id']);
         $order->begin = CommonEnum::STATE_IS_OK;
+        $order->begin_time = date('Y-m-d H:i:s', time());
+        $res = $order->save();
+        if (!$res) {
+            throw new UpdateException();
+        }
+    }
+
+    public function beginWait($params)
+    {
+        $order = $this->getOrder($params['id']);
+        $order->begin = CommonEnum::STATE_IS_OK;
+        $order->begin_wait = date('Y-m-d H:i:s', time());
         $res = $order->save();
         if (!$res) {
             throw new UpdateException();

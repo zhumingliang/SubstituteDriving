@@ -136,6 +136,30 @@ class Order extends BaseController
 
     }
 
+
+    /**
+     * @api {POST} /api/v1/order/begin/wait  Android司机端-到达目的地，点击开始等待
+     * @apiGroup   Android
+     * @apiVersion 1.0.1
+     * @apiDescription   Android司机端-到达目的地，点击开始等待
+     * @apiExample {post}  请求样例:
+     *    {
+     *       "id": 1
+     *     }
+     * @apiParam (请求参数说明) {int} id  订单id
+     * @apiSuccessExample {json} 返回样例:
+     *{"msg":"ok","errorCode":0}
+     * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误
+     * @apiSuccess (返回参数说明) {String} msg 信息描述
+     */
+    public function beginWait()
+    {
+        $params = $this->request->param();
+        (new OrderService())->beginWait($params);
+        return json(new SuccessMessage());
+
+    }
+
     /**
      * @api {POST} /api/v1/order/arriving  Android司机端-点击到达起点
      * @apiGroup   Android
