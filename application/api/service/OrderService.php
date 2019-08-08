@@ -395,13 +395,16 @@ class OrderService
         if (!count($list)) {
             return false;
         }
-
         //设置三个set: 司机未接单 driver_order_no；司机正在派单 driver_order_ing；司机已经接单 driver_order_receive
         foreach ($list as $k => $v) {
             $d_id = $v;
-
             if (GatewayService::isDriverUidOnline($d_id) &&
                 $redis->sIsMember('driver_order_no', $d_id)) {
+                $check = $this->checkDriverPush($order->id, $d_id);
+                if ($check == 3 || $check == 2) {
+                    continue;
+                }
+
                 //将司机从'未接单'移除，添加到：正在派单
                 $redis->sRem('driver_order_no', $d_id);
                 $redis->sAdd('driver_order_ing', $d_id);
@@ -435,6 +438,23 @@ class OrderService
             }
 
         }
+    }
+
+    private function checkDriverPush($o_id, $d_id)
+    {
+        $pushes = OrderPushT::where('o_id', $o_id)
+            ->where('d_id', $d_id)
+            ->select();
+        if (!$pushes) {
+            return 1;
+        }
+        foreach ($pushes as $k => $v) {
+            if ($v['state'] == OrderEnum::ORDER_PUSH_REFUSE) {
+                return 3;
+            }
+        }
+
+        return 2;
     }
 
     public function orderCancel($params)
