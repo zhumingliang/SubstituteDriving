@@ -53,7 +53,7 @@ class WalletRecordV extends Model
 
     public static function recordsToDriver($page, $size, $d_id)
     {
-        $list = self::where('d_id', $d_id)
+        $list = self::where('id', $d_id)
             ->field('money,type,create_time')
             ->order('create_time desc')
             ->paginate($size, false, ['page' => $page]);

@@ -177,8 +177,8 @@ class Order extends BaseController
      */
     public function orderArriving()
     {
-        $params = $this->request->param();
-        (new OrderService())->arrivingStart($params);
+        $id = $this->request->param('id');
+        (new OrderService())->arrivingStart($id);
         return json(new SuccessMessage());
 
     }

@@ -25,6 +25,7 @@ use app\lib\enum\OrderEnum;
 use app\lib\enum\TicketEnum;
 use app\lib\enum\UserEnum;
 use app\lib\exception\AuthException;
+use app\lib\exception\ParameterException;
 use app\lib\exception\SaveException;
 use app\lib\exception\UpdateException;
 use think\Db;
@@ -500,7 +501,10 @@ class OrderService
      */
     public function arrivingStart($id)
     {
-        $order = $this->getOrder($id);
+        $order = OrderT::get($id);
+        if (!$order) {
+            throw new ParameterException(['msg' => '订单不存在']);
+        }
         $order->arriving_time = date('Y-m-d H:i:s', time());
         $res = $order->save();
         if (!$res) {
