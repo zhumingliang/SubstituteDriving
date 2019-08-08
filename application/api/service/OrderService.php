@@ -4,7 +4,6 @@
 namespace app\api\service;
 
 
-use app\api\model\DriverIncomeV;
 use app\api\model\DriverT;
 use app\api\model\FarStateT;
 use app\api\model\LocationT;
@@ -16,20 +15,17 @@ use app\api\model\OrderT;
 use app\api\model\OrderV;
 use app\api\model\StartPriceT;
 use app\api\model\SystemOrderChargeT;
-use app\api\model\TicketT;
 use app\api\model\TimeIntervalT;
 use app\api\model\WaitPriceT;
 use app\api\model\WeatherT;
 use app\lib\enum\CommonEnum;
 use app\lib\enum\OrderEnum;
 use app\lib\enum\TicketEnum;
-use app\lib\enum\UserEnum;
 use app\lib\exception\AuthException;
 use app\lib\exception\ParameterException;
 use app\lib\exception\SaveException;
 use app\lib\exception\UpdateException;
 use think\Db;
-use think\db\Where;
 use think\Exception;
 use zml\tp_tools\CalculateUtil;
 
@@ -259,7 +255,8 @@ class OrderService
 
         //获取订单信息并检测订单状态
         $order = OrderT::getOrder($orderList->o_id);
-        if (!$order || $order->state != OrderEnum::ORDER_NO) {
+        if (!$order || $order->state != OrderEnum::ORDER_NO
+            || $order->stop == OrderEnum::ORDER_STOP) {
             $orderList->state = OrderEnum::ORDER_LIST_COMPLETE;
             $orderList->save();
             return true;
@@ -464,12 +461,30 @@ class OrderService
             return true;
         }
         //处理司机状态
-        (new DriverService())->handelDriveStateByCancel($params['id']);
-
+        if ($order->d_id) {
+            $d_id = $order->d_id;
+        } else {
+            $orderPush = OrderPushT::where('o_id', $params['id'])
+                ->where('state', OrderEnum::ORDER_PUSH_NO)
+                ->order('create_time desc')
+                ->find();
+            if ($orderPush) {
+                $d_id = $orderPush->d_id;
+                //处理推送取消
+                //触发器-处理订单/订单处理列表状态
+                $orderPush->state = OrderEnum::ORDER_PUSH_WITHDRAW;
+                $orderPush->save();
+            } else {
+                $d_id = '';
+            }
+        }
+        if ($d_id) {
+            (new DriverService())->handelDriveStateByCancel($d_id);
+        }
         //处理订单状态
         //由接单中/派单中/未接单->订单撤销
-        OrderListT::update(['state' => OrderEnum::ORDER_LIST_CANCEL],
-            ['o_id' => $params['id']]);
+        /* OrderListT::update(['state' => OrderEnum::ORDER_LIST_CANCEL],
+             ['o_id' => $params['id']]);*/
 
 
     }
@@ -1041,20 +1056,25 @@ class OrderService
             throw new UpdateException(['msg' => '订单已开始出发，不能被撤回']);
         }
         if ($order->d_id) {
-            (new DriverService())->handelDriveStateByCancel($order->d_id);
+            $d_id = $order->d_id;
+        } else {
+            $orderPush = OrderPushT::where('o_id', $o_id)
+                ->where('state', CommonEnum::STATE_IS_OK)
+                ->order('create_time desc')
+                ->find();
+            if ($orderPush) {
+                $d_id = $orderPush->d_id;
+                //处理推送取消
+                //触发器-处理订单/订单处理列表状态
+                $orderPush->state = OrderEnum::ORDER_PUSH_WITHDRAW;
+                $orderPush->save();
+            } else {
+                $d_id = '';
+            }
         }
-        //修改推送表状态
-        $push = OrderPushT::where('o_id', $o_id)
-            ->order('create_time desc')
-            ->find();
-        if ($push) {
-            //触发器修改订单状态
-            //将订单派送列表中订单状态改为撤销状态
-            $push->state = OrderEnum::ORDER_PUSH_WITHDRAW;
-            $push->save();
+        if ($d_id) {
+            (new DriverService())->handelDriveStateByCancel($d_id);
         }
-
-
     }
 
     public function CMSManagerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from)

@@ -33,6 +33,8 @@ class OrderEnum
 
     const ORDER_CANCEL = 5;
 
+    const ORDER_STOP = 1;
+
 
     const ORDER_LIST_NO = 1;
 
