@@ -113,6 +113,15 @@ class OrderService
             $params['from'] = OrderEnum::FROM_MANAGER;
             $params['state'] = OrderEnum::ORDER_NO;
             $params['order_num'] = time();
+
+            //处理远程接驾费用
+            $location = $this->getDriverLocation($d_id);
+            $far = $this->prefixFar($params['start_lng'], $params['start_lat'], $location['lng'], $location['lat']);
+
+            $params['far_distance'] = $far['far_distance'];
+            $params['far_money'] = $far['far_money'];
+
+
             $order = $this->saveOrder($params);
             $o_id = $order->id;
             //新增到订单待处理队列-状态：正在派单
