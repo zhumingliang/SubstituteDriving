@@ -668,7 +668,7 @@ class OrderService
                 throw new SaveException(['msg' => '订单抽成失败']);
             }
             Db::commit();
-            (new DriverService())->handelDriveStateByComplete($id);
+            (new DriverService())->handelDriveStateByComplete($order->d_id);
             (new WalletService())->checkDriverBalance(Token::getCurrentUid());
             return $this->prepareOrderInfo($order);
 

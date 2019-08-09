@@ -29,8 +29,8 @@ class DriverService
 
     public function __construct()
     {
-       // $this->redis = new \Redis();
-        //$this->redis->connect('127.0.0.1', 6379, 60);
+        $this->redis = new \Redis();
+        $this->redis->connect('127.0.0.1', 6379, 60);
 
     }
 
@@ -46,10 +46,10 @@ class DriverService
 
     }
 
-    public function drivers($page, $size, $time_begin, $time_end, $username, $account, $number,$online)
+    public function drivers($page, $size, $time_begin, $time_end, $username, $account, $number, $online)
     {
 
-        $drivers = WalletRecordV::drivers($page, $size, $time_begin, $time_end, $username, $account, $number,$online);
+        $drivers = WalletRecordV::drivers($page, $size, $time_begin, $time_end, $username, $account, $number, $online);
         return $drivers;
 
     }
@@ -140,17 +140,28 @@ class DriverService
         //1.上线-添加进入未接单
         //2.下线-需要检测当前时候否有进行中的订单；清除接单三大状态
         if ($line_type == DriverEnum::ONLINE) {
-            $this->redis->sRem('driver_order_ing', $d_id);
-            $this->redis->sRem('driver_order_receive', $d_id);
+            if ($this->redis->sIsMember('driver_order_ing', $d_id)) {
+                $this->redis->sRem('driver_order_ing', $d_id);
+            }
+            if ($this->redis->sIsMember('driver_order_receive', $d_id)) {
+                $this->redis->sRem('driver_order_receive', $d_id);
+            }
             $this->redis->sAdd('driver_order_no', $d_id);
 
         } else {
             if ($this->checkNoCompleteOrder($d_id)) {
                 throw new UpdateException(['您还有订单进行中，不能下线']);
             }
-            $this->redis->sRem('driver_order_no', $d_id);
-            $this->redis->sRem('driver_order_ing', $d_id);
-            $this->redis->sRem('driver_order_receive', $d_id);
+
+            if ($this->redis->sIsMember('driver_order_no', $d_id)) {
+                $this->redis->sRem('driver_order_no', $d_id);
+            }
+            if ($this->redis->sIsMember('driver_order_ing', $d_id)) {
+                $this->redis->sRem('driver_order_ing', $d_id);
+            }
+            if ($this->redis->sIsMember('driver_order_receive', $d_id)) {
+                $this->redis->sRem('driver_order_receive', $d_id);
+            }
         }
 
 
@@ -169,7 +180,9 @@ class DriverService
      */
     public function handelDriveStateByComplete($d_id)
     {
-        $this->redis->sRem('driver_order_receive', $d_id);
+        if ($this->redis->sIsMember('driver_order_receive', $d_id)) {
+            $this->redis->sRem('driver_order_receive', $d_id);
+        }
         $this->redis->sAdd('driver_order_no', $d_id);
 
     }
@@ -180,7 +193,9 @@ class DriverService
      */
     public function handelDriveStateByReceive($d_id)
     {
-        $this->redis->sRem('driver_order_no', $d_id);
+        if ($this->redis->sIsMember('driver_order_no', $d_id)) {
+            $this->redis->sRem('driver_order_no', $d_id);
+        }
         $this->redis->sAdd('driver_order_receive', $d_id);
     }
 
@@ -190,7 +205,9 @@ class DriverService
      */
     public function handelDriveStateByING($d_id)
     {
-        $this->redis->sRem('driver_order_no', $d_id);
+        if ($this->redis->sIsMember('driver_order_no', $d_id)) {
+            $this->redis->sRem('driver_order_no', $d_id);
+        }
         $this->redis->sAdd('driver_order_ing', $d_id);
     }
 
@@ -200,8 +217,12 @@ class DriverService
      */
     public function handelDriveStateByCancel($d_id)
     {
-        $this->redis->sRem('driver_order_ing', $d_id);
-        $this->redis->sRem('driver_order_receive', $d_id);
+        if ($this->redis->sIsMember('driver_order_ing', $d_id)) {
+            $this->redis->sRem('driver_order_ing', $d_id);
+        }
+        if ($this->redis->sIsMember('driver_order_receive', $d_id)) {
+            $this->redis->sRem('driver_order_receive', $d_id);
+        }
         $this->redis->sAdd('driver_order_no', $d_id);
     }
 
