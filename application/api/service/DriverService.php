@@ -396,7 +396,7 @@ class DriverService
 
         $today = date('Y-m-d', time());
         $yesterday = reduceDay(1, $today);
-        $d_id = 1;//Token::getCurrentUid();
+        $d_id = Token::getCurrentUid();
         $today_income = DriverIncomeV::income($d_id, $today);
         $yesterday_income = DriverIncomeV::income($d_id, $yesterday);
         return [
