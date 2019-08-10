@@ -458,7 +458,7 @@ class Order extends BaseController
      * @apiSuccess (返回参数说明) {String} cancel_remark 撤销订单说明
      * @apiSuccess (返回参数说明) {String} from 下单来源
      * @apiSuccess (返回参数说明) {String}  create_time 创建时间
-     * @apiSuccess (返回参数说明) {int} state 订单状态：4|完成；5|撤销
+     * @apiSuccess (返回参数说明) {int} state 订单状态：2|进行中；4|完成；5|撤销
      * @apiSuccess (返回参数说明) {Obj} statistic 统计信息
      * @apiSuccess (返回参数说明) {int} statistic-orders_count 订单数
      * @apiSuccess (返回参数说明) {Float} statistic-all_money 订单总金额
