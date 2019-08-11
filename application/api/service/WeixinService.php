@@ -29,13 +29,12 @@ class WeixinService
 
     public function validate()
     {
-        LogService::save(1111);
+
         /* $response = $this->app->server->serve();
          $response->send();
          exit;*/
 
-        $this->app->server->push(function ($message) {
-            LogService::save(json_encode($message));
+        $res = $this->app->server->push(function ($message) {
             // $message['MsgType'] // 消息类型：event, text....
             $type = $message['MsgType'];
             if ($type == "event") {
@@ -50,6 +49,7 @@ class WeixinService
 
         });
 
+        LogService::save(json_encode($res));
     }
 
 
