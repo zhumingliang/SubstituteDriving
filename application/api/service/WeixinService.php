@@ -76,7 +76,7 @@ class WeixinService
                         "name" => "立即下单",
                         "url" => "http://mp.weixin.qq.com",
                         "appid" => "wxff0de9d71076ff70",
-                        "pagepath" > "pages/lunar/index"
+                        "pagepath" > "pages/index/index"
                     ]
                 ]
             ],
