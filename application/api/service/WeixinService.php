@@ -34,21 +34,21 @@ class WeixinService
          $response->send();
          exit;*/
 
-        $res = $this->app->server->push(function ($message) {
+        $this->app->server->push(function ($message) {
+            $msg = "您好！欢迎使用OK代驾。";
             LogService::save(1);
             LogService::save(json_encode($message));
             // $message['MsgType'] // 消息类型：event, text....
             $type = $message['MsgType'];
             if ($type == "event") {
                 $event = $message['Event'];
-                if ($event == "click") {
-                    return $this->click($message['EventKey']);
+                if ($event == "CLICK") {
+                    $msg = $this->click($message['EventKey']);
                 }
 
 
             }
-            return "您好！欢迎使用OK代驾。";
-
+            return $msg;
         });
         $response = $this->app->server->serve();
         $response->send();
