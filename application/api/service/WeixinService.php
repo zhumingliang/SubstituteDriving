@@ -96,7 +96,7 @@ class WeixinService
     {
         $menus = [
             [
-                "name" => "预约代价",
+                "name" => "预约代驾",
                 "sub_button" => [
                     [
                         "type" => "miniprogram",
@@ -110,8 +110,9 @@ class WeixinService
             [
                 "type" => "click",
                 "name" => "资费标准",
-                "key" > "fee"
-            ], [
+                "key" => "fee"
+            ],
+            [
                 "type" => "click",
                 "name" => "联系我们",
                 "key" => "contact"

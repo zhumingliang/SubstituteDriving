@@ -15,7 +15,31 @@ class Index
         //(new SendSMSService())->sendOrderSMS('18956225230', ['code' => '*****' . substr('sajdlkjdsk21312', 5), 'order_time' => date('H:i', time())]);
 
         // $this->initDriverStatus();
-        echo $this->prefixFee();
+        $menus = [
+            [
+                "name" => "预约代驾",
+                "sub_button" => [
+                    [
+                        "type" => "miniprogram",
+                        "name" => "立即下单",
+                        "url" => "http://mp.weixin.qq.com",
+                        "appid" => "wx286b93c14bbf93aa",
+                        "pagepath" > "pages/lunar/index"
+                    ]
+                ]
+            ],
+            [
+                "type" => "click",
+                "name" => "资费标准",
+                "key" => "fee"
+            ],
+            [
+                "type" => "click",
+                "name" => "联系我们",
+                "key" => "contact"
+            ]
+        ];
+        return json($menus);
     }
 
     private function prefixFee()
