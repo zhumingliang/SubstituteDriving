@@ -36,7 +36,6 @@ class WeixinService
         $this->app->server->push(function ($message) {
             // $message['MsgType'] // 消息类型：event, text....
             $type = $message['MsgType'];
-            $type = $message['CLICK'];
             if ($type == "event") {
                 $event = $message['Event'];
                 if ($event == "click") {
