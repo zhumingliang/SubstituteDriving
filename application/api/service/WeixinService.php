@@ -29,6 +29,7 @@ class WeixinService
 
     public function validate()
     {
+        LogService::save(1111);
         /* $response = $this->app->server->serve();
          $response->send();
          exit;*/
