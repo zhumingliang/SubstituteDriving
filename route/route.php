@@ -120,4 +120,5 @@ Route::rule('api/:version/order/list/handel', 'api/:version.Order/orderListHande
 Route::rule('api/:version/order/push/no/handel', 'api/:version.Order/handelDriverNoAnswer');
 
 Route::rule('api/:version/weixin/public', 'api/:version.WeiXinPublic/server');
+Route::rule('api/:version/weixin/public/menu', 'api/:version.WeiXinPublic/createMenu');
 
