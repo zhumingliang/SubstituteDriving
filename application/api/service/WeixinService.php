@@ -75,7 +75,7 @@ class WeixinService
                         "type" => "miniprogram",
                         "name" => "立即下单",
                         "url" => "http://mp.weixin.qq.com",
-                        "appid" => "wx286b93c14bbf93aa",
+                        "appid" => "wxff0de9d71076ff70",
                         "pagepath" > "pages/lunar/index"
                     ]
                 ]
