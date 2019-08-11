@@ -50,7 +50,8 @@ class WeixinService
             return "您好！欢迎使用OK代驾。";
 
         });
-
+        $response = $this->app->server->serve();
+        $response->send();
     }
 
 
