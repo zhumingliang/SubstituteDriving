@@ -3,15 +3,50 @@
 namespace app\api\controller\v1;
 
 use app\api\model\DriverT;
+use app\api\model\StartPriceT;
+use app\api\model\TimeIntervalT;
+use app\api\model\WaitPriceT;
 use app\api\service\SendSMSService;
 
 class Index
 {
-    public function index($lat, $lng, $type)
+    public function index()
     {
         //(new SendSMSService())->sendOrderSMS('18956225230', ['code' => '*****' . substr('sajdlkjdsk21312', 5), 'order_time' => date('H:i', time())]);
 
-        $this->initDriverStatus();
+        // $this->initDriverStatus();
+        echo $this->prefixFee();
+    }
+
+    private function prefixFee()
+    {
+        $wait = WaitPriceT::find();
+        $wait_msg = "  免费等候" . $wait->free . "分钟，等候超出" . $wait->free . "分钟后每1分钟加收" . $wait->price . "元。";
+        $fee_msg = "";
+        $interval = TimeIntervalT::select();
+        $start = StartPriceT::where('type', 1)->select();
+        if (!empty($interval)) {
+            foreach ($interval as $k => $v) {
+                $fee_msg .= "  时间：(" . $v->time_begin . "-" . $v->time_end . ")" . "起步价" . $v->price . "元";
+                $d = 0;
+                foreach ($start as $k2 => $v2) {
+
+                    if ($k2 == 0) {
+                        $fee_msg .= "（" . $v2->distance . "公里内包含" . $v2->distance . "公里）;" . "\n";
+                    } else if ($k2 == 1) {
+                        $d += $v2->distance;
+                        $fee_msg .= "超出起步里程后," . $v2->distance . "公里内包含" . $v2->distance . "公里,加收" . $v2->price . "元；";
+                    } else {
+                        $fee_msg .= "超出起步里程" . $d . "公里后," . $v2->distance . "公里内包含" . $v2->distance . "公里,加收" . $v2->price . "元；";
+                        $d += $v2->distance;
+                    }
+
+                }
+                $fee_msg .= "\n";
+            }
+        }
+
+        return "资费标准：\n" . $fee_msg . $wait_msg;
     }
 
     public function initDriverStatus()

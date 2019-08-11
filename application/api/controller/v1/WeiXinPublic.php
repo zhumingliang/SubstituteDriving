@@ -6,6 +6,7 @@ namespace app\api\controller\v1;
 
 use app\api\controller\BaseController;
 use app\api\service\WeixinService;
+use app\lib\exception\SuccessMessage;
 
 class WeiXinPublic extends BaseController
 {
@@ -13,7 +14,12 @@ class WeiXinPublic extends BaseController
     {
         (new WeixinService())->validate();
 
+    }
 
+    public function createMenu()
+    {
+        (new WeixinService())->createMenu();
+        return json(new SuccessMessage());
     }
 
 }
