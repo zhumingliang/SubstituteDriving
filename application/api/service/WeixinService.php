@@ -36,8 +36,6 @@ class WeixinService
 
         $this->app->server->push(function ($message) {
             $msg = "您好！欢迎使用OK代驾。";
-            LogService::save(1);
-            LogService::save(json_encode($message));
             // $message['MsgType'] // 消息类型：event, text....
             $type = $message['MsgType'];
             if ($type == "event") {
@@ -46,8 +44,8 @@ class WeixinService
                     $msg = $this->click($message['EventKey']);
                 }
 
-
             }
+            LogService::save($msg);
             return $msg;
         });
         $response = $this->app->server->serve();
@@ -66,37 +64,6 @@ class WeixinService
         }
         return $return_msg;
 
-    }
-
-    private function prefixFee()
-    {
-        $wait = WaitPriceT::find();
-        $wait_msg = "  免费等候" . $wait->free . "分钟，等候超出" . $wait->free . "分钟后每1分钟加收" . $wait->price . "元。";
-        $fee_msg = "";
-        $interval = TimeIntervalT::select();
-        $start = StartPriceT::where('type', 1)->select();
-        if (!empty($interval)) {
-            foreach ($interval as $k => $v) {
-                $fee_msg .= "  时间：(" . $v->time_begin . "-" . $v->time_end . ")" . "起步价" . $v->price . "元";
-                $d = 0;
-                foreach ($start as $k2 => $v2) {
-
-                    if ($k2 == 0) {
-                        $fee_msg .= "（" . $v2->distance . "公里内包含" . $v2->distance . "公里）;" . "\n";
-                    } else if ($k2 == 1) {
-                        $d += $v2->distance;
-                        $fee_msg .= "超出起步里程后," . $v2->distance . "公里内包含" . $v2->distance . "公里,加收" . $v2->price . "元；";
-                    } else {
-                        $fee_msg .= "超出起步里程" . $d . "公里后," . $v2->distance . "公里内包含" . $v2->distance . "公里,加收" . $v2->price . "元；";
-                        $d += $v2->distance;
-                    }
-
-                }
-                $fee_msg .= "\n";
-            }
-        }
-
-        return "资费标准：\n" . $fee_msg . $wait_msg;
     }
 
     public function createMenu()
@@ -132,5 +99,35 @@ class WeixinService
         }
     }
 
+    private function prefixFee()
+    {
+        $waitObj = WaitPriceT::find();
+        $wait_msg = "  免费等候" . $waitObj->free . "分钟，等候超出" . $waitObj->free . "分钟后每1分钟加收" . $waitObj->price . "元。";
+        $fee_msg = "";
+        $interval = TimeIntervalT::select();
+        $start = StartPriceT::where('type', 1)->select();
+        if (!empty($interval)) {
+            foreach ($interval as $k => $v) {
+                $fee_msg .= "  时间：(" . $v->time_begin . "-" . $v->time_end . ")" . "起步价" . $v->price . "元";
+                $d = 0;
+                foreach ($start as $k2 => $v2) {
+
+                    if ($k2 == 0) {
+                        $fee_msg .= "（" . $v2->distance . "公里内包含" . $v2->distance . "公里）;" . "\n";
+                    } else if ($k2 == 1) {
+                        $d += $v2->distance;
+                        $fee_msg .= "超出起步里程后," . $v2->distance . "公里内包含" . $v2->distance . "公里,加收" . $v2->price . "元；";
+                    } else {
+                        $fee_msg .= "超出起步里程" . $d . "公里后," . $v2->distance . "公里内包含" . $v2->distance . "公里,加收" . $v2->price . "元；";
+                        $d += $v2->distance;
+                    }
+
+                }
+                $fee_msg .= "\n";
+            }
+        }
+
+        return "资费标准：\n" . $fee_msg . $wait_msg;
+    }
 
 }
