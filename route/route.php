@@ -119,3 +119,5 @@ Route::post('api/:version/message/save', 'api/:version.Message/save');
 Route::rule('api/:version/order/list/handel', 'api/:version.Order/orderListHandel');
 Route::rule('api/:version/order/push/no/handel', 'api/:version.Order/handelDriverNoAnswer');
 
+Route::rule('api/:version/weixin/public', 'api/:version.WeiXinPublic/server');
+
