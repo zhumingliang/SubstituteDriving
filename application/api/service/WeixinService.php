@@ -45,7 +45,6 @@ class WeixinService
                 }
 
             }
-            LogService::save($msg);
             return $msg;
         });
         $response = $this->app->server->serve();
