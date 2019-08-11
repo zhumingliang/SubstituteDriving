@@ -34,6 +34,7 @@ class WeixinService
          exit;*/
 
         $this->app->server->push(function ($message) {
+            LogService::save(json_encode($message));
             // $message['MsgType'] // 消息类型：event, text....
             $type = $message['MsgType'];
             if ($type == "event") {
