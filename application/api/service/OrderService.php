@@ -1050,16 +1050,18 @@ class OrderService
 
     }
 
-    public function orderLocations($id)
+    public function orderLocations($page, $size, $id)
     {
+       // Token::getCurrentUid();
         $order = OrderT::get($id);
         $locations = LocationT::where('o_id', $id)
             ->where('begin', CommonEnum::STATE_IS_OK)
             ->field('lat,lng')
-            ->select();
+            ->paginate($size, false, ['page' => $page])->toArray();
         return [
             'start' => $order->start,
             'end' => $order->end,
+            'state' => $order->state,
             'locations' => $locations
         ];
     }

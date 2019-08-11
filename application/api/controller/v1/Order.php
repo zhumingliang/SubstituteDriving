@@ -584,22 +584,27 @@ class Order extends BaseController
      * @api {GET} /api/v1/order/locations Android管理端/CMS管理端-获取订单地理位置
      * @apiGroup  COMMON
      * @apiVersion 1.0.1
-     * @apiDescription   Android管理端/CMS管理端-获取订单地理位置
+     * @apiDescription   Android管理端/CMS管理端-获取订单地理位置（获取订单地理位置时，对于正在进行订单需要实时刷新地理位置。）
      * @apiExample {get}  请求样例:
-     * https://tonglingok.com/api/v1/order/locations?id=1
+     * https://tonglingok.com/api/v1/order/locations?id=26&page=1&size=500
      * @apiParam (请求参数说明) {int} id 订单id
      * @apiSuccessExample {json} 返回样例:
-     * {"msg":"ok","errorCode":0,"code":200,"data":{"start":"长江路","end":"高速地产","locations":[{"lat":"40.584459","lng":"115.793844"},{"lat":"40.584459","lng":"115.793844"},{"lat":"40.584459","lng":"115.793844"},{"lat":"39.948933","lng":"115.056232"},{"lat":"27.474563","lng":"114.173822"},{"lat":"25.518178","lng":"111.341648"},{"lat":"31.60487","lng":"103.901761"}]}}
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"start":"肯德基(中心书城餐厅)","end":"肯德基(会展中心餐厅)","state":2,"locations":{"total":1027,"per_page":2,"current_page":1,"last_page":514,"data":[{"lat":"22.600893","lng":"114.480011"},{"lat":"22.600893","lng":"114.480011"}]}}}
+     * @apiSuccess (返回参数说明) {int} state 订单状态：：1 | 未接单；2 | 已接单，代驾中；4 | 完成；5 | 撤销订单 当state=2时才需要三秒请求一个接口获取最新的地理位置
      * @apiSuccess (返回参数说明) {String} start 起点
      * @apiSuccess (返回参数说明) {String} end 终点
      * @apiSuccess (返回参数说明) {Obj} locations 地理位置坐标
+     * @apiSuccess (返回参数说明) {int} total 数据总数
+     * @apiSuccess (返回参数说明) {int} per_page 每页多少条数据
+     * @apiSuccess (返回参数说明) {int} current_page 当前页码
+     * @apiSuccess (返回参数说明) {int} last_page 最后页码
      * @apiSuccess (返回参数说明) {String} lat 纬度
      * @apiSuccess (返回参数说明) {String} lng 经度
      */
-    public function orderLocations()
+    public function orderLocations($page = 1, $size = 500)
     {
         $id = $this->request->param('id');
-        $locations = (new OrderService())->orderLocations($id);
+        $locations = (new OrderService())->orderLocations($page, $size, $id);
         return json(new SuccessMessageWithData(['data' => $locations]));
     }
 
