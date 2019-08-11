@@ -77,14 +77,18 @@ class WeixinService
         $start = StartPriceT::where('type', 1)->select();
         if (!empty($interval)) {
             foreach ($interval as $k => $v) {
-                $fee_msg = "  时间：(" . $v->time_begin . "-" . $v->time_end . ")" . "起步价" . $v->price . "元";
+                $fee_msg .= "  时间：(" . $v->time_begin . "-" . $v->time_end . ")" . "起步价" . $v->price . "元";
                 $d = 0;
                 foreach ($start as $k2 => $v2) {
-                    $d += $v2->distance;
+
                     if ($k2 == 0) {
                         $fee_msg .= "（" . $v2->distance . "公里内包含" . $v2->distance . "公里）;" . "\n";
+                    } else if ($k2 == 1) {
+                        $d += $v2->distance;
+                        $fee_msg .= "超出起步里程后," . $v2->distance . "公里内包含" . $v2->distance . "公里,加收" . $v2->price . "元；";
                     } else {
-                        $fee_msg .= "超出" . $d . "公里后," . $v2->distance . "公里内包含" . $v2->distance . "公里,加收" . $v2->price . "元；";
+                        $fee_msg .= "超出起步里程" . $d . "公里后," . $v2->distance . "公里内包含" . $v2->distance . "公里,加收" . $v2->price . "元；";
+                        $d += $v2->distance;
                     }
 
                 }
