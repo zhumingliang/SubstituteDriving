@@ -4,9 +4,11 @@
 namespace app\api\service;
 
 
+use app\api\model\TicketTOpenT;
 use app\api\model\TicketT;
 use app\api\model\TicketUserT;
 use app\api\model\TicketV;
+use app\api\model\UserT;
 use app\lib\enum\CommonEnum;
 use app\lib\enum\TicketEnum;
 use app\lib\exception\SaveException;
@@ -58,23 +60,52 @@ class TicketService
         return $ticks;
     }
 
-    public static function userTicketSave($scene, $u_id)
+    public static function userTicketSave($scene, $u_id, $phone)
     {
+        $ticketOpen = TicketTOpenT::where('scene', $scene)->find();
+        if (!$ticketOpen || ($ticketOpen->open == CommonEnum::STATE_IS_FAIL) || self::checkTicketSend($phone, $scene)) {
+            return [
+                'ticket' => 2
+            ];
+        }
         $ticket = TicketT::where('scene', $scene)->find();
         if (!$ticket) {
-            return false;
+            return [
+                'ticket' => 2
+            ];
         }
         $data = [
             'u_id' => $u_id,
             't_id' => $ticket->id,
+            'phone' => '',
             'state' => CommonEnum::STATE_IS_OK,
             'money' => $ticket->price,
-            'time_begin' => $ticket->time_begin,
-            'time_end' => $ticket->time_end,
+            //'time_begin' => $ticket->time_begin,
+            //'time_end' => $ticket->time_end,
+            'time_begin' => date('Y-m-d',time()),
+            'time_end' => addDay(config('setting.ticket_time'), date('Y-m-d',time())),
             'scene' => $scene,
-            'name' => $ticket->name
+            'name' => $ticket->name,
+            'phone' => $phone
         ];
         TicketUserT::create($data);
+        //发送优惠券发放短信短信
+
+        return [
+            'ticket' => 1,
+            'time_begin' => $ticket->time_begin,
+            'time_end' => $ticket->time_end,
+            'money' => $ticket->price
+        ];
+
+    }
+
+    private static function checkTicketSend($phone, $scene)
+    {
+        $ticket = UserT::where('phone', $phone)
+            ->where('scene', $scene)
+            ->count();
+        return $ticket;
 
     }
 

@@ -11,6 +11,7 @@ namespace app\api\service;
 
 use app\api\model\UserT;
 use app\api\model\UserV;
+use app\lib\enum\TicketEnum;
 use app\lib\exception\TokenException;
 use app\lib\exception\UpdateException;
 use app\lib\exception\UserInfoException;
@@ -155,18 +156,21 @@ class UserInfo
         $redis = new Redis();
         $token = Request::header('token');
         $current_code = $redis->get($token);
+        $u_id = Token::getCurrentUid();
         if (!$current_code) {
             throw new UpdateException(['errorCode' => '10007', 'msg' => '验证码过期，请重新获取']);
         }
         if ($current_code != $params['phone'] . '-' . $params['code']) {
             throw new UpdateException(['errorCode' => '10002', 'msg' => '验证码不正确']);
         }
-        $res = UserModel::update(['phone' => $params['phone']], ['id' => Token::getCurrentUid()]);
+        $res = UserModel::update(['phone' => $params['phone']], ['id' => $u_id]);
         if (!$res) {
             throw new UpdateException(['msg' => '绑定手机用户手机号失败']);
         }
-
+        $scene = $params['scene'];
         $this->updateCache(['phone' => $params['phone']]);
+        //检测小程序用户是否首次绑定手机号->派送优惠券
+        return TicketService::userTicketSave($scene, $u_id, $params['phone']);
 
     }
 
@@ -197,7 +201,6 @@ class UserInfo
         return $user->id;
 
     }
-
 
 
 }

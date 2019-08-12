@@ -50,29 +50,35 @@ class User extends BaseController
     }
 
     /**
-     * @api {POST} /api/v1/user/bindPhone 小程序客户端-绑定手机号
-     * @apiGroup  MINI
+     * @api {POST} /api/v1/user/bindPhone -绑定手机号小程序客户端/公众号客户端
+     * @apiGroup  COMMON
      * @apiVersion 1.0.1
-     * @apiDescription  小程序客户端-绑定手机号
+     * @apiDescription  小程序客户端/公众号客户端
      * @apiExample {post}  请求样例:
      *    {
      *       "phone": "18956225230",
      *       "code": "34982"
+     *       "scene": 1
      *     }
      * @apiParam (请求参数说明) {String} phone  用户输入手机号
      * @apiParam (请求参数说明) {String} code   用户输入验证码
+     * @apiParam (请求参数说明) {int} scene   验证类别：1|小程序验证；2|公众号验证
      *
      * @apiSuccessExample {json} 返回样例:
-     *{"msg":"ok","errorCode":0}
+     *{"msg":"ok","errorCode":0,"data"{"ticket:1","time_begin":"","time_end":"","money":""}}
      * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误
      * @apiSuccess (返回参数说明) {String} msg 信息描述
+     * @apiSuccess (返回参数说明) {int} ticket 是否有优惠券发放：1|有；2|没有
+     * @apiSuccess (返回参数说明) {string} time_begin 优惠券有效期开始时间
+     * @apiSuccess (返回参数说明) {string} time_end 优惠券有效期结束时间
+     * @apiSuccess (返回参数说明) {string} money 优惠券金额
      *
      */
     public function bindPhone()
     {
         $params = $this->request->param();
-        (new UserInfoService('', ''))->bindPhone($params);
-        return json(new SuccessMessage());
+        $ticket = (new UserInfoService('', ''))->bindPhone($params);
+        return json(new SuccessMessageWithData(['data' => $ticket]));
     }
 
 

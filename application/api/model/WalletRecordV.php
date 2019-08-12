@@ -10,7 +10,7 @@ class WalletRecordV extends Model
 {
     public function getTypeAttr($value)
     {
-        $state = [1 => "保险费用", 2 => "订单服务费", 3 => "账户余额充值", 4 => "初始化"];
+        $state = [1 => "保险费用", 2 => "订单服务费", 3 => "账户余额充值", 4 => "初始化",5=>"优惠券返还"];
         return $state[$value];
     }
 

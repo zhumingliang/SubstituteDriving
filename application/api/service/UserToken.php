@@ -71,7 +71,6 @@ class UserToken extends Token
 
         if (!$user) {
             $u_id = $this->newUser($openid);
-            TicketService::userTicketSave(TicketEnum::MINI_FIRST_LOGIN, $u_id);
         } else {
             $u_id = $user->id;
         }
