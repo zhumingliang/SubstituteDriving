@@ -76,7 +76,7 @@ class WeixinService
                         "name" => "立即下单",
                         "url" => "http://mp.weixin.qq.com",
                         "appid" => "wxff0de9d71076ff70",
-                        "pagepath" > "pages/index/index"
+                        "pagepath" > "/pages/index/index"
                     ]
                 ]
             ],
@@ -100,8 +100,6 @@ class WeixinService
 
     private function prefixFee()
     {
-        $waitObj = WaitPriceT::find();
-        $wait_msg = "  免费等候" . $waitObj->free . "分钟，等候超出" . $waitObj->free . "分钟后每1分钟加收" . $waitObj->price . "元。";
         $fee_msg = "";
         $interval = TimeIntervalT::select();
         $start = StartPriceT::where('type', 1)->select();
@@ -125,6 +123,8 @@ class WeixinService
                 $fee_msg .= "\n";
             }
         }
+        $waitObj = WaitPriceT::find();
+        $wait_msg = "  免费等候" . $waitObj->free . "分钟，等候超出" . $waitObj->free . "分钟后每1分钟加收" . $waitObj->price . "元。";
 
         return "资费标准：\n" . $fee_msg . $wait_msg;
     }
