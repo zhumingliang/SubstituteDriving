@@ -58,7 +58,7 @@ class WeixinService
         if ($key == "fee") {
             $return_msg = $this->prefixFee();
         } else if ($key == "contact") {
-            $return_msg = '服务电话：13515623335（微信同号）';
+            $return_msg = "下单电话：19855751988 \n"."投诉电话：13515623335 \n";
 
         }
         return $return_msg;

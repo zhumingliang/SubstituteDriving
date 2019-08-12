@@ -5,6 +5,7 @@ namespace app\api\service;
 
 
 use app\api\model\DriverT;
+use app\api\model\DriverTicketT;
 use app\api\model\FarStateT;
 use app\api\model\LocationT;
 use app\api\model\LogT;
@@ -630,11 +631,23 @@ class OrderService
                     $ticket_money = $order->ticket->money;
                     $money -= $ticket_money;
                     //处理优惠券
-                    $t_res = (new TicketService())->prefixTicketHandel($order->t_id, TicketEnum::STATE_USED);;
+                    $t_res = (new TicketService())->prefixTicketHandel($order->t_id, TicketEnum::STATE_USED);
                     if (!$t_res) {
                         Db::rollback();
                         throw new SaveException(['msg' => '保存处理优惠券失败']);
                     }
+                    /* //将优惠券金额返回给司机
+                     $driverTicket = DriverTicketT::create([
+                         'o_id' => $id,
+                         't_id' => $order->t_id,
+                         'd_id' => $order->d_id,
+                         'money' => $ticket_money,
+
+                     ]);
+                     if (!$driverTicket) {
+                         Db::rollback();
+                         throw new SaveException(['msg' => '保存处理优惠券失败']);
+                     }*/
                 }
                 $order->distance = $distance;
                 $order->distance_money = $distance_money;
@@ -698,6 +711,12 @@ class OrderService
                 'd_id' => $d_id,
                 'money' => $order_money,
                 'type' => 2,
+            ],
+            [
+                'o_id' => $o_id,
+                'd_id' => $d_id,
+                'money' => 0 - $ticket_money,
+                'type' => 5,
             ]
         ];
         $res = (new OrderMoneyT())->saveAll($data);
@@ -1052,7 +1071,7 @@ class OrderService
 
     public function orderLocations($page, $size, $id)
     {
-       // Token::getCurrentUid();
+        // Token::getCurrentUid();
         $order = OrderT::get($id);
         $locations = LocationT::where('o_id', $id)
             ->where('begin', CommonEnum::STATE_IS_OK)
