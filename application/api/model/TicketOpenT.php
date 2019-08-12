@@ -6,7 +6,7 @@ namespace app\api\model;
 
 use think\Model;
 
-class TicketTOpenT extends Model
+class TicketOpenT extends Model
 {
 
 }

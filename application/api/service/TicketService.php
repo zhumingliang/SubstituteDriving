@@ -4,7 +4,7 @@
 namespace app\api\service;
 
 
-use app\api\model\TicketTOpenT;
+use app\api\model\TicketOpenT;
 use app\api\model\TicketT;
 use app\api\model\TicketUserT;
 use app\api\model\TicketV;
@@ -62,7 +62,7 @@ class TicketService
 
     public static function userTicketSave($scene, $u_id, $phone)
     {
-        $ticketOpen = TicketTOpenT::where('scene', $scene)->find();
+        $ticketOpen = TicketOpenT::where('scene', $scene)->find();
         if (!$ticketOpen || ($ticketOpen->open == CommonEnum::STATE_IS_FAIL) || self::checkTicketSend($phone, $scene)) {
             return [
                 'ticket' => 2
@@ -93,6 +93,7 @@ class TicketService
 
         return [
             'ticket' => 1,
+            'name' => $ticket->name,
             'time_begin' => $ticket->time_begin,
             'time_end' => $ticket->time_end,
             'money' => $ticket->price
