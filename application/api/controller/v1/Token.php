@@ -14,6 +14,7 @@ use app\api\model\TestT;
 use app\api\model\UserT;
 use app\api\service\AdminToken;
 use app\api\service\DriverToken;
+use app\api\service\UserPublicToken;
 use app\api\service\UserToken;
 use app\api\validate\TokenGet;
 use app\lib\enum\CommonEnum;
@@ -122,7 +123,28 @@ class Token extends Controller
         $ut = new UserToken($code);
         $token = $ut->get();
         return json(new SuccessMessageWithData(['data' => $token]));
+    }
 
+    /**
+     * @api {GET} /api/v1/token/public/user  小程序端获取登录token
+     * @apiGroup  PUBLIC
+     * @apiVersion 1.0.1
+     * @apiDescription  微信用户登录获取token
+     * @apiExample {get}  请求样例:
+     * https://tonglingok.com/api/v1/token/public/user?openid=mdksk
+     * @apiParam (请求参数说明) {String} openid   公众号openid
+     * @apiSuccessExample {json} 返回样例:
+     *{"msg":"ok","errorCode":0,"data":{"token":"f4ad56e55cad93833180186f22586a08","type":1,"phone":"18956225230"}}
+     * @apiSuccess (返回参数说明) {Sting} token 口令令牌，每次请求接口需要传入，有效期 2 hours
+     * @apiSuccess (返回参数说明) {Sting} phone 手机号
+     * @apiSuccess (返回参数说明) {int} type 数据库是否存储小程序用户信息:1 | 已存储；2 | 未存储,需要请求userInfo接口
+     */
+    public function getUserPublicToken()
+    {
+        $code = $this->request->param('openid');
+        $ut = new UserPublicToken($code);
+        $token = $ut->get();
+        return json(new SuccessMessageWithData(['data' => $token]));
     }
 
 

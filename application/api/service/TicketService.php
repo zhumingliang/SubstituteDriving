@@ -53,10 +53,11 @@ class TicketService
         return $ticks;
     }
 
-    public function userTickets()
+    public function userTickets($scene)
     {
         $u_id = Token::getCurrentUid();
-        $ticks = TicketUserT::userTickets($u_id);
+        $scene = Token::getCurrentTokenVar('scene');
+        $ticks = TicketUserT::userTickets($u_id, $scene);
         return $ticks;
     }
 
@@ -82,8 +83,8 @@ class TicketService
             'money' => $ticket->price,
             //'time_begin' => $ticket->time_begin,
             //'time_end' => $ticket->time_end,
-            'time_begin' => date('Y-m-d',time()),
-            'time_end' => addDay(config('setting.ticket_time'), date('Y-m-d',time())),
+            'time_begin' => date('Y-m-d', time()),
+            'time_end' => addDay(config('setting.ticket_time'), date('Y-m-d', time())),
             'scene' => $scene,
             'name' => $ticket->name,
             'phone' => $phone

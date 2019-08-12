@@ -160,6 +160,7 @@ class UserToken extends Token
         //  $cachedValue['name_sub'] = $user['name_sub'];
         $cachedValue['avatarUrl'] = $user['avatarUrl'];
         $cachedValue['type'] = 'mini';
+        $cachedValue['scene'] = 1;
         return $cachedValue;
     }
 

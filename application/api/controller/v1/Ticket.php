@@ -13,6 +13,7 @@ use app\lib\exception\SaveException;
 use app\lib\exception\SuccessMessage;
 use app\lib\exception\SuccessMessageWithData;
 use app\lib\exception\UpdateException;
+use think\facade\Request;
 
 class Ticket extends BaseController
 {
@@ -224,11 +225,10 @@ class Ticket extends BaseController
     }
 
     /**
-     * @api {GET} /api/v1/tickets/user 小程序获取客户拥有可使用卡券
-     * @apiGroup  MINI
+     * @api {GET} /api/v1/tickets/user 小程序/公众号获取客户拥有可使用卡券
+     * @apiGroup  COMMON
      * @apiVersion 1.0.1
-     * @apiDescription  小程序获取客户拥有可使用卡券
-     *
+     * @apiDescription  小程序/公众号获取客户拥有可使用卡券
      * @apiExample {get}  请求样例:
      * https://tonglingok.com/api/v1/tickets/user
      * @apiSuccessExample {json} 返回样例:

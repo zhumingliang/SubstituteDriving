@@ -14,11 +14,14 @@ Route::rule('api/:version/send', 'api/:version.Index/send');
 
 Route::post('api/:version/token/admin', 'api/:version.Token/getAdminToken');
 Route::get('api/:version/token/user', 'api/:version.Token/getUserToken');
+Route::get('api/:version/token/public/user', 'api/:version.Token/getUserPublicToken');
 Route::post('api/:version/token/android', 'api/:version.Token/getAndroidToken');
 Route::post('api/:version/token/small', 'api/:version.Token/getSmallToken');
 Route::get('api/:version/token/login/out', 'api/:version.Token/loginOut');
 
 Route::post('api/:version/user/info', 'api/:version.User/userInfo');
+Route::post('api/:version/user/public/info', 'api/:version.User/userPublicInfo');
+Route::post('api/:version/user/check/bind', 'api/:version.User/checkBind');
 Route::post('api/:version/user/bindPhone', 'api/:version.User/bindPhone');
 Route::get('api/:version/user/login/out', 'api/:version.User/loginOut');
 Route::get('api/:version/users', 'api/:version.User/users');
