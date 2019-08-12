@@ -74,7 +74,7 @@ class WeixinService
                     [
                         "type" => "miniprogram",
                         "name" => "立即下单",
-                        "url" => "https://a.eqxiu.com/s/Ocf7gnUt?share_level=1&from_user=808b7e78-414c-4b11-ac8d-32a99e39ed41&from_id=82971c15-420f-40ba-acd5-69a72fa08f7e&share_time=1536715434588&from=timeline",
+                        "url" => "http://mp.weixin.qq.com",
                         "appid" => "wxff0de9d71076ff70",
                         "pagepath" => "pages/index/index"
                     ]
