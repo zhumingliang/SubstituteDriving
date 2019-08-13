@@ -53,7 +53,7 @@ class TicketService
         return $ticks;
     }
 
-    public function userTickets($scene)
+    public function userTickets()
     {
         $u_id = Token::getCurrentUid();
         $scene = Token::getCurrentTokenVar('scene');

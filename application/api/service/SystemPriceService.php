@@ -52,7 +52,7 @@ class SystemPriceService
     {
         $lat = $params['lat'];
         $lng = $params['lng'];
-        $tickets = (new TicketService())->userTickets(1);;
+        $tickets = (new TicketService())->userTickets();;
         //附近2km
         $drivers = 0;
         $start = $this->startPrice();
