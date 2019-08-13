@@ -62,7 +62,7 @@ class TicketService
             $ticks = TicketUserT::userTickets($u_id, $scene);
 
         } else {
-            $ticks = TicketUserT::userPhoneTickets();
+            $ticks = TicketUserT::userPhoneTickets($phone);
         }
         return $ticks;
     }
