@@ -57,7 +57,13 @@ class TicketService
     {
         $u_id = Token::getCurrentUid();
         $scene = Token::getCurrentTokenVar('scene');
-        $ticks = TicketUserT::userTickets($u_id, $scene);
+        $phone = Token::getCurrentTokenVar('phone');
+        if (empty($phone)) {
+            $ticks = TicketUserT::userTickets($u_id, $scene);
+
+        } else {
+            $ticks = TicketUserT::userPhoneTickets();
+        }
         return $ticks;
     }
 

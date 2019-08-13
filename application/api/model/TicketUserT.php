@@ -23,4 +23,17 @@ class TicketUserT extends Model
 
     }
 
+    public static function userPhoneTickets($phone)
+    {
+        $now = date('Y-m-d H:i');
+        $tickets = self::where('phone', $phone)
+            ->where('state', CommonEnum::STATE_IS_OK)
+            ->whereTime('time_begin', '<=', $now)
+            ->whereTime('time_end', '>=', $now)
+            ->field('id,name,money,time_begin,time_end')
+            ->select();
+        return $tickets;
+
+    }
+
 }

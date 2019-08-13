@@ -64,7 +64,7 @@ class Token extends Controller
      *       "code": "121212",
      *       "type": "driver",
      *     }
-     * @apiParam (请求参数说明) {String} phone    用户手机号
+     * @apiParam (请求参数说明) {String} account  账号
      * @apiParam (请求参数说明) {String} pwd   用户密码
      * @apiParam (请求参数说明) {String} code   安卓手机唯一识别码
      * @apiParam (请求参数说明) {String} type  当前登录用户类别：driver|司机；manager|管理员
