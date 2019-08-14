@@ -126,7 +126,7 @@ class Token extends Controller
     }
 
     /**
-     * @api {GET} /api/v1/token/public/user  小程序端获取登录token
+     * @api {GET} /api/v1/token/public/user  微信用户获取登录token
      * @apiGroup  PUBLIC
      * @apiVersion 1.0.1
      * @apiDescription  微信用户登录获取token

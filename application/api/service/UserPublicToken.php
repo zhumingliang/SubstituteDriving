@@ -83,9 +83,8 @@ class UserPublicToken extends Token
 
         $cachedValue['phone'] = $user['phone'];
         $cachedValue['openId'] = $user['openid'];
-        $cachedValue['gender'] = $user['gender'];
         $cachedValue['province'] = $user['province'];
-        $cachedValue['nickName'] = $user['nickName'];
+        $cachedValue['nickName'] = $user['nickname'];
         $cachedValue['type'] = 'public';
         $cachedValue['scene'] = 2;
         $cachedValue['u_id'] = $u_id;
