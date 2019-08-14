@@ -9,16 +9,14 @@
 namespace app\api\service;
 
 
+use app\api\model\UserPublicT;
 use app\api\model\UserT;
-use app\api\model\UserV;
-use app\lib\enum\TicketEnum;
+use app\api\model\UserT as UserModel;
 use app\lib\exception\TokenException;
 use app\lib\exception\UpdateException;
-use app\lib\exception\UserInfoException;
 use app\lib\exception\WeChatException;
 use think\facade\Cache;
 use think\facade\Request;
-use app\api\model\UserT as UserModel;
 use zml\tp_tools\Redis;
 
 class UserInfo
@@ -163,7 +161,12 @@ class UserInfo
         if ($current_code != $params['phone'] . '-' . $params['code']) {
             throw new UpdateException(['errorCode' => '10002', 'msg' => '验证码不正确']);
         }
-        $res = UserModel::update(['phone' => $params['phone']], ['id' => $u_id]);
+        if (Token::getCurrentTokenVar('type') == 'public') {
+            $res = UserPublicT::update(['phone' => $params['phone']], ['id' => $u_id]);
+
+        } else {
+            $res = UserT::update(['phone' => $params['phone']], ['id' => $u_id]);
+        }
         if (!$res) {
             throw new UpdateException(['msg' => '绑定手机用户手机号失败']);
         }
