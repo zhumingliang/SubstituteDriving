@@ -110,7 +110,7 @@ class TicketService
 
     private static function checkTicketSend($phone, $scene)
     {
-        $ticket = UserT::where('phone', $phone)
+        $ticket = TicketUserT::where('phone', $phone)
             ->where('scene', $scene)
             ->count();
         return $ticket;
