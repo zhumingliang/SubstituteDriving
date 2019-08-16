@@ -86,12 +86,12 @@ class WeixinService
                 "sub_button" => [
                     [
                         "type" => "view",
-                        "name" => "领取优惠券",
+                        "name" => "我的优惠券",
                         "url" => "http://weixin.tonglingok.com/driver-weclient/src/pages/my-tickets/index.html"
                     ],
                     [
                         "type" => "view",
-                        "name" => "我的优惠券",
+                        "name" => "领取优惠券",
                         "url" => "http://weixin.tonglingok.com/driver-weclient/src/pages/bind-phone/index.html"
                     ]
                 ]
