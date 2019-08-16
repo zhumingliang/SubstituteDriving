@@ -58,7 +58,7 @@ class WeixinService
         if ($key == "fee") {
             $return_msg = $this->prefixFee();
         } else if ($key == "contact") {
-            $return_msg = "下单电话：19855751988 \n"."投诉电话：13515623335 \n";
+            $return_msg = "下单电话：19855751988 \n" . "投诉电话：13515623335 \n";
 
         }
         return $return_msg;
@@ -80,15 +80,37 @@ class WeixinService
                     ]
                 ]
             ],
+
             [
-                "type" => "click",
-                "name" => "资费标准",
-                "key" => "fee"
+                "name" => "优惠券",
+                "sub_button" => [
+                    [
+                        "type" => "view",
+                        "name" => "领取优惠券",
+                        "url" => "http://weixin.tonglingok.com/driver-weclient/src/pages/my-tickets/index.html"
+                    ],
+                    [
+                        "type" => "view",
+                        "name" => "我的优惠券",
+                        "url" => "http://weixin.tonglingok.com/driver-weclient/src/pages/bind-phone/index.html"
+                    ]
+                ]
             ],
             [
-                "type" => "click",
-                "name" => "联系我们",
-                "key" => "contact"
+                "name" => "关于我们",
+                "sub_button" => [
+                    [
+                        "type" => "click",
+                        "name" => "资费标准",
+                        "key" => "fee"
+                    ]
+                    ,
+                    [
+                        "type" => "click",
+                        "name" => "联系我们",
+                        "key" => "contact"
+                    ]
+                ]
             ]
         ];
         $res = $this->app->menu->create($menus);
