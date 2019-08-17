@@ -10,12 +10,13 @@ class User extends BaseValidate
         'iv' => 'require|isNotEmpty',
         'encryptedData' => 'require|isNotEmpty',
         'phone' => 'require|isMobile',
-        'code' => 'require|isNotEmpty'
+        'code' => 'require|isNotEmpty',
+        'scene' => 'require|in:1,2'
     ];
 
     protected $scene = [
         'userInfo' => ['iv', 'encryptedData'],
-        'bindPhone' => ['phone', 'code'],
+        'bindPhone' => ['phone', 'code','scene'],
     ];
 
 }
