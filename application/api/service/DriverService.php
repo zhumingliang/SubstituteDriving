@@ -310,6 +310,7 @@ class DriverService
 
         ]);
 
+        print_r($list);
         return $list;
     }
 
