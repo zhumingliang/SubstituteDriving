@@ -140,7 +140,11 @@ class User extends BaseController
     public function checkBind()
     {
         $u_id = \app\api\service\Token::getCurrentUid();
-        $user = UserPublicT::get($u_id);
+        if (\app\api\service\Token::getCurrentTokenVar('scene') == 2) {
+            $user = UserPublicT::get($u_id);
+        } else {
+            $user = UserT::get($u_id);
+        }
         if (empty($user->phone)) {
             $res = 2;
         } else {
