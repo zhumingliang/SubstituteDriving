@@ -38,6 +38,7 @@ Route::post('api/:version/driver/handel', 'api/:version.Driver/handel');
 Route::post('api/:version/driver/online', 'api/:version.Driver/online');
 Route::get('api/:version/driver/online/records', 'api/:version.Driver/onlineRecords');
 Route::get('api/:version/driver/acceptableOrder', 'api/:version.Driver/acceptableOrder');
+Route::get('api/:version/driver/acceptableOrder/manager', 'api/:version.Driver/acceptableManagerCreateOrder');
 Route::get('api/:version/driver/income', 'api/:version.Driver/income');
 
 Route::post('api/:version/ticket/save', 'api/:version.Ticket/save');

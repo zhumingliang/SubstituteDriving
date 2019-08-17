@@ -273,6 +273,47 @@ class DriverService
         return $return_data;
     }
 
+    public function acceptableManagerCreateOrder($start_lng, $start_lat)
+    {
+        $list = $this->redis->rawCommand('georadius',
+            'drivers_tongling', $start_lng, $start_lat, 100000, 'km', 'WITHDIST', 'WITHCOORD');
+
+        $redis = new Redis();
+        $driver_ids = $redis->sMembers('driver_order_no');
+        if (!$driver_ids || !count($list)) {
+            return array();
+        }
+
+        $return_data = [];
+        foreach ($list as $k => $v) {
+            $d_id = $v[0];
+            if (in_array($d_id, $driver_ids)) {
+                $driver = $redis->rPop("driver:$d_id:location");
+                if ($driver) {
+                    $driver = json_decode($driver, true);
+                }
+                $data = [
+                    'id' => $d_id,
+                    'distance' => $v[1],
+                    'name' => $driver ? $driver['username'] : '',
+                    'phone' => $driver ? $driver['phone'] : '',
+                    'citycode' => $driver ? $driver['citycode'] : '',
+                    'city' => $driver ? $driver['city'] : '',
+                    'district' => $driver ? $driver['district'] : '',
+                    'street' => $driver ? $driver['street'] : '',
+                    'addr' => $driver ? $driver['addr'] : '',
+                    'location' => $v[2]
+                ];
+                array_push($return_data, $data);
+            }
+        }
+
+        /* $d_ids = implode(',', $driver_ids);
+         $drivers = DriverT::field('id,username')->whereIn('id', $d_ids)->select();*/
+
+        return $return_data;
+    }
+
     /**
      * 获取司机附近所有司机
      */
