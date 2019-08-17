@@ -303,13 +303,13 @@ class DriverService
         $list = $this->redis->rawCommand('georadius',
             'drivers_tongling', $lng, $lat, $km, 'km', 'WITHCOORD');
 
-
+        print_r($list);
         array_push($list, [
-            0=>Token::getCurrentUid(),
-            1=>[ $lng, $lat]
+            0 => Token::getCurrentUid(),
+            1 => [$lng, $lat]
 
         ]);
-
+        print_r($list);
         return $list;
     }
 
@@ -324,9 +324,8 @@ class DriverService
             }
         }
 
-        print_r($order_no_arr);
         foreach ($drivers as $k => $v) {
-          //  if (GatewayService::isDriverUidOnline($v[0])) {
+            if (GatewayService::isDriverUidOnline($v[0])) {
 
                 $state = 2;//不可接单
                 if (in_array($v[0], $order_no_arr)) {
@@ -338,7 +337,7 @@ class DriverService
                     'location' => ['lng' => $v[1][0], 'lat' => $v[1][1]]
                 ]);
                 array_push($ids_arr, $v[0]);
-            //}
+            }
         }
         if (!count($online)) {
             return array();
