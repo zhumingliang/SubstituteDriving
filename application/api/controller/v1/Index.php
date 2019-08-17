@@ -12,10 +12,10 @@ class Index
 {
     public function index()
     {
-        //(new SendSMSService())->sendOrderSMS('18956225230', ['code' => '*****' . substr('sajdlkjdsk21312', 5), 'order_time' => date('H:i', time())]);
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1', 6379, 60);
+       // $redis->sRem('driver_order_receive', $d_id);
 
-        // $this->initDriverStatus();
-     echo $this->prefixFee();
     }
 
     private function prefixFee()

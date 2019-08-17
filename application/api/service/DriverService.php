@@ -27,8 +27,8 @@ class DriverService
 
     public function __construct()
     {
-       /* $this->redis = new \Redis();
-        $this->redis->connect('127.0.0.1', 6379, 60);*/
+        $this->redis = new \Redis();
+        $this->redis->connect('127.0.0.1', 6379, 60);
 
     }
 
@@ -398,8 +398,8 @@ class DriverService
         $today_income = DriverIncomeV::income($d_id, $today);
         $yesterday_income = DriverIncomeV::income($d_id, $yesterday);
         return [
-            'yesterday' =>$yesterday_income,
-            'today' =>$today_income,
+            'yesterday' => $yesterday_income,
+            'today' => $today_income,
             'today_orders' => DriverIncomeV::todayOrders($d_id)
         ];
     }
