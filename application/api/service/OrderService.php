@@ -123,6 +123,7 @@ class OrderService
             $params['far_money'] = $far['far_money'];
 
 
+            unset($params['d_id']);
             $order = $this->saveOrder($params);
             $o_id = $order->id;
             //新增到订单待处理队列-状态：正在派单
@@ -1106,7 +1107,33 @@ class OrderService
     public function current($page, $size)
     {
         $orders = Orderv::currentOrders($page, $size);
+        $orders['data'] = $this->prefixCurrentPush($orders['data']);
         return $orders;
+    }
+
+    private function prefixCurrentPush($data)
+    {
+        if (!empty($data)) {
+            foreach ($data as $k => $v) {
+                if (empty($v['d_id'])) {
+                    $push = OrderPushT::where('o_id', $v['id'])
+                        ->with(['driver' => function ($query) {
+                            $query->field('id,username');
+                        }])
+                        ->order('create_time desc')->find();
+
+                    $data[$k]['push'] = [
+                        'd_id' => $push->d_id,
+                        'name' => $push->driver->username,
+                        'state' => $push->state
+                    ];
+
+                }
+            }
+
+        }
+        return $data;
+
     }
 
     /**
