@@ -310,7 +310,6 @@ class DriverService
 
         ]);
 
-        print_r($list);
         return $list;
     }
 
@@ -325,6 +324,7 @@ class DriverService
             }
         }
 
+        print_r($order_no_arr);
         foreach ($drivers as $k => $v) {
             if (GatewayService::isDriverUidOnline($v[0])) {
 
