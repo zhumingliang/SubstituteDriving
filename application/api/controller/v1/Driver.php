@@ -81,6 +81,9 @@ class Driver extends BaseController
     public function update()
     {
         $params = $this->request->param();
+        if (!empty($params['pwd'])) {
+            $params['pwd'] = sha1($params['pwd']);
+        }
         $res = DriverT::update($params);
         if (!$res) {
             throw new UpdateException();
@@ -236,9 +239,9 @@ class Driver extends BaseController
     public function acceptableManagerCreateOrder()
     {
         $params = Request::param();
-        $lng=$params['lng'];
-        $lat=$params['lat'];
-        $drivers = (new DriverService())->acceptableManagerCreateOrder($lng,$lat);
+        $lng = $params['lng'];
+        $lat = $params['lat'];
+        $drivers = (new DriverService())->acceptableManagerCreateOrder($lng, $lat);
         return json(new SuccessMessageWithData(['data' => $drivers]));
 
     }
