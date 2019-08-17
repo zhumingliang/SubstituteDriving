@@ -254,14 +254,14 @@ class DriverService
                 $data = [
                     'id' => $d_id,
                     'distance' => $v[1],
-                    'name' => $driver ? $driver['username'] : '',
-                    'phone' => $driver ? $driver['phone'] : '',
-                    'citycode' => $driver ? $driver['citycode'] : '',
-                    'city' => $driver ? $driver['city'] : '',
-                    'district' => $driver ? $driver['district'] : '',
-                    'street' => $driver ? $driver['street'] : '',
-                    'addr' => $driver ? $driver['addr'] : '',
-                    'locationdescribe' => $driver ? $driver['locationdescribe'] : '',
+                    'name' => empty($driver['username']) ? '' : $driver['username'],
+                    'phone' => empty($driver['phone']) ? '' : $driver['phone'],
+                    'citycode' => empty($driver['citycode']) ? '' : $driver['citycode'],
+                    'city' => empty($driver['city']) ? '' : $driver['city'],
+                    'district' => empty($driver['district']) ? '' : $driver['district'],
+                    'street' => empty($driver['street']) ? '' : $driver['street'],
+                    'addr' => empty($driver['addr']) ? '' : $driver['addr'],
+                    'locationdescribe' => empty($driver['locationdescribe']) ? '' : $driver['locationdescribe'],
                     'location' => $v[2]
                 ];
                 array_push($return_data, $data);
@@ -296,14 +296,14 @@ class DriverService
                 $data = [
                     'id' => $d_id,
                     'distance' => $v[1],
-                    'name' => $driver ? $driver['username'] : '',
-                    'phone' => $driver ? $driver['phone'] : '',
-                    'citycode' => $driver ? $driver['citycode'] : '',
-                    'city' => $driver ? $driver['city'] : '',
-                    'district' => $driver ? $driver['district'] : '',
-                    'street' => $driver ? $driver['street'] : '',
-                    'addr' => $driver ? $driver['addr'] : '',
-                    'locationdescribe' => $driver ? $driver['locationdescribe'] : '',
+                    'name' => empty($driver['username']) ? '' : $driver['username'],
+                    'phone' => empty($driver['phone']) ? '' : $driver['phone'],
+                    'citycode' => empty($driver['citycode']) ? '' : $driver['citycode'],
+                    'city' => empty($driver['city']) ? '' : $driver['city'],
+                    'district' => empty($driver['district']) ? '' : $driver['district'],
+                    'street' => empty($driver['street']) ? '' : $driver['street'],
+                    'addr' => empty($driver['addr']) ? '' : $driver['addr'],
+                    'locationdescribe' => empty($driver['locationdescribe']) ? '' : $driver['locationdescribe'],
                     'location' => $v[2]
                 ];
                 array_push($return_data, $data);
