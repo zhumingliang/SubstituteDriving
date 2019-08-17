@@ -20,12 +20,11 @@ class DriverIncomeV extends Model
 
     }
 
-    public static function income($d_id,$day)
+    public static function income($d_id, $day)
     {
         $money = self::where('d_id', $d_id)
             ->whereBetweenTime('create_time', $day)
-            ->field('sum(money-cost) as money')
-            ->find();
+            ->sum('ac_money');
 
         return $money;
 

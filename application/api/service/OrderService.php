@@ -699,26 +699,44 @@ class OrderService
         $insurance = $orderCharge->insurance;
         $order = $orderCharge->order;
         $order_money = ($money + $ticket_money) * $order;
-        $data = [
-            [
-                'o_id' => $o_id,
-                'd_id' => $d_id,
-                'money' => $insurance,
-                'type' => 1,
+        if ($ticket_money) {
+            $data = [
+                [
+                    'o_id' => $o_id,
+                    'd_id' => $d_id,
+                    'money' => $insurance,
+                    'type' => 1,
 
-            ], [
-                'o_id' => $o_id,
-                'd_id' => $d_id,
-                'money' => $order_money,
-                'type' => 2,
-            ],
-            [
-                'o_id' => $o_id,
-                'd_id' => $d_id,
-                'money' => 0 - $ticket_money,
-                'type' => 5,
-            ]
-        ];
+                ], [
+                    'o_id' => $o_id,
+                    'd_id' => $d_id,
+                    'money' => $order_money,
+                    'type' => 2,
+                ],
+                [
+                    'o_id' => $o_id,
+                    'd_id' => $d_id,
+                    'money' => 0 - $ticket_money,
+                    'type' => 5,
+                ]
+            ];
+        } else {
+            $data = [
+                [
+                    'o_id' => $o_id,
+                    'd_id' => $d_id,
+                    'money' => $insurance,
+                    'type' => 1,
+
+                ], [
+                    'o_id' => $o_id,
+                    'd_id' => $d_id,
+                    'money' => $order_money,
+                    'type' => 2,
+                ]
+            ];
+        }
+
         $res = (new OrderMoneyT())->saveAll($data);
         return $res;
 
