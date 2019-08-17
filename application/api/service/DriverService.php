@@ -326,7 +326,7 @@ class DriverService
 
         print_r($order_no_arr);
         foreach ($drivers as $k => $v) {
-            if (GatewayService::isDriverUidOnline($v[0])) {
+          //  if (GatewayService::isDriverUidOnline($v[0])) {
 
                 $state = 2;//不可接单
                 if (in_array($v[0], $order_no_arr)) {
@@ -338,7 +338,7 @@ class DriverService
                     'location' => ['lng' => $v[1][0], 'lat' => $v[1][1]]
                 ]);
                 array_push($ids_arr, $v[0]);
-            }
+            //}
         }
         if (!count($online)) {
             return array();
