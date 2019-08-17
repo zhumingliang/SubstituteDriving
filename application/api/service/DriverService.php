@@ -284,6 +284,7 @@ class DriverService
             $km = config('setting.nearby_km');
             //1.获取本司机当前位置
             $driver_location = (new OrderService())->getDriverLocation($d_id);
+            print_r($driver_location);
             $drivers = $this->getDriversWithLocation($driver_location['lng'], $driver_location['lat'], $km);
 
         } else {
