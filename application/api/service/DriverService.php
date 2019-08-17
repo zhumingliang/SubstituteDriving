@@ -303,11 +303,13 @@ class DriverService
         $list = $this->redis->rawCommand('georadius',
             'drivers_tongling', $lng, $lat, $km, 'km', 'WITHCOORD');
 
-        print_r($list);
+
         array_push($list, [
-            $lng, $lat
+            0=>Token::getCurrentUid(),
+            1=>[ $lng, $lat]
+
         ]);
-        print_r($list);
+
         return $list;
     }
 
