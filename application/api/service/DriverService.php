@@ -261,6 +261,7 @@ class DriverService
                     'district' => $driver ? $driver['district'] : '',
                     'street' => $driver ? $driver['street'] : '',
                     'addr' => $driver ? $driver['addr'] : '',
+                    'locationdescribe' => $driver ? $driver['locationdescribe'] : '',
                     'location' => $v[2]
                 ];
                 array_push($return_data, $data);
@@ -302,6 +303,7 @@ class DriverService
                     'district' => $driver ? $driver['district'] : '',
                     'street' => $driver ? $driver['street'] : '',
                     'addr' => $driver ? $driver['addr'] : '',
+                    'locationdescribe' => $driver ? $driver['locationdescribe'] : '',
                     'location' => $v[2]
                 ];
                 array_push($return_data, $data);
