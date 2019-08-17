@@ -302,6 +302,9 @@ class DriverService
         //查询所有司机并按距离排序（包括在线和不在线）
         $list = $this->redis->rawCommand('georadius',
             'drivers_tongling', $lng, $lat, $km, 'km', 'WITHCOORD');
+        array_push($list, [
+            $lng, $lat
+        ]);
         return $list;
     }
 
