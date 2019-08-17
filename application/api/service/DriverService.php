@@ -284,7 +284,6 @@ class DriverService
             $km = config('setting.nearby_km');
             //1.获取本司机当前位置
             $driver_location = (new OrderService())->getDriverLocation($d_id);
-            print_r($driver_location);
             $drivers = $this->getDriversWithLocation($driver_location['lng'], $driver_location['lat'], $km);
 
         } else {
@@ -303,9 +302,12 @@ class DriverService
         //查询所有司机并按距离排序（包括在线和不在线）
         $list = $this->redis->rawCommand('georadius',
             'drivers_tongling', $lng, $lat, $km, 'km', 'WITHCOORD');
+
+        print_r($list);
         array_push($list, [
             $lng, $lat
         ]);
+        print_r($list);
         return $list;
     }
 
