@@ -20,8 +20,8 @@ class Order extends BaseValidate
         't_id' => 'require|isPositiveInteger',
         'wait_time' => 'require',
         'wait_money' => 'require',
-        'distance' => 'require|isNotEmpty',
-        'distance_money' => 'require|isNotEmpty'
+        'distance' => 'require',
+        'distance_money' => 'require'
     ];
 
     protected $scene = [
