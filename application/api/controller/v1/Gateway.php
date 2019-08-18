@@ -31,7 +31,6 @@ class Gateway extends BaseController
         $client_id = $params['client_id'];
         $u_id = \app\api\service\Token::getCurrentUid();
         $grade = \app\api\service\Token::getCurrentTokenVar('type');
-        echo $grade . '-' . $u_id;
         \GatewayClient\Gateway::bindUid($client_id, $grade . '-' . $u_id);
         //检测余额
         (new WalletService())->checkDriverBalance($u_id);
