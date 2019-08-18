@@ -33,17 +33,17 @@ class SendSMSService
     public function sendOrderSMS($phone, $params, $num = 1)
     {
 
-        if ($num > 3) {
+      /*  if ($num > 3) {
             LogService::save('发送短信服务失败');
             return false;
-        }
+        }*/
         $res = SendSms::instance()->send($phone, $params, 'driver');
         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
             return true;
         }
         LogService::save(json_encode($res));
-        $num++;
-        $this->sendOrderSMS($phone, $params, $num);
+       /* $num++;
+        $this->sendOrderSMS($phone, $params, $num);*/
 
     }
 
