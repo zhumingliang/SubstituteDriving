@@ -3,15 +3,20 @@
 namespace app\api\controller\v1;
 
 use app\api\model\DriverT;
+use app\api\model\OrderPushT;
 use app\api\model\StartPriceT;
 use app\api\model\TimeIntervalT;
 use app\api\model\WaitPriceT;
 use app\api\service\SendSMSService;
+use app\lib\enum\OrderEnum;
 
 class Index
 {
     public function index()
     {
+       echo OrderPushT::where('state', OrderEnum::ORDER_PUSH_NO)
+            ->where('create_time', '<', date("Y-m-d H:i:s", time() - config('setting.driver_push_expire_in')))
+            ->update(['state' => 4]);
         $this->test();
     }
 

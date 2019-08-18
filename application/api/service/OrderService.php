@@ -255,6 +255,7 @@ class OrderService
      */
     public function orderListHandel()
     {
+        LogService::save('list-1');
         //查询待处理订单并将订单状态改为处理中
         $orderList = OrderListT::where('state', OrderEnum::ORDER_LIST_NO)
             ->find();
@@ -282,8 +283,10 @@ class OrderService
      */
     public function handelDriverNoAnswer()
     {
+        LogService::save('push-1');
+
         OrderPushT::where('state', OrderEnum::ORDER_PUSH_NO)
-            ->where('create_time', '<', date("Y-m-d H:i:s", time() - config('setting.driver_push_expire_in')))
+            ->where('create_time', '>', date("Y-m-d H:i:s", time() + config('setting.driver_push_expire_in')))
             ->update(['state' => 4]);
     }
 

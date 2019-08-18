@@ -2,7 +2,7 @@
 
 return [
     'domain' => 'https://mengant.cn/house/',
-    'driver_push_expire_in' => 30,
+    'driver_push_expire_in' => 20,
     'nearby_km' => 30000,
     'balance_limit' => 10,
     'ticket_time' => 15,
