@@ -12,10 +12,32 @@ class Index
 {
     public function index()
     {
+        $this->test();
+    }
+
+
+    public function test()
+    {
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
-       // $redis->sRem('driver_order_receive', $d_id);
+        $redis->rawCommand('zrem', 'drivers_tongling', 8);
+        //2.新增新的实时地理位置
+        $ret = $redis->rawCommand('geoadd', 'drivers_tongling', "117.83648925781", "30.94262559678", 8);
+        //3.保存司机位置名称信息
+        $location_data = [
+            'username' => "测试司机",
+            'phone' => "18956225230",
+            'lat' => "30.94262559678",
+            'lng' => "117.83648925781",
+            'citycode' => 123,
+            'city' => "铜陵",
+            'district' => "铜官区",
+            'street' => "谢龙路",
+            'addr' => "大学生创业园",
+            'locationdescribe' => "大学生创业园"
+        ];
 
+        $redis->rPush("driver:$u_id:location", json_encode($location_data));
     }
 
     private function prefixFee()
