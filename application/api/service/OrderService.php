@@ -275,7 +275,10 @@ class OrderService
             return true;
         }
         //查找司机并推送
-        $this->findDriverToPush($order);
+        if (!$this->findDriverToPush($order)) {
+            $orderList->state = OrderEnum::ORDER_LIST_NO;
+            $orderList->save();
+        }
 
     }
 
@@ -409,6 +412,7 @@ class OrderService
         if (!count($list)) {
             return false;
         }
+        $push = false;
         //设置三个set: 司机未接单 driver_order_no；司机正在派单 driver_order_ing；司机已经接单 driver_order_receive
         foreach ($list as $k => $v) {
             $d_id = $v;
@@ -449,10 +453,12 @@ class OrderService
                 $driver = DriverT::where('id', $d_id)->find();
                 $phone = $driver->phone;
                 (new SendSMSService())->sendOrderSMS($phone, ['code' => '*****' . substr($order->order_num, 5), 'order_time' => date('H:i', strtotime($order->create_time))]);
+                $push = true;
                 break;
             }
 
         }
+        return $push;
     }
 
     private function checkDriverPush($o_id, $d_id)
