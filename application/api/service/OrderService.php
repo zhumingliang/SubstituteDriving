@@ -855,6 +855,7 @@ class OrderService
             throw new UpdateException(['msg' => '订单不存在']);
         }
         $grade = Token::getCurrentTokenVar('type');
+        return $order;
         if ($grade == 'manager') {
             return $order;
         } else {
