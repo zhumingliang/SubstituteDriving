@@ -18,11 +18,12 @@ class Index
 
     public function test()
     {
+        $u_id = 8;
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
-        $redis->rawCommand('zrem', 'drivers_tongling', 8);
+        $redis->rawCommand('zrem', 'drivers_tongling', $u_id);
         //2.新增新的实时地理位置
-        $ret = $redis->rawCommand('geoadd', 'drivers_tongling', "117.83648925781", "30.94262559678", 8);
+        $ret = $redis->rawCommand('geoadd', 'drivers_tongling', "117.83648925781", "30.94262559678", $u_id);
         //3.保存司机位置名称信息
         $location_data = [
             'username' => "测试司机",
