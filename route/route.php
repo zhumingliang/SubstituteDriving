@@ -110,6 +110,7 @@ Route::get('api/:version/order/info', 'api/:version.Order/orderInfo');
 Route::get('api/:version/order/mini', 'api/:version.Order/miniOrder');
 Route::get('api/:version/order/end', 'api/:version.Order/driverOrderWithEnd');
 Route::get('api/:version/order/consumption/records', 'api/:version.Order/recordsOfConsumption');
+Route::get('api/:version/order/push/info', 'api/:version.Order/orderPushInfo');
 Route::get('api/:version/order/locations', 'api/:version.Order/orderLocations');
 Route::post('api/:version/order/driver/complete', 'api/:version.Order/orderComplete');
 Route::post('api/:version/order/transfer', 'api/:version.Order/transferOrder');

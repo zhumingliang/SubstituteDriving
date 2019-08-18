@@ -5,9 +5,12 @@ namespace app\api\controller\v1;
 
 
 use app\api\controller\BaseController;
+use app\api\model\OrderPushT;
 use app\api\service\OrderService;
+use app\lib\enum\OrderEnum;
 use app\lib\exception\SuccessMessage;
 use app\lib\exception\SuccessMessageWithData;
+use think\facade\Request;
 
 class Order extends BaseController
 {
@@ -637,9 +640,10 @@ class Order extends BaseController
      * @apiSuccess (返回参数说明) {String} from 下单来源
      * @apiSuccess (返回参数说明) {String}  create_time 创建时间
      * @apiSuccess (返回参数说明) {int} state 订单状态：1 | 未接单；2 | 已接单
-     * @apiSuccess (返回参数说明) {obj} push 当没没有司机接单是，返回最近一条推送信息
+     * @apiSuccess (返回参数说明) {obj} push 当没有司机接单时，返回最近一条推送信息
      * @apiSuccess (返回参数说明) {int} push|d_id 被推送司机id
-     * @apiSuccess (返回参数说明) {string} push|username 被推送司机姓名
+     * @apiSuccess (返回参数说明) {string} push|name 被推送司机姓名
+     * @apiSuccess (返回参数说明) {string} push|create_time 推送时间，从推送时间开始时间计算，做一个倒计时处理20s
      * @apiSuccess (返回参数说明) {int} state 推送状态：1 | 未处理；2 | 同意；3 拒绝 ;4 | 推送失效；5|撤回推送
      *
      */
@@ -747,6 +751,38 @@ class Order extends BaseController
     {
         $data = (new OrderService())->CMSInsuranceOrders($page, $size, $time_begin, $time_end);
         return json(new SuccessMessageWithData(['data' => $data]));
+    }
+
+    /**
+     * @api {GET} /api/v1/order/push/info Android管理端-获取订单最新一条有效推送信息
+     * @apiGroup  Android
+     * @apiVersion 1.0.1
+     * @apiDescription    Android管理端-获取订单最新一条有效推送信息
+     * @apiExample {get}  请求样例:
+     * https://tonglingok.com/api/v1/order/push/info?o_id=1
+     * @apiParam (请求参数说明) {int} o_id 订单id
+     * @apiSuccessExample {json} 返回样例:
+    {"msg":"ok","errorCode":0,"code":200,"data":{"d_id":4,"name":"zml4","create_time":"2019-08-18 00:57:15"}}
+     * @apiSuccess (返回参数说明) {int} d_id 被推送司机ID
+     * @apiSuccess (返回参数说明) {string} name 被推送司机姓名
+     * @apiSuccess (返回参数说明) {string} create_time 推送时间，从推送时间开始时间计算，做一个倒计时处理20s
+     *
+     */
+    public function orderPushInfo()
+    {
+        $o_id = Request::param('o_id');
+        $push = OrderPushT::where('o_id', $o_id)
+            ->with(['driver' => function ($query) {
+                $query->field('id,username');
+            }])
+            ->order('create_time desc')->find();
+        $info = [
+            'd_id' => $push->d_id,
+            'name' => $push->driver->username,
+            'create_time' => $push->create_time
+        ];
+        return json(new SuccessMessageWithData(['data' => $info]));
+
     }
 
 }
