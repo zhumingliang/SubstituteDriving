@@ -158,6 +158,7 @@ class OrderService
         $push_data = [
             'type' => 'order',
             'order_info' => [
+                'o_id' => $order->id,
                 'phone' => $order->phone,
                 'start' => $order->start,
                 'end' => $order->end,
@@ -433,6 +434,7 @@ class OrderService
                 $push_data = [
                     'type' => 'order',
                     'order_info' => [
+                        'o_id' => $order->id,
                         'phone' => $order->phone,
                         'start' => $order->start,
                         'end' => $order->end,
@@ -929,6 +931,7 @@ class OrderService
             'order_info' => [
                 'from_type' => $push_type == "transfer" ? 'driver' : 'manager',
                 'from' => $from_name,
+                'o_id' => $order->id,
                 'name' => $order->name,
                 'phone' => $order->phone,
                 'start' => $order->start,
