@@ -167,6 +167,7 @@ class OrderService
 
             ]
         ];
+        LogService::save(\GuzzleHttp\json_encode($push_data).'-'.$d_id);
         GatewayService::sendToDriverClient($d_id, $push_data);
         //通过短信推送给司机
         $driver = DriverT::where('id', $d_id)->find();
