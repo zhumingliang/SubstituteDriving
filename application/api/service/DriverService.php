@@ -356,6 +356,7 @@ class DriverService
 
     private function prefixDrivers($drivers, $order_no)
     {
+        print_r($drivers);
         $online = array();
         $ids_arr = array();
         $order_no_arr = array();
