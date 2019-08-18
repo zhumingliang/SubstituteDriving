@@ -402,8 +402,8 @@ class OrderService
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
         //查询所有司机并按距离排序
-        $lat = $order['lat'];
-        $lng = $order['lng'];
+        $lat = $order['start_lat'];
+        $lng = $order['start_lng'];
         $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, '1000000', 'km', 'ASC');
         if (!count($list)) {
             return false;
