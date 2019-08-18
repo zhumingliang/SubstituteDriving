@@ -159,6 +159,7 @@ class OrderService
             'type' => 'order',
             'order_info' => [
                 'o_id' => $order->id,
+                'name' => $order->name,
                 'phone' => $order->phone,
                 'start' => $order->start,
                 'end' => $order->end,
@@ -167,7 +168,6 @@ class OrderService
 
             ]
         ];
-        LogService::save(GatewayService::isDriverUidOnline($d_id) . '-' . \GuzzleHttp\json_encode($push_data) . '-' . $d_id);
         GatewayService::sendToDriverClient($d_id, $push_data);
         //通过短信推送给司机
         $driver = DriverT::where('id', $d_id)->find();
