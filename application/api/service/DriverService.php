@@ -366,6 +366,7 @@ class DriverService
         }
 
         foreach ($drivers as $k => $v) {
+            echo "driver-" . $v[0].'-'.GatewayService::isDriverUidOnline("driver-" . $v[0]);
             if (GatewayService::isDriverUidOnline("driver-" . $v[0])) {
 
                 $state = 2;//不可接单
