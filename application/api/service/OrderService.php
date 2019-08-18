@@ -374,6 +374,7 @@ class OrderService
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
         $redis->sRem('driver_order_ing', $d_id);
+        $redis->sRem('driver_order_receive', $d_id);
         $redis->sAdd('driver_order_no', $d_id);
     }
 

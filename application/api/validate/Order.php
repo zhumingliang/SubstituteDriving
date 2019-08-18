@@ -18,7 +18,7 @@ class Order extends BaseValidate
         'end_lng' => 'require|isNotEmpty',
         'remark' => 'require|isNotEmpty',
         't_id' => 'require|isPositiveInteger',
-        'wait_time' => 'require|isPositiveInteger',
+        'wait_time' => 'require',
         'wait_money' => 'require',
         'distance' => 'require|isNotEmpty',
         'distance_money' => 'require|isNotEmpty'
