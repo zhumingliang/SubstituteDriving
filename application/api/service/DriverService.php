@@ -346,17 +346,16 @@ class DriverService
         $list = $this->redis->rawCommand('georadius',
             'drivers_tongling', $lng, $lat, $km, 'km', 'WITHCOORD');
 
-        array_push($list, [
+       /* array_push($list, [
             0 => Token::getCurrentUid(),
             1 => [$lng, $lat]
 
-        ]);
+        ]);*/
         return $list;
     }
 
     private function prefixDrivers($drivers, $order_no)
     {
-        print_r($drivers);
         $online = array();
         $ids_arr = array();
         $order_no_arr = array();
@@ -390,7 +389,7 @@ class DriverService
             foreach ($drivers_info as $k2 => $v2) {
                 if ($v['id'] == $v2->id) {
                     $online[$k]['username'] = $v2->username;
-                    unset($drivers_info[$k2]);
+                   // unset($drivers_info[$k2]);
                     break;
                 }
             }
