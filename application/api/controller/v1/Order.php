@@ -55,7 +55,7 @@ class Order extends BaseController
     public function orderListHandel()
     {
         (new OrderService())->orderListHandel();
-        return json(new SuccessMessage());
+       // return json(new SuccessMessage());
     }
 
     /**
@@ -64,7 +64,7 @@ class Order extends BaseController
     public function handelDriverNoAnswer()
     {
         (new OrderService())->handelDriverNoAnswer();
-        return json(new SuccessMessage());
+      //  return json(new SuccessMessage());
     }
 
     /**

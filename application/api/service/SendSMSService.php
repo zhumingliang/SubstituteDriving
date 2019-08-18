@@ -34,7 +34,7 @@ class SendSMSService
     {
 
         if ($num > 3) {
-            throw new SaveException(['msg' => '短信服务出错']);
+           LogService::save('发送短信服务失败');
         }
         $res = SendSms::instance()->send($phone, $params, 'driver');
         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
