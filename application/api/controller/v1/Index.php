@@ -25,9 +25,8 @@ class Index
 
         //send_message/send_message_success/send_message_fail
         $lenth = Redis::instance()->llen($name);
-        if (!$lenth) {
-            echo null;
-        }
+
+        echo $lenth;
         print_r(Redis::instance()->lRanges($name, 0, $lenth));
 
     }
