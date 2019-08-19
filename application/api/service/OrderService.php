@@ -257,8 +257,6 @@ class OrderService
      */
     public function orderListHandel()
     {
-        LogService::save('list');
-
         //查询待处理订单并将订单状态改为处理中
         $orderList = OrderListT::where('state', OrderEnum::ORDER_LIST_NO)
             ->find();
