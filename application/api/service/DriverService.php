@@ -319,7 +319,7 @@ class DriverService
     /**
      * 获取司机附近所有司机
      */
-    public function nearbyDrivers()
+    public function nearbyDrivers($params)
     {
         $grade = Token::getCurrentTokenVar('type');
         $d_id = Token::getCurrentUid();
@@ -330,7 +330,9 @@ class DriverService
             $drivers = $this->getDriversWithLocation($driver_location['lng'], $driver_location['lat'], $km);
 
         } else {
-            $drivers = $this->getDriversWithLocation();
+            $lng = $params['lng'];
+            $lat = $params['lat'];
+            $drivers = $this->getDriversWithLocation($lng, $lat);
         }
 
 
@@ -346,11 +348,11 @@ class DriverService
         $list = $this->redis->rawCommand('georadius',
             'drivers_tongling', $lng, $lat, $km, 'km', 'WITHCOORD');
 
-       /* array_push($list, [
-            0 => Token::getCurrentUid(),
-            1 => [$lng, $lat]
+        /* array_push($list, [
+             0 => Token::getCurrentUid(),
+             1 => [$lng, $lat]
 
-        ]);*/
+         ]);*/
         return $list;
     }
 
@@ -389,7 +391,7 @@ class DriverService
             foreach ($drivers_info as $k2 => $v2) {
                 if ($v['id'] == $v2->id) {
                     $online[$k]['username'] = $v2->username;
-                   // unset($drivers_info[$k2]);
+                    // unset($drivers_info[$k2]);
                     break;
                 }
             }

@@ -253,7 +253,9 @@ class Driver extends BaseController
      * @apiVersion 1.0.1
      * @apiDescription   Android司机端/Android管理端-获取附近司机列表
      * @apiExample {get}  请求样例:
-     * https://tonglingok.com/api/v1/drivers/nearby
+     * https://tonglingok.com/api/v1/drivers/nearby?lng=''&lat=''
+     * @apiParam (请求参数说明) {string} lng 经度
+     * @apiParam (请求参数说明) {string} lat 纬度
      * @apiSuccessExample {json} 返回样例:
      * {"msg":"ok","errorCode":0,"code":200,"data":[{"id":"1","state":1,"location":{"lng":"115.79384654760360718","lat":"40.58445845049069334"},"username":"朱明良"}]}
      * @apiSuccess (返回参数说明) {int} id 司机ID
@@ -265,7 +267,8 @@ class Driver extends BaseController
      */
     public function nearbyDrivers()
     {
-        $drivers = (new DriverService())->nearbyDrivers();
+        $params = Request::param();
+        $drivers = (new DriverService())->nearbyDrivers($params);
         return json(new SuccessMessageWithData(['data' => $drivers]));
 
     }
