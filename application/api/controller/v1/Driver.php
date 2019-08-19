@@ -362,4 +362,22 @@ class Driver extends BaseController
 
         return json(new SuccessMessageWithData(['data' => $income]));
     }
+
+    /**
+     * @api {GET} /api/v1/driver/checkOnline Android司机端-检测司机是否在线
+     * @apiGroup  Android
+     * @apiVersion 1.0.1
+     * @apiDescription    Android司机端-检测司机是否在线
+     * @apiExample {get}  请求样例:
+     * https://tonglingok.com/api/v1/driver/checkOnline
+     * @apiSuccessExample {json} 返回样例:
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"online":1}]}
+     * @apiSuccess (返回参数说明) {int} online 1|在线；2|离线
+     */
+    public function checkOnline()
+    {
+        $u_id = \app\api\service\Token::getCurrentUid();
+        $driver = DriverT::get($u_id);
+        return json(new SuccessMessageWithData(['online' => $driver->online]));
+    }
 }

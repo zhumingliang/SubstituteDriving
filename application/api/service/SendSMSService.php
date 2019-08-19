@@ -76,15 +76,16 @@ class SendSMSService
             $data = $redis->rPop('send_message');//从结尾处弹出一个值,超时时间为60s
             $data_arr = json_decode($data, true);
             $res = SendSms::instance()->send($data_arr['phone'], $data_arr['params'], $data_arr['type']);
+
+            $data = [
+                'phone' => $data_arr['phone'],
+                'params' => $data_arr['params'],
+                'type' => $data_arr['type'],
+                'failCount' => $data_arr['failCount'] + 1
+            ];
             if (key_exists('Code', $res) && $res['Code'] == 'OK') {
-                continue;
+                $redis->lPush('send_message_success', json_encode($data));
             } else {
-                $data = [
-                    'phone' => $data_arr['phone'],
-                    'params' => $data_arr['params'],
-                    'type' => $data_arr['type'],
-                    'failCount' => $data_arr['failCount'] + 1
-                ];
                 if ($data_arr['failCount'] == 2) {
                     $data['failMsg'] = json_encode($res);
                     $redis->lPush('send_message_fail', json_encode($data));

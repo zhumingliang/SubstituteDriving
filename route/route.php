@@ -40,6 +40,7 @@ Route::get('api/:version/driver/online/records', 'api/:version.Driver/onlineReco
 Route::get('api/:version/driver/acceptableOrder', 'api/:version.Driver/acceptableOrder');
 Route::get('api/:version/driver/acceptableOrder/manager', 'api/:version.Driver/acceptableManagerCreateOrder');
 Route::get('api/:version/driver/income', 'api/:version.Driver/income');
+Route::get('api/:version/driver/checkOnline', 'api/:version.Driver/checkOnline');
 
 Route::post('api/:version/ticket/save', 'api/:version.Ticket/save');
 Route::post('api/:version/ticket/update', 'api/:version.Ticket/update');
