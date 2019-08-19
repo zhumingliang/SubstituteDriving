@@ -420,7 +420,7 @@ class OrderService
             if (GatewayService::isDriverUidOnline($d_id) &&
                 $redis->sIsMember('driver_order_no', $d_id)) {
                 $check = $this->checkDriverPush($order->id, $d_id);
-                LogService::save('check:'.$check);
+                LogService::save('check:' . $check);
                 if ($check == 3 || $check == 2) {
                     continue;
                 }
@@ -467,8 +467,8 @@ class OrderService
     {
         $pushes = OrderPushT::where('o_id', $o_id)
             ->where('d_id', $d_id)
-            ->select();
-        if (empty($pushes)) {
+            ->select()->toArray();
+        if (!count($pushes)) {
             LogService::save(1);
             return 1;
         }
