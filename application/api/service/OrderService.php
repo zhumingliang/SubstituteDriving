@@ -465,6 +465,7 @@ class OrderService
 
     private function checkDriverPush($o_id, $d_id)
     {
+        LogService::save('o_id:'.$o_id."-d_id:".$d_id);
         $pushes = OrderPushT::where('o_id', $o_id)
             ->where('d_id', $d_id)
             ->select();
