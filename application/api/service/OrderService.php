@@ -417,11 +417,10 @@ class OrderService
         //设置三个set: 司机未接单 driver_order_no；司机正在派单 driver_order_ing；司机已经接单 driver_order_receive
         foreach ($list as $k => $v) {
             $d_id = $v;
-
-            LogService::save($d_id.'-'.GatewayService::isDriverUidOnline($d_id).'-'. $redis->sIsMember('driver_order_no', $d_id));
             if (GatewayService::isDriverUidOnline($d_id) &&
                 $redis->sIsMember('driver_order_no', $d_id)) {
                 $check = $this->checkDriverPush($order->id, $d_id);
+                LogService::save('check-'.$check);
                 if ($check == 3 || $check == 2) {
                     continue;
                 }
