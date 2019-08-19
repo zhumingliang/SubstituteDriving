@@ -9,21 +9,14 @@ use app\api\model\TimeIntervalT;
 use app\api\model\WaitPriceT;
 use app\api\service\SendSMSService;
 use app\lib\enum\OrderEnum;
+use zml\tp_aliyun\SendSms;
 
 class Index
 {
-    public function index()
+    public function index($phone)
     {
-        $data = [
-            'phone' => "1",
-            'params' => ['a' => 1, 'b' => 2],
-            'type' =>1,
-            'failCount' =>1
-        ];
-        print_r($data);
-        $json_data= json_encode($data);
-        echo $json_data;
-        print_r(json_decode($json_data,true));
+        $res = SendSms::instance()->send($phone, ['code' => 123], 'login');
+        print_r($res);
 
     }
 
