@@ -455,5 +455,19 @@ class DriverService
         ];
     }
 
+    public function init($d_id)
+    {
+        DriverT::update(['online' => CommonEnum::STATE_IS_FAIL], ['id' => $d_id]);
+        if ($this->redis->sIsMember('driver_order_ing', $d_id)) {
+            $this->redis->sRem('driver_order_ing', $d_id);
+        }
+        if ($this->redis->sIsMember('driver_order_receive', $d_id)) {
+            $this->redis->sRem('driver_order_receive', $d_id);
+        }
+        if ($this->redis->sIsMember('driver_order_no', $d_id)) {
+            $this->redis->sRem('driver_order_no', $d_id);
+        }
+    }
+
 
 }

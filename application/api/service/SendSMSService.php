@@ -16,8 +16,6 @@ class SendSMSService
 {
     public function sendCode($phone, $type, $num = 1)
     {
-
-
         $code = rand(10000, 99999);
         $res = SendSms::instance()->send($phone, ['code' => $code], $type);
 
@@ -27,8 +25,6 @@ class SendSMSService
             $redis->set($token, $phone . '-' . $code, 60);
             return true;
         }
-        /* $params = ['code' => $code];
-         $this->saveSend($phone, $params, $type);*/
     }
 
     public function sendOrderSMS($phone, $params, $num = 1)

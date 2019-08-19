@@ -380,4 +380,10 @@ class Driver extends BaseController
         $driver = DriverT::get($u_id);
         return json(new SuccessMessageWithData(['online' => $driver->online]));
     }
+
+    public function init($d_id)
+    {
+        (new DriverService())->init($d_id);
+
+    }
 }
