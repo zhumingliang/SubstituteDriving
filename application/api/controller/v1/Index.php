@@ -14,10 +14,17 @@ class Index
 {
     public function index()
     {
-       echo OrderPushT::where('state', OrderEnum::ORDER_PUSH_NO)
-            ->where('create_time', '<', date("Y-m-d H:i:s", time() - config('setting.driver_push_expire_in')))
-            ->update(['state' => 4]);
-        $this->test();
+        $data = [
+            'phone' => "1",
+            'params' => ['a' => 1, 'b' => 2],
+            'type' =>1,
+            'failCount' =>1
+        ];
+        print_r($data);
+        $json_data= json_encode($data);
+        echo $json_data;
+        print_r(json_decode($json_data,true));
+
     }
 
 

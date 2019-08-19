@@ -27,8 +27,8 @@ class SendSMSService
             $redis->set($token, $phone . '-' . $code, 60);
             return true;
         }
-       /* $params = ['code' => $code];
-        $this->saveSend($phone, $params, $type);*/
+        /* $params = ['code' => $code];
+         $this->saveSend($phone, $params, $type);*/
     }
 
     public function sendOrderSMS($phone, $params, $num = 1)
@@ -55,29 +55,44 @@ class SendSMSService
 
     private function saveSend($phone, $params, $type)
     {
-        SendMessageT::create([
+        $redis = new Redis();
+        $data = [
             'phone' => $phone,
-            'params' => json_encode($params),
-            'state' => CommonEnum::STATE_IS_FAIL,
-            'type' => $type
-
-        ]);
+            'params' => $params,
+            'type' => $type,
+            'failCount' => 0
+        ];
+        $redis->lPush('send_message', json_encode($data));
     }
 
     public function sendHandel()
     {
-        $list = SendMessageT::where('state', CommonEnum::STATE_IS_FAIL)
-            ->where('count', '<', 4)
-            ->select()->toArray();
-        if (!empty($list)) {
-            foreach ($list as $k => $v) {
-                $res = SendSms::instance()->send($v['phone'], json_decode($v['params'], true), $v['type']);
-                if (key_exists('Code', $res) && $res['Code'] == 'OK') {
-                    SendMessageT::update(['state' => CommonEnum::STATE_IS_OK], ['id' => $v['id']]);
-                    continue;
+        $redis = new Redis();
+        $lenth = $redis->llen('send_message');
+        if (!$lenth) {
+            return true;
+        }
+        for ($i = 0; $i < 10; $i++) {
+            $data = $redis->rPop('send_message');//从结尾处弹出一个值,超时时间为60s
+            $data_arr = json_decode($data, true);
+            $res = SendSms::instance()->send($data_arr['phone'], $data_arr['params'], $data_arr['type']);
+            if (key_exists('Code', $res) && $res['Code'] == 'OK') {
+                continue;
+            } else {
+                $data = [
+                    'phone' => $data_arr['phone'],
+                    'params' => $data_arr['params'],
+                    'type' => $data_arr['type'],
+                    'failCount' => $data_arr['failCount'] + 1
+                ];
+                if ($data_arr['failCount'] == 2) {
+                    $data['failMsg'] = json_encode($res);
+                    $redis->lPush('send_message_fail', json_encode($data));
                 }
-                SendMessageT::update(['count' => $v['count'] + 1], ['id' => $v['id']]);
+                $redis->lPush('send_message', json_encode($data));
+
             }
+            usleep(500000);//微秒，调用第三方接口，需要注意频率，
         }
 
     }

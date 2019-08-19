@@ -192,6 +192,20 @@ class Redis
         return $this->redisObj[$this->sn]->lpop($key);
     }
 
+
+    /**
+     * 列表元素数量
+     * @param string $key 集合名字
+     * @return mixed
+     */
+    public function llen($key)
+    {
+        $re = $this->redisObj[$this->sn]->exists($key);//存在返回1，不存在返回0
+        if (!$re) return false;
+        return $this->redisObj[$this->sn]->llen($key);
+    }
+
+
     /*------------------------------------2.end list结构----------------------------------------------------*/
 
 
@@ -222,6 +236,7 @@ class Redis
         if (!$re) return false;
         return $this->redisObj[$this->sn]->smembers($key);
     }
+
 
     /*------------------------------------3.end  set结构----------------------------------------------------*/
 
