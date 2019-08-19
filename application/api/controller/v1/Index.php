@@ -10,16 +10,27 @@ use app\api\model\WaitPriceT;
 use app\api\service\SendSMSService;
 use app\lib\enum\OrderEnum;
 use zml\tp_aliyun\SendSms;
+use zml\tp_tools\Redis;
 
 class Index
 {
-    public function index($phone)
+    public function index($name)
     {
-        $res = SendSms::instance()->send($phone, ['code' => 123], 'login');
-        print_r($res);
+        $this->sendMessage($name);
 
     }
 
+    public function sendMessage($name)
+    {
+
+        //send_message/send_message_success/send_message_fail
+        $lenth = Redis::instance()->llen($name);
+        if (!$lenth) {
+            echo null;
+        }
+        print_r(Redis::instance()->lRanges($name, 0, $lenth));
+
+    }
 
     public function test()
     {
