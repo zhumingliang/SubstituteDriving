@@ -467,6 +467,7 @@ class OrderService
         $pushes = OrderPushT::where('o_id', $o_id)
             ->where('d_id', $d_id)
             ->select();
+        LogService::save(json_encode($pushes));
         if (empty($pushes)) {
             return 1;
         }
