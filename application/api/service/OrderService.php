@@ -409,6 +409,8 @@ class OrderService
         $lat = $order['start_lat'];
         $lng = $order['start_lng'];
         $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, '1000000', 'km', 'ASC');
+
+        LogService::save(\GuzzleHttp\json_encode($list));
         if (!count($list)) {
             return false;
         }
