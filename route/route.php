@@ -89,6 +89,7 @@ Route::get('api/:version/wallet/records/manager', 'api/:version.Wallet/managerRe
 
 Route::post('api/:version/sms/register', 'api/:version.SendSMS/sendCodeToMINI');
 Route::post('api/:version/sms/login', 'api/:version.SendSMS/sendCodeToAndroid');
+Route::rule('api/:version/sms/handel', 'api/:version.SendSMS/sendHandel');
 
 Route::post('api/:version/order/mini/save', 'api/:version.Order/saveMiniOrder');
 Route::post('api/:version/order/drive/save', 'api/:version.Order/saveDriverOrder');

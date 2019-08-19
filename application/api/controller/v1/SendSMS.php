@@ -57,4 +57,13 @@ class SendSMS extends BaseController
         return json(new SuccessMessage());
     }
 
+    /**
+     * 处理没有成功发送短信
+     */
+    public function sendHandel()
+    {
+        (new SendSMSService())->sendHandel();
+
+    }
+
 }

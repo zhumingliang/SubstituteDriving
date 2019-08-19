@@ -4,64 +4,81 @@
 namespace app\api\service;
 
 
+use app\api\model\SendMessageT;
+use app\lib\enum\CommonEnum;
 use app\lib\exception\SaveException;
 use think\facade\Request;
 use zml\tp_aliyun\SendSms;
 use zml\tp_tools\Redis;
+use function GuzzleHttp\Promise\each_limit;
 
 class SendSMSService
 {
     public function sendCode($phone, $type, $num = 1)
     {
 
-        if ($num > 3) {
-            throw new SaveException(['msg' => '短信服务出错']);
-        }
+
         $code = rand(10000, 99999);
         $res = SendSms::instance()->send($phone, ['code' => $code], $type);
+
         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
             $redis = new Redis();
             $token = Request::header('token');
             $redis->set($token, $phone . '-' . $code, 60);
             return true;
         }
-        $num++;
-        $this->sendCode($phone, $type, $num);
-
+       /* $params = ['code' => $code];
+        $this->saveSend($phone, $params, $type);*/
     }
 
     public function sendOrderSMS($phone, $params, $num = 1)
     {
 
-      /*  if ($num > 3) {
-            LogService::save('发送短信服务失败');
-            return false;
-        }*/
         $res = SendSms::instance()->send($phone, $params, 'driver');
         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
             return true;
         }
-        LogService::save(json_encode($res));
-       /* $num++;
-        $this->sendOrderSMS($phone, $params, $num);*/
-
+        $this->saveSend($phone, $params, 'driver');
     }
 
 
     public function sendRechargeSMS($phone, $params, $num = 1)
     {
 
-        if ($num > 3) {
-            return false;
-            // throw new SaveException(['msg' => '短信服务出错']);
-        }
         $res = SendSms::instance()->send($phone, $params, 'recharge');
         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
             return true;
         }
-        LogService::save(json_encode($res));
-        $num++;
-        $this->sendOrderSMS($phone, $params, $num);
+        $this->saveSend($phone, $params, 'recharge');
+
+    }
+
+    private function saveSend($phone, $params, $type)
+    {
+        SendMessageT::create([
+            'phone' => $phone,
+            'params' => json_encode($params),
+            'state' => CommonEnum::STATE_IS_FAIL,
+            'type' => $type
+
+        ]);
+    }
+
+    public function sendHandel()
+    {
+        $list = SendMessageT::where('state', CommonEnum::STATE_IS_FAIL)
+            ->where('count', '<', 4)
+            ->select()->toArray();
+        if (!empty($list)) {
+            foreach ($list as $k => $v) {
+                $res = SendSms::instance()->send($v['phone'], json_decode($v['params'], true), $v['type']);
+                if (key_exists('Code', $res) && $res['Code'] == 'OK') {
+                    SendMessageT::update(['state' => CommonEnum::STATE_IS_OK], ['id' => $v['id']]);
+                    continue;
+                }
+                SendMessageT::update(['count' => $v['count'] + 1], ['id' => $v['id']]);
+            }
+        }
 
     }
 
