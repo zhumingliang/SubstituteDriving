@@ -25,6 +25,7 @@ class SendSMSService
             $redis = new Redis();
             $token = Request::header('token');
             $redis->set($token, $phone . '-' . $code, 60);
+            $redis->lPush('send_message_success', json_encode($res));
             return true;
         }
         /* $params = ['code' => $code];
@@ -36,6 +37,8 @@ class SendSMSService
 
         $res = SendSms::instance()->send($phone, $params, 'driver');
         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
+            $redis = new Redis();
+            $redis->lPush('send_message_success', json_encode($res));
             return true;
         }
         $this->saveSend($phone, $params, 'driver');
@@ -47,6 +50,7 @@ class SendSMSService
 
         $res = SendSms::instance()->send($phone, $params, 'recharge');
         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
+            Redis::instance()->lPush('send_message_success', json_encode($res));
             return true;
         }
         $this->saveSend($phone, $params, 'recharge');
@@ -55,14 +59,13 @@ class SendSMSService
 
     private function saveSend($phone, $params, $type)
     {
-        $redis = new Redis();
         $data = [
             'phone' => $phone,
             'params' => $params,
             'type' => $type,
             'failCount' => 0
         ];
-        $redis->lPush('send_message', json_encode($data));
+        Redis::instance()->lPush('send_message', json_encode($data));
     }
 
     public function sendHandel()
