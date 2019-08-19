@@ -468,8 +468,8 @@ class OrderService
         $pushes = OrderPushT::where('o_id', $o_id)
             ->where('d_id', $d_id)
             ->select();
-        LogService::save(json_encode($pushes));
         if (empty($pushes)) {
+            LogService::save(1);
             return 1;
         }
         foreach ($pushes as $k => $v) {
