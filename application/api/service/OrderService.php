@@ -420,6 +420,7 @@ class OrderService
             if (GatewayService::isDriverUidOnline($d_id) &&
                 $redis->sIsMember('driver_order_no', $d_id)) {
                 $check = $this->checkDriverPush($order->id, $d_id);
+                LogService::save('check:'.$check);
                 if ($check == 3 || $check == 2) {
                     continue;
                 }
