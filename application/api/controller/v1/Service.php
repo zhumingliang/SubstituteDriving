@@ -18,8 +18,8 @@ class Service extends BaseController
 
     public function failHandel()
     {
-        (new SendSMS())->sendHandel();
-        (new OrderService())->handelDriverNoAnswer();
+       // (new SendSMS())->sendHandel();
+       // (new OrderService())->handelDriverNoAnswer();
     }
 
 }

@@ -7,6 +7,7 @@ use app\api\model\OrderPushT;
 use app\api\model\StartPriceT;
 use app\api\model\TimeIntervalT;
 use app\api\model\WaitPriceT;
+use app\api\service\OrderService;
 use app\api\service\SendSMSService;
 use app\lib\enum\OrderEnum;
 use zml\tp_aliyun\SendSms;
@@ -16,8 +17,12 @@ class Index
 {
     public function index()
     {
-        $res = SendSms::instance()->send('18956225230', ['code' => 123], 'login');
-        print_r($res);
+
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1', 6379, 60);
+        $location = $redis->rawCommand('geopos', 'drivers_tongling', 8);
+        /* $res = SendSms::instance()->send('18956225230', ['code' => 123], 'login');
+ print_r($res);*/
     }
 
     public function sendMessage($name)

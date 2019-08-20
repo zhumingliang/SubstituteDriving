@@ -847,8 +847,8 @@ class OrderService
         $redis->connect('127.0.0.1', 6379, 60);
         $location = $redis->rawCommand('geopos', 'drivers_tongling', $u_id);
         if ($location) {
-            $lng = $location[0][0];
-            $lat = $location[0][1];
+            $lng = empty($location[0][0]) ? null : $location[0][0];
+            $lat = empty($location[0][1]) ? null : $location[0][1];
         } else {
             $lng = null;
             $lat = null;
@@ -879,19 +879,19 @@ class OrderService
         }
         $grade = Token::getCurrentTokenVar('type');
         return $order;
-        if ($grade == 'manager') {
-            return $order;
-        } else {
-            if ($grade == 'driver') {
-                $field_id = $order->d_id;
-            } else {
-                $field_id = $order->u_id;
-            }
-            if (Token::getCurrentUid() != $field_id) {
-                throw new UpdateException(['msg' => '无权限操作此订单']);
-            }
-            return $order;
-        }
+        /* if ($grade == 'manager') {
+             return $order;
+         } else {
+             if ($grade == 'driver') {
+                 $field_id = $order->d_id;
+             } else {
+                 $field_id = $order->u_id;
+             }
+             if (Token::getCurrentUid() != $field_id) {
+                 throw new UpdateException(['msg' => '无权限操作此订单']);
+             }
+             return $order;
+         }*/
 
     }
 
