@@ -35,8 +35,7 @@ class WeixinService
          exit;*/
 
         $this->app->server->push(function ($message) {
-            $msg = "您好！欢迎使用OK代驾。";
-            // $message['MsgType'] // 消息类型：event, text....
+            $msg = "您好，欢迎关注和使用OK代驾，OK代驾随叫随到、一路安心、一切OK，专业提供酒后代驾、商务代驾、旅游代驾、司机外派等业务。全城最低价，专业有保障。服务热线：19855751988";
             $type = $message['MsgType'];
             if ($type == "event") {
                 $event = $message['Event'];
