@@ -21,6 +21,7 @@ class Index
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
         $location = $redis->rawCommand('geopos', 'drivers_tongling', 8);
+       var_dump($location);
         /* $res = SendSms::instance()->send('18956225230', ['code' => 123], 'login');
  print_r($res);*/
     }
