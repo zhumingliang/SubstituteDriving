@@ -27,8 +27,8 @@ class DriverService
 
     public function __construct()
     {
-        $this->redis = new \Redis();
-        $this->redis->connect('127.0.0.1', 6379, 60);
+      // $this->redis = new \Redis();
+      //  $this->redis->connect('127.0.0.1', 6379, 60);
 
     }
 
@@ -321,8 +321,8 @@ class DriverService
      */
     public function nearbyDrivers($params)
     {
-        $grade = Token::getCurrentTokenVar('type');
-        $d_id = Token::getCurrentUid();
+        $grade = 1;//Token::getCurrentTokenVar('type');
+        $d_id = 1;//Token::getCurrentUid();
         if ($grade == "driver") {
             $km = config('setting.nearby_km');
             //1.获取本司机当前位置
@@ -335,7 +335,7 @@ class DriverService
             $drivers = $this->getDriversWithLocation($lng, $lat);
         }
 
-
+        print_r($drivers);
         $order_no = $this->getDriverOrderNo();
         $drivers = $this->prefixDrivers($drivers, $order_no);
         return $drivers;
@@ -347,12 +347,6 @@ class DriverService
         //查询所有司机并按距离排序（包括在线和不在线）
         $list = $this->redis->rawCommand('georadius',
             'drivers_tongling', $lng, $lat, $km, 'km', 'WITHCOORD');
-
-        /* array_push($list, [
-             0 => Token::getCurrentUid(),
-             1 => [$lng, $lat]
-
-         ]);*/
         return $list;
     }
 

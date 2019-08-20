@@ -442,11 +442,13 @@ class OrderService
                     'type' => 'order',
                     'order_info' => [
                         'o_id' => $order->id,
+                        'from' => "系统派单",
+                        'name' => $order->name,
                         'phone' => $order->phone,
                         'start' => $order->start,
                         'end' => $order->end,
                         'create_time' => $order->create_time,
-                        'p_id' => $push->id,
+                        'p_id' => $push->id
 
                     ]
                 ];

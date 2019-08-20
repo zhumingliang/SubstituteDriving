@@ -7,6 +7,7 @@ namespace app\api\controller\v1;
 use app\api\controller\BaseController;
 use app\api\model\DriverT;
 use app\api\service\DriverService;
+use app\lib\enum\DriverEnum;
 use app\lib\exception\SaveException;
 use app\lib\exception\SuccessMessage;
 use app\lib\exception\SuccessMessageWithData;
@@ -371,14 +372,20 @@ class Driver extends BaseController
      * @apiExample {get}  请求样例:
      * https://tonglingok.com/api/v1/driver/checkOnline
      * @apiSuccessExample {json} 返回样例:
-     * {"msg":"ok","errorCode":0,"code":200,"data":{"online":1}]}
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"online":1,"online_time":10000}]}
      * @apiSuccess (返回参数说明) {int} online 1|在线；2|离线
+     * @apiSuccess (返回参数说明) {int} online_time 在线时间：单位秒
      */
     public function checkOnline()
     {
         $u_id = \app\api\service\Token::getCurrentUid();
         $driver = DriverT::get($u_id);
-        return json(new SuccessMessageWithData(['online' => $driver->online]));
+        $ret = ['online' => $driver->online];
+        if ($driver->online == DriverEnum::ONLINE) {
+            $online_time = time() - strtotime($driver->last_online_time);
+            $ret['online_time'] = $online_time;
+        }
+        return json(new SuccessMessageWithData(['data'=>$ret]));
     }
 
     public function init($d_id)
