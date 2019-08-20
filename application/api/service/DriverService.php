@@ -334,9 +334,10 @@ class DriverService
             $lat = $params['lat'];
             $drivers = $this->getDriversWithLocation($lng, $lat);
         }
-
         print_r($drivers);
+
         $order_no = $this->getDriverOrderNo();
+        print_r($order_no);
         $drivers = $this->prefixDrivers($drivers, $order_no);
         return $drivers;
     }
@@ -362,6 +363,7 @@ class DriverService
         }
 
         foreach ($drivers as $k => $v) {
+            echo $v[0].'-'.GatewayService::isDriverUidOnline($v[0]);
             if (GatewayService::isDriverUidOnline($v[0])) {
 
                 $state = 2;//不可接单
