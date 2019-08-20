@@ -130,3 +130,7 @@ Route::rule('api/:version/order/push/no/handel', 'api/:version.Order/handelDrive
 Route::rule('api/:version/weixin/public', 'api/:version.WeiXinPublic/server');
 Route::rule('api/:version/weixin/public/menu', 'api/:version.WeiXinPublic/createMenu');
 
+Route::rule('api/:version/service/order', 'api/:version.Service/orderHandel');
+Route::rule('api/:version/service/fail', 'api/:version.Service/failHandel');
+
+

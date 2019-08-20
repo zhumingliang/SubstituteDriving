@@ -70,8 +70,10 @@ class SendSMSService
         for ($i = 0; $i < 10; $i++) {
             $data = $redis->rPop('send_message');//从结尾处弹出一个值,超时时间为60s
             $data_arr = json_decode($data, true);
+            if (empty($data_arr['phone'])) {
+                continue;
+            }
             $res = SendSms::instance()->send($data_arr['phone'], $data_arr['params'], $data_arr['type']);
-
             $data = [
                 'phone' => $data_arr['phone'],
                 'params' => $data_arr['params'],
@@ -81,14 +83,16 @@ class SendSMSService
             if (key_exists('Code', $res) && $res['Code'] == 'OK') {
                 $redis->lPush('send_message_success', json_encode($data));
             } else {
-                if ($data_arr['failCount'] == 2) {
+                if ($data_arr['failCount'] > 2) {
                     $data['failMsg'] = json_encode($res);
                     $redis->lPush('send_message_fail', json_encode($data));
+
+                } else {
+                    $redis->lPush('send_message', json_encode($data));
                 }
-                $redis->lPush('send_message', json_encode($data));
 
             }
-            usleep(500000);//微秒，调用第三方接口，需要注意频率，
+            usleep(100000);//微秒，调用第三方接口，需要注意频率，
         }
 
     }

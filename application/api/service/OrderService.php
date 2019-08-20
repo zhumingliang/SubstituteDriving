@@ -287,9 +287,17 @@ class OrderService
      */
     public function handelDriverNoAnswer()
     {
-        OrderPushT::where('state', OrderEnum::ORDER_PUSH_NO)
+        //处理未发送短信
+
+
+        $push = OrderPushT::where('state', OrderEnum::ORDER_PUSH_NO)
             ->where('create_time', '<', date("Y-m-d H:i:s", time() - config('setting.driver_push_expire_in')))
-            ->update(['state' => 4]);
+            ->select();
+        foreach ($push as $k => $v) {
+            $d_id = $v['d_id'];
+            $this->prefixPushRefuse($d_id);
+            OrderPushT::update(['state' => OrderEnum::ORDER_PUSH_INVALID], ['id' => $d_id]);
+        }
     }
 
     /**
@@ -377,7 +385,6 @@ class OrderService
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
         $redis->sRem('driver_order_ing', $d_id);
-        $redis->sRem('driver_order_receive', $d_id);
         $redis->sAdd('driver_order_no', $d_id);
     }
 
