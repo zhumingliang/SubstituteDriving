@@ -321,8 +321,8 @@ class DriverService
      */
     public function nearbyDrivers($params)
     {
-        $grade = 1;//Token::getCurrentTokenVar('type');
-        $d_id = 1;//Token::getCurrentUid();
+        $grade = Token::getCurrentTokenVar('type');
+        $d_id = Token::getCurrentUid();
         if ($grade == "driver") {
             $km = config('setting.nearby_km');
             //1.获取本司机当前位置
@@ -334,10 +334,7 @@ class DriverService
             $lat = $params['lat'];
             $drivers = $this->getDriversWithLocation($lng, $lat);
         }
-        print_r($drivers);
-
         $order_no = $this->getDriverOrderNo();
-        print_r($order_no);
         $drivers = $this->prefixDrivers($drivers, $order_no);
         return $drivers;
     }
@@ -363,9 +360,7 @@ class DriverService
         }
 
         foreach ($drivers as $k => $v) {
-            echo $v[0].'-'.GatewayService::isDriverUidOnline($v[0]);
             if (GatewayService::isDriverUidOnline($v[0])) {
-
                 $state = 2;//不可接单
                 if (in_array($v[0], $order_no_arr)) {
                     $state = 1;//可以接单
