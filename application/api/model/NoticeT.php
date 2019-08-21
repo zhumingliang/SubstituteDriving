@@ -19,6 +19,7 @@ class NoticeT extends Model
     {
         $list = self::where('state', '<', 3)
             ->field('id,title,content,state,create_time')
+            ->order('create_time desc')
             ->paginate($size, false, ['page' => $page]);
         return $list;
 
@@ -28,6 +29,7 @@ class NoticeT extends Model
     {
         $list = self::where('state', CommonEnum::NOTICE_RELEASED)
             ->field('id,title,content,create_time')
+            ->order('create_time desc')
             ->paginate($size, false, ['page' => $page]);
         return $list;
 
@@ -52,6 +54,7 @@ class NoticeT extends Model
                 }
             })
             ->hidden(['u_id', 'scene', 'source'])
+            ->order('create_time desc')
             ->paginate($size, false, ['page' => $page])
             ->toArray();
         return $list;

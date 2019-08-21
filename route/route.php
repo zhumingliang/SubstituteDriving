@@ -72,7 +72,8 @@ Route::post('api/:version/SystemPrice/order/update', 'api/:version.SystemPrice/u
 Route::get('api/:version/SystemPrice/weather', 'api/:version.SystemPrice/weatherPrice');
 Route::post('api/:version/SystemPrice/weather/update', 'api/:version.SystemPrice/weatherUpdate');
 
-Route::get('api/:version/SystemPrice/init/mini', 'api/:version.SystemPrice/priceInfoForMINI');
+Route::get('api/:version/SystemPrice/initIndex/mini', 'api/:version.SystemPrice/initMINIIndex');
+Route::get('api/:version/SystemPrice/initPrice/mini', 'api/:version.SystemPrice/initMINIPrice');
 Route::get('api/:version/SystemPrice/init/driver', 'api/:version.SystemPrice/priceInfoForDriver');
 
 Route::post('api/:version/notice/save', 'api/:version.Notice/save');

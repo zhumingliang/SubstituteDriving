@@ -181,9 +181,9 @@ class SystemPrice extends BaseController
      */
     public function startUpdate()
     {
-       /* $info = $this->request->param('info');
-        (new SystemPriceService())->startUpdate($info);
-        return json(new SuccessMessage());*/
+        /* $info = $this->request->param('info');
+         (new SystemPriceService())->startUpdate($info);
+         return json(new SuccessMessage());*/
         $params = Request::only('id,distance,price,order');
         (new SystemPriceService())->startUpdate($params);
         return json(new SuccessMessage());
@@ -406,23 +406,14 @@ class SystemPrice extends BaseController
     }
 
     /**
-     * @api {GET} /api/v1/SystemPrice/init/mini  小程序用户端-获取初始化价格设置信息
+     * @api {GET} /api/v1/SystemPrice/initPrice/mini  小程序用户端-获取初始化价格设置信息
      * @apiGroup   MINI
      * @apiVersion 1.0.1
      * @apiDescription   小程序用户端-获取初始化价格设置信息
      * @apiExample {get}  请求样例:
-     * https://tonglingok.com/api/v1/SystemPrice/init/mini?lat="11212.12121"&lng="3323.3223"
-     * @apiParam (请求参数说明) {String} lat  纬度
-     * @apiParam (请求参数说明) {String} lng  经度
+     * https://tonglingok.com/api/v1/SystemPrice/initPrice/mini
      * @apiSuccessExample {json} 返回样例:
-     * {"msg":"ok","errorCode":0,"code":200,"data":{"tickets":[{"id":1,"name":"新用户优惠券","money":5,"time_begin":"2019-07-01 22:38:00","time_end":"2019-07-31 22:38:05"}],"drivers":0,"start":[{"id":1,"distance":8,"price":30,"order":1},{"id":2,"distance":1,"price":80,"order":2},{"id":3,"distance":2,"price":15,"order":3}],"wait":{"id":1,"free":30,"price":1},"interval":[{"id":1,"time_begin":"08:00:00","time_end":"18:00:00","price":18},{"id":2,"time_begin":"18:00:00","time_end":"00:00:00","price":18}]}}
-     * @apiSuccess (返回参数说明) {Obj} tickets 优惠券信息
-     * @apiSuccess (返回参数说明) {int} tickets|id  优惠券id
-     * @apiSuccess (返回参数说明) {String} tickets-name  优惠券名称
-     * @apiSuccess (返回参数说明) {Float} tickets-money  优惠券金额
-     * @apiSuccess (返回参数说明) {String} tickets-time_begin  有效期开始时间
-     * @apiSuccess (返回参数说明) {String} tickets-time_end  有效期截止时间
-     * @apiSuccess (返回参数说明) {int} drivers 附近候驾司机数量
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"start":[{"id":1,"distance":8,"price":30,"order":1},{"id":2,"distance":1,"price":80,"order":2},{"id":3,"distance":2,"price":15,"order":3}],"wait":{"id":1,"free":30,"price":1},"interval":[{"id":1,"time_begin":"08:00:00","time_end":"18:00:00","price":18},{"id":2,"time_begin":"18:00:00","time_end":"00:00:00","price":18}]}}
      * @apiSuccess (返回参数说明) {Obj} start  价格信息
      * @apiSuccess (返回参数说明) {int} start-id  价格设置id
      * @apiSuccess (返回参数说明) {float} start-distance  距离
@@ -438,20 +429,52 @@ class SystemPrice extends BaseController
      * @apiSuccess (返回参数说明) {int} interval-time_end 起步价时间段结束时间
      * @apiSuccess (返回参数说明) {Float} interval-price 该时间段内的价格
      */
-    public function priceInfoForMINI()
+    public function initMINIPrice()
     {
         $params = $this->request->param();
-        $info = (new SystemPriceService())->priceInfoForMINI($params);
+        $info = (new SystemPriceService())->initMINIPrice($params);
         return json(new SuccessMessageWithData(['data' => $info]));
     }
 
     /**
-     * @api {GET} /api/v1/SystemPrice/init/driver  Android司机端-获取初始化价格设置信息
+     * @api {GET} /api/v1/SystemPrice/initIndex/mini  小程序用户端-获取首页初始化信息：价格/附近司机数量/优惠券
+     * @apiGroup   MINI
+     * @apiVersion 1.0.1
+     * @apiDescription  小程序用户端-获取首页初始化信息：价格/附近司机数量/优惠券
+     * @apiExample {get}  请求样例:
+     * https://tonglingok.com/api/v1/SystemPrice/initIndex/mini?lat="11212.12121"&lng="3323.3223"
+     * @apiParam (请求参数说明) {String} lat  纬度
+     * @apiParam (请求参数说明) {String} lng  经度
+     * @apiSuccessExample {json} 返回样例:
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"tickets":[{"id":60,"name":"首次关注微信公众号优惠券","money":5,"time_begin":"2019-08-16 00:00:00","time_end":"2019-08-31 00:00:00"}],"drivers":0,"interval":[{"time_begin":"07:00","time_end":"20:59","price":10},{"time_begin":"21:00","time_end":"06:59","price":20}]}}
+     * @apiSuccess (返回参数说明) {Obj} tickets 优惠券信息
+     * @apiSuccess (返回参数说明) {int} tickets|id  优惠券id
+     * @apiSuccess (返回参数说明) {String} tickets-name  优惠券名称
+     * @apiSuccess (返回参数说明) {Float} tickets-money  优惠券金额
+     * @apiSuccess (返回参数说明) {String} tickets-time_begin  有效期开始时间
+     * @apiSuccess (返回参数说明) {String} tickets-time_end  有效期截止时间
+     * @apiSuccess (返回参数说明) {int} drivers 附近候驾司机数量
+     * @apiSuccess (返回参数说明) {Obj} interval 起步价时间段设置
+     * @apiSuccess (返回参数说明) {int} interval-id 起步价时间段设置id
+     * @apiSuccess (返回参数说明) {int} interval-time_begin 起步价时间段开始时间
+     * @apiSuccess (返回参数说明) {int} interval-time_end 起步价时间段结束时间
+     * @apiSuccess (返回参数说明) {Float} interval-price 该时间段内的价格
+     */
+    public function initMINIIndex()
+    {
+        $params = $this->request->param();
+        $info = (new SystemPriceService())->loginInit($params);
+        return json(new SuccessMessageWithData(['data' => $info]));
+    }
+
+
+    /**
+     * @api {GET} /api/v1/SystemPrice/initPrice/driver  Android司机端-获取初始化价格设置信息
      * @apiGroup   Android
      * @apiVersion 1.0.1
      * @apiDescription   Android司机端-获取初始化价格设置信息
      * @apiExample {get}  请求样例:
-     * https://tonglingok.com/api/v1/SystemPrice/init/driver
+     * https://tonglingok.com/api/v1/SystemPrice/initPrice/driver
      * @apiSuccessExample {json} 返回样例:
      * {"msg":"ok","errorCode":0,"code":200,"data":{"start":[{"id":1,"distance":8,"price":18,"order":1},{"id":2,"distance":1,"price":80,"order":2},{"id":3,"distance":2,"price":15,"order":3}],"wait":{"id":1,"free":30,"price":1}}}
      * @apiSuccess (返回参数说明) {Obj} start  价格信息

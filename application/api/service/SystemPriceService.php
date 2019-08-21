@@ -48,21 +48,14 @@ class SystemPriceService
 
     }
 
-    public function priceInfoForMINI($params)
+    public function initMINIPrice($params)
     {
-        $lat = $params['lat'];
-        $lng = $params['lng'];
-        $tickets = (new TicketService())->userTickets();;
-        //附近2km
-        $drivers = 0;
         $start = $this->startPrice();
         $wait = $this->wait();
         $interval = $this->intervalTime();
 
 
         return [
-            'tickets' => $tickets,
-            'drivers' => $drivers,
             'start' => $start,
             'wait' => $wait,
             'interval' => $interval,
@@ -117,5 +110,22 @@ class SystemPriceService
             'wait' => $wait];
 
     }
+
+    public function loginInit($params)
+    {
+        $lat = $params['lat'];
+        $lng = $params['lng'];
+        $tickets = (new TicketService())->userTickets();;
+        //附近2km
+        $drivers = (new DriverService())->getDriversCountWithLocation($lat, $lng);
+        return [
+            'tickets' => $tickets,
+            'drivers' => $drivers,
+            'interval' => TimeIntervalT::where('state', CommonEnum::STATE_IS_OK)
+                ->field('time_begin,time_end,price')
+                ->select()->toArray()
+        ];
+    }
+
 
 }

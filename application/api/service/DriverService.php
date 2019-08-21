@@ -460,5 +460,14 @@ class DriverService
         }
     }
 
+    public function getDriversCountWithLocation($lat, $lng)
+    {
+        $redis = new \Redis();
+        $km = config('setting.mini_nearby_km');
+        $redis->connect('127.0.0.1', 6379, 60);
+        $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat,$km, 'km');
+        return count($list);
+    }
+
 
 }
