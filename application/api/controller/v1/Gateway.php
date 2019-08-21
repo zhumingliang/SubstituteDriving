@@ -7,6 +7,7 @@ namespace app\api\controller\v1;
 use app\api\controller\BaseController;
 use app\api\service\WalletService;
 use app\lib\exception\SuccessMessage;
+use app\lib\exception\SuccessMessageWithData;
 
 class Gateway extends BaseController
 {
@@ -37,6 +38,12 @@ class Gateway extends BaseController
 
         return json(new SuccessMessage());
 
+    }
+
+    public function onlineClients()
+    {
+        $list = \GatewayClient\Gateway::getAllUidList();
+        return json(new SuccessMessageWithData(['data' => $list]));
     }
 
 }
