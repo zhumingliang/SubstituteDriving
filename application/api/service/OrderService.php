@@ -427,8 +427,7 @@ class OrderService
             if (GatewayService::isDriverUidOnline($d_id) &&
                 $redis->sIsMember('driver_order_no', $d_id)) {
                 $check = $this->checkDriverPush($order->id, $d_id);
-                LogService::save('check:' . $check);
-                if ($check == 3 || $check == 2) {
+                if ($check == 2) {
                     continue;
                 }
 
@@ -478,16 +477,17 @@ class OrderService
             ->where('d_id', $d_id)
             ->select()->toArray();
         if (!count($pushes)) {
-            LogService::save(1);
             return 1;
         }
         foreach ($pushes as $k => $v) {
             if ($v['state'] == OrderEnum::ORDER_PUSH_REFUSE) {
-                return 3;
+                return 2;
             }
         }
-
-        return 2;
+        if (count($pushes) == 3) {
+            return 2;
+        }
+        return 1;
     }
 
     public function orderCancel($params)
