@@ -17,6 +17,7 @@ use app\lib\exception\AuthException;
 use app\lib\exception\ParameterException;
 use app\lib\exception\SaveException;
 use app\lib\exception\UpdateException;
+use GatewayClient\Gateway;
 use think\Db;
 use think\Exception;
 use zml\tp_tools\Redis;
@@ -236,9 +237,7 @@ class DriverService
 
         $list = $this->redis->rawCommand('georadius',
             'drivers_tongling', $start_lng, $start_lat, 100000, 'km', 'WITHDIST', 'WITHCOORD');
-
-        $redis = new Redis();
-        $driver_ids = $redis->sMembers('driver_order_no');
+        $driver_ids = $this->redis->sMembers('driver_order_no');
         if (!$driver_ids || !count($list)) {
             return array();
         }
@@ -246,11 +245,12 @@ class DriverService
         $return_data = [];
         foreach ($list as $k => $v) {
             $d_id = $v[0];
-            if (in_array($d_id, $driver_ids)) {
-                $driver = $redis->rPop("driver:$d_id:location");
-                if ($driver) {
-                    $driver = json_decode($driver, true);
+            if (in_array($d_id, $driver_ids) && GatewayService::isDriverUidOnline($d_id)) {
+                $driver = $this->redis->lPop("driver:$d_id:location");
+                if (!$driver) {
+                    continue;
                 }
+                $driver = json_decode($driver, true);
                 $data = [
                     'id' => $d_id,
                     'distance' => $v[1],
@@ -264,13 +264,10 @@ class DriverService
                     'locationdescribe' => empty($driver['locationdescribe']) ? '' : $driver['locationdescribe'],
                     'location' => $v[2]
                 ];
+
                 array_push($return_data, $data);
             }
         }
-
-        /* $d_ids = implode(',', $driver_ids);
-         $drivers = DriverT::field('id,username')->whereIn('id', $d_ids)->select();*/
-
         return $return_data;
     }
 
@@ -465,7 +462,7 @@ class DriverService
         $redis = new \Redis();
         $km = config('setting.mini_nearby_km');
         $redis->connect('127.0.0.1', 6379, 60);
-        $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat,$km, 'km');
+        $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, $km, 'km');
         return count($list);
     }
 
