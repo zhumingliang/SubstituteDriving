@@ -245,7 +245,7 @@ class DriverService
         $return_data = [];
         foreach ($list as $k => $v) {
             $d_id = $v[0];
-            if (in_array($d_id, $driver_ids) && GatewayService::isDriverUidOnline($d_id)) {
+            if (in_array($d_id, $driver_ids) && GatewayService::isDriverUidOnline($d_id) && $this->checkOnline($d_id)) {
                 $driver = $this->redis->lPop("driver:$d_id:location");
                 if (!$driver) {
                     continue;
@@ -285,8 +285,10 @@ class DriverService
         $return_data = [];
         foreach ($list as $k => $v) {
             $d_id = $v[0];
-            if (in_array($d_id, $driver_ids)) {
-                $driver = $redis->rPop("driver:$d_id:location");
+            if (in_array($d_id, $driver_ids)
+                && GatewayService::isDriverUidOnline($d_id)
+                && $this->checkOnline($d_id)) {
+                $driver = $redis->lPop("driver:$d_id:location");
                 if ($driver) {
                     $driver = json_decode($driver, true);
                 }
@@ -306,10 +308,6 @@ class DriverService
                 array_push($return_data, $data);
             }
         }
-
-        /* $d_ids = implode(',', $driver_ids);
-         $drivers = DriverT::field('id,username')->whereIn('id', $d_ids)->select();*/
-
         return $return_data;
     }
 
@@ -357,7 +355,7 @@ class DriverService
         }
 
         foreach ($drivers as $k => $v) {
-            if (GatewayService::isDriverUidOnline($v[0])) {
+            if (GatewayService::isDriverUidOnline($v[0]) && $this->checkOnline($v[0])) {
                 $state = 2;//不可接单
                 if (in_array($v[0], $order_no_arr)) {
                     $state = 1;//可以接单
@@ -464,6 +462,20 @@ class DriverService
         $redis->connect('127.0.0.1', 6379, 60);
         $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, $km, 'km');
         return count($list);
+    }
+
+    public function checkOnline($d_id)
+    {
+        $driver = DriverT::where('state', CommonEnum::STATE_IS_OK)->find();
+        if (!$driver) {
+            return false;
+        }
+
+        if ($driver->online == DriverEnum::ONLINE) {
+            return true;
+        }
+        return false;
+
     }
 
 
