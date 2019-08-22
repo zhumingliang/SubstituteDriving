@@ -513,12 +513,14 @@ class Order extends BaseController
      * @apiVersion 1.0.1
      * @apiDescription   Android管理端-获取订单列表
      * @apiExample {get}  请求样例:
-     * https://tonglingok.com/api/v1/orders/manager?page=1&size=10&driver=''&time_begin=''&time_end=''
+     * https://tonglingok.com/api/v1/orders/manager?page=1&size=10&driver=''&time_begin=''&time_end=''&order_state=1&order_from=1
      * @apiParam (请求参数说明) {int} page 当前页码
      * @apiParam (请求参数说明) {int} size 每页多少条数据
      * @apiParam (请求参数说明) {int} driver 司机名称
      * @apiParam (请求参数说明) {int} time_begin 查询开始时间
      * @apiParam (请求参数说明) {int} time_end 查询结束时间
+     * @apiParam (请求参数说明) {int} time_end 查询结束时间
+     * @apiParam (请求参数说明) {int} order_state 订单状态：1|未接单；2|已接单；4|完成；5|已经撤销；6|全部
      * @apiSuccessExample {json} 返回样例:
      * {"msg":"ok","errorCode":0,"code":200,"data":{"total":6,"per_page":10,"current_page":1,"last_page":1,"data":[{"id":8,"d_id":0,"superior":{"username":"zml2"},"transfer":1,"from":"小程序下单","state":5,"start":"安徽省铜陵市郊区铜都大道北段","end":"铜陵站","name":"先生\/女士","money":0,"cancel_type":"乘客","cancel_remark":"司机不接电话，","create_time":"2019-07-17 20:15:01"},{"id":6,"d_id":0,"superior":null,"transfer":2,"from":"小程序下单","state":5,"start":"安徽省铜陵市铜官区谢垅路","end":"东山苑小区","name":"先生\/女士","money":0,"cancel_type":"乘客","cancel_remark":"等待司机太久，","create_time":"2019-07-17 16:08:39"},{"id":5,"d_id":0,"superior":null,"transfer":2,"from":"小程序下单","state":5,"start":"安徽省铜陵市铜官区谢垅路","end":"东山苑小区","name":"先生\/女士","money":0,"cancel_type":"乘客","cancel_remark":"没有司机接单，","create_time":"2019-07-17 15:45:57"},{"id":3,"d_id":0,"superior":null,"transfer":2,"from":"小程序下单","state":5,"start":"广东省江门市蓬江区建设二路18号","end":"蓬江区人民政府","name":"","money":0,"cancel_type":"乘客","cancel_remark":"没有司机接单，","create_time":"2019-07-14 23:41:49"},{"id":2,"d_id":0,"superior":null,"transfer":2,"from":"小程序下单","state":4,"start":"广东省江门市蓬江区建设二路18号","end":"蓬江区人民政府","name":"","money":80,"cancel_type":"乘客","cancel_remark":"没有司机接单，","create_time":"2019-07-14 23:37:23"},{"id":1,"d_id":1,"superior":null,"transfer":2,"from":"小程序下单","state":4,"start":"长江路","end":"高速地产","name":"","money":136,"cancel_type":null,"cancel_remark":null,"create_time":"2019-07-11 01:30:00"}],"statistic":{"members":2,"orders_count":2,"all_money":224,"ticket_money":8}}}
      * @apiSuccess (返回参数说明) {Obj} orders 订单列表
@@ -546,9 +548,9 @@ class Order extends BaseController
      * @apiSuccess (返回参数说明) {Float} statistic-all_money 订单总金额
      * @apiSuccess (返回参数说明) {Float} statistic-ticket_money 使用优惠券总金额
      */
-    public function managerOrders($page = 1, $size = 10, $driver = '', $time_begin = '', $time_end = '')
+    public function managerOrders($page = 1, $size = 10, $driver = '', $time_begin = '', $time_end = '', $order_state = 6, $order_from = 5)
     {
-        $data = (new OrderService())->managerOrders($page, $size, $driver, $time_begin, $time_end);
+        $data = (new OrderService())->managerOrders($page, $size, $driver, $time_begin, $time_end, $order_state , $order_from);
         return json(new SuccessMessageWithData(['data' => $data]));
     }
 

@@ -1045,13 +1045,13 @@ class OrderService
         return $info;
     }
 
-    public function managerOrders($page, $size, $driver, $time_begin, $time_end)
+    public function managerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from)
     {
         $grade = Token::getCurrentTokenVar('type');
         if ($grade != 'manager') {
             throw new AuthException();
         }
-        $orders = OrderV::managerOrders($page, $size, $driver, $time_begin, $time_end);
+        $orders = OrderV::managerOrders($page, $size, $driver, $time_begin, $time_end,  $order_state, $order_from);
         $orders['data'] = $this->prefixTransferInfo($orders['data']);
         $orders['statistic'] = $this->getManagerOrdersStatistic($driver, $time_begin, $time_end);
         return $orders;
