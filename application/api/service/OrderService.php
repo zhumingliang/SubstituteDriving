@@ -316,9 +316,9 @@ class OrderService
         if ($type == OrderEnum::ORDER_PUSH_AGREE) {
             if ($push_type == "normal") {
                 $this->prefixPushAgree($push->d_id);
-                $this->sendToMini($push);
                 //处理远程接驾费用
                 $this->prefixFarDistance($push->o_id, $push->d_id);
+                $this->sendToMini($push);
 
             } else if ($push_type == "transfer") {
                 //释放转单司机
@@ -367,14 +367,14 @@ class OrderService
         if ($u_id) {
             $send_data = [
                 'type' => 'order',
-                'data' => [
+                'order_info' => [
                     'id' => $order->id,
                     'driver_name' => $order->driver->username,
                     'driver_phone' => $order->driver->phone,
                     'distance' => $this->getDriverDistance($order->start_lng, $order->start_lat, $d_id)
                 ]
             ];
-            GatewayService::sendToMiniClient($u_id, json_encode($send_data));
+            GatewayService::sendToMiniClient($u_id,$send_data);
         }
 
     }
