@@ -10,7 +10,7 @@ class WalletRecordV extends Model
 {
     public function getTypeAttr($value)
     {
-        $state = [1 => "保险服务费", 2 => "订单服务费", 3 => "账户余额充值", 4 => "初始化", 5 => "优惠券返还"];
+        $state = [1 => "保险服务费", 2 => "订单服务费", 3 => "账户余额充值", 4 => "初始化", 5 => "优惠券返还", 6 => "代驾行驶费"];
         return $state[$value];
     }
 
@@ -56,6 +56,7 @@ class WalletRecordV extends Model
     {
         $time_end = addDay(1, $time_end);
         $list = self::where('id', $d_id)
+            ->where('type', '<>', 4)
             ->field('money,type,create_time')
             ->where(function ($query) use ($time_begin, $time_end) {
                 if (strlen($time_begin) && strlen($time_end)) {
@@ -93,7 +94,7 @@ class WalletRecordV extends Model
 
                 }
             })
-            ->where('type', '<', 4)
+            ->where('type', '<>', 4)
             ->field('id as d_id,username, money,create_time')
             ->order('create_time desc')
             ->paginate($size, false, ['page' => $page]);
@@ -103,6 +104,7 @@ class WalletRecordV extends Model
     public static function driverBalance($d_id)
     {
         $balance = self::where('id', $d_id)
+            ->whereIn('type', '1,2,3,5')
             ->sum('money');
         return $balance;
 
