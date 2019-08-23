@@ -628,7 +628,7 @@ class OrderService
 
         try {
             Db::startTrans();
-
+            $distance = round($params['distance'] / 1000, 2);
             $id = $params['id'];
             $wait_time = $params['wait_time'];
             $order = $this->getOrder($id);
@@ -642,7 +642,6 @@ class OrderService
             } else {
                 $distance_money = $params['distance_money'];
                 $wait_money = $params['wait_money'];
-                $distance = $params['distance'];
                 //处理恶劣天气费用
                 $weather_money = $this->prefixWeather($distance_money);
 
@@ -1051,7 +1050,7 @@ class OrderService
         if ($grade != 'manager') {
             throw new AuthException();
         }
-        $orders = OrderV::managerOrders($page, $size, $driver, $time_begin, $time_end,  $order_state, $order_from);
+        $orders = OrderV::managerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from);
         $orders['data'] = $this->prefixTransferInfo($orders['data']);
         $orders['statistic'] = $this->getManagerOrdersStatistic($driver, $time_begin, $time_end);
         return $orders;
