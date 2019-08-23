@@ -52,6 +52,17 @@ class DriverToken extends Token
                     'errorCode' => 30000
                 ]);
             }
+            if (empty($admin->code)) {
+                $admin->phone_code = $this->code;
+                $admin->save();
+            } else {
+                if (!($admin->phone_code == $this->code)) {
+                    throw new TokenException([
+                        'msg' => '刚账号已在另外一台设备登录，请联系管理员解除绑定',
+                        'errorCode' => 30010
+                    ]);
+                }
+            }
 
             // 获取缓存参数
             $cachedValue = $this->prepareCachedValue($admin);

@@ -92,7 +92,7 @@ class User extends BaseController
     }
 
     /**
-     * @api {POST} /api/v1/user/bindPhone -绑定手机号小程序客户端/公众号客户端
+     * @api {POST} /api/v1/user/bindPhone 小程序客户端/公众号客户端-绑定手机号
      * @apiGroup  COMMON
      * @apiVersion 1.0.1
      * @apiDescription  小程序客户端/公众号客户端
@@ -105,7 +105,6 @@ class User extends BaseController
      * @apiParam (请求参数说明) {String} phone  用户输入手机号
      * @apiParam (请求参数说明) {String} code   用户输入验证码
      * @apiParam (请求参数说明) {int} scene   验证类别：1|小程序验证；2|公众号验证
-     *
      * @apiSuccessExample {json} 返回样例:
      *{"msg":"ok","errorCode":0,"data"{"ticket:1","name":"","time_begin":"","time_end":"","money":""}}
      * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误

@@ -98,9 +98,11 @@ class Wallet extends BaseController
      * @apiVersion 1.0.1
      * @apiDescription
      * @apiExample {get}  请求样例:
-     * https://tonglingok.com/api/v1/wallet/records/driver?page=1&size=10
+     * https://tonglingok.com/api/v1/wallet/records/driver?page=1&size=10&time_begin='&time_end=''
      * @apiParam (请求参数说明) {int} page 当前页码
      * @apiParam (请求参数说明) {int} size 每页多少条数据
+     * @apiParam (请求参数说明) {String} time_begin 查询开始时间
+     * @apiParam (请求参数说明) {String} time_end 查询结束时间
      * @apiSuccessExample {json} 返回样例:
      * {"msg":"ok","errorCode":0,"code":200,"data":{"records":{"total":3,"per_page":10,"current_page":1,"last_page":1,"data":[{"money":"-2.30","type":"保险费用","create_time":"2019-07-17 16:04:41"},{"money":"-26.20","type":"订单服务费","create_time":"2019-07-17 16:04:41"},{"money":"100.00","type":"账户余额充值","create_time":"2019-07-04 18:39:40"}]},"balance":71.5}}
      * @apiSuccess (返回参数说明) {Obj} records 列表数据
@@ -113,9 +115,9 @@ class Wallet extends BaseController
      * @apiSuccess (返回参数说明) {int} type 明细类型
      * @apiSuccess (返回参数说明) {int} balance 账户余额
      */
-    public function driverRecords($page = 1, $size = 10)
+    public function driverRecords($page = 1, $size = 10,$time_begin = '', $time_end = '')
     {
-        $records = (new WalletService())->driverRecords($page, $size);
+        $records = (new WalletService())->driverRecords($page, $size,$time_begin, $time_end);
         return json(new SuccessMessageWithData(['data' => $records]));
     }
 

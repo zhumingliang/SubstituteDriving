@@ -319,11 +319,11 @@ class DriverService
         $grade = Token::getCurrentTokenVar('type');
         $d_id = Token::getCurrentUid();
         if ($grade == "driver") {
-            $km = config('setting.nearby_km');
+            $km = config('setting.driver_nearby_km');
             //1.获取本司机当前位置
             $driver_location = (new OrderService())->getDriverLocation($d_id);
             $drivers = $this->getDriversWithLocation($driver_location['lng'], $driver_location['lat'], $km);
-
+            $drivers = array_reverse($drivers);
         } else {
             $lng = $params['lng'];
             $lat = $params['lat'];
@@ -377,7 +377,6 @@ class DriverService
             foreach ($drivers_info as $k2 => $v2) {
                 if ($v['id'] == $v2->id) {
                     $online[$k]['username'] = $v2->username;
-                    // unset($drivers_info[$k2]);
                     break;
                 }
             }

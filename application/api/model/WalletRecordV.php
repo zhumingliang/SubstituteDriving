@@ -10,11 +10,11 @@ class WalletRecordV extends Model
 {
     public function getTypeAttr($value)
     {
-        $state = [1 => "保险服务费", 2 => "订单服务费", 3 => "账户余额充值", 4 => "初始化",5=>"优惠券返还"];
+        $state = [1 => "保险服务费", 2 => "订单服务费", 3 => "账户余额充值", 4 => "初始化", 5 => "优惠券返还"];
         return $state[$value];
     }
 
-    public static function drivers($page, $size, $time_begin, $time_end, $username, $account, $number,$online)
+    public static function drivers($page, $size, $time_begin, $time_end, $username, $account, $number, $online)
     {
         $list = self::where(function ($query) use ($username) {
             if (strlen($username)) {
@@ -51,10 +51,16 @@ class WalletRecordV extends Model
     }
 
 
-    public static function recordsToDriver($page, $size, $d_id)
+    public static function recordsToDriver($page, $size, $d_id, $time_begin, $time_end)
     {
         $list = self::where('id', $d_id)
             ->field('money,type,create_time')
+            ->where(function ($query) use ($time_begin, $time_end) {
+                if (strlen($time_begin) && strlen($time_end)) {
+                    $query->whereBetweenTime('create_time', $time_begin, $time_end);
+
+                }
+            })
             ->order('create_time desc')
             ->paginate($size, false, ['page' => $page]);
         return $list;
