@@ -360,7 +360,7 @@ class DriverService
                 if (in_array($v[0], $order_no_arr)) {
                     $state = 1;//可以接单
                 }
-                array_push($online, [
+                array_unshift($online, [
                     'id' => $v[0],
                     'state' => $state,
                     'location' => ['lng' => $v[1][0], 'lat' => $v[1][1]]

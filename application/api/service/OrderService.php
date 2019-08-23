@@ -340,7 +340,7 @@ class OrderService
         $location = $this->getDriverLocation($d_id);
         $far = $this->prefixFar($order->start_lng, $order->start_lat, $location['lng'], $location['lat']);
 
-        $order->far_distance = $far['far_distance'];
+        $order->far_distance =$far['far_distance'];
         $order->far_money = $far['far_money'];
         $order->save();
     }
@@ -628,7 +628,7 @@ class OrderService
 
         try {
             Db::startTrans();
-            $distance = round($params['distance'] / 1000, 2);
+            $distance = round($params['distance'] / 1000, 1);
             $id = $params['id'];
             $wait_time = $params['wait_time'];
             $order = $this->getOrder($id);

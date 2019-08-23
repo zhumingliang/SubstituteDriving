@@ -30,6 +30,7 @@ class CalculateUtil
                 cos($radLat1) * cos($radLat2) * pow(sin($b / 2), 2)));
         $s = $s * self::$EARTH_RADIUS;
         $s = round($s * 10000) / 10000;
-        return $s;
+        return round($s, 1);
+        //return $s;
     }
 }
