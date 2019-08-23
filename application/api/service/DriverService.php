@@ -323,7 +323,6 @@ class DriverService
             //1.获取本司机当前位置
             $driver_location = (new OrderService())->getDriverLocation($d_id);
             $drivers = $this->getDriversWithLocation($driver_location['lng'], $driver_location['lat'], $km);
-            $drivers = array_reverse($drivers);
         } else {
             $lng = $params['lng'];
             $lat = $params['lat'];
