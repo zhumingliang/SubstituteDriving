@@ -115,6 +115,7 @@ class DriverService
             ->whereBetweenTime('create_time', $online_begin, $online_end)
             ->where('state', OrderEnum::ORDER_COMPLETE)
             ->sum('money');
+
         $count = OrderT::where('d_id', $d_id)
             ->whereBetweenTime('create_time', $online_begin, $online_end)
             ->where('state', OrderEnum::ORDER_COMPLETE)
@@ -148,9 +149,9 @@ class DriverService
             $this->redis->sAdd('driver_order_no', $d_id);
 
         } else {
-            if ($this->checkNoCompleteOrder($d_id)) {
+       /*     if ($this->checkNoCompleteOrder($d_id)) {
                 throw new UpdateException(['您还有订单进行中，不能下线']);
-            }
+            }*/
 
             if ($this->redis->sIsMember('driver_order_no', $d_id)) {
                 $this->redis->sRem('driver_order_no', $d_id);
