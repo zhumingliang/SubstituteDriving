@@ -67,12 +67,12 @@ class WalletService
         }
     }
 
-    public function driverRecords($page, $size,$time_begin, $time_end)
+    public function driverRecords($page, $size, $time_begin, $time_end)
     {
-        $grade = "driver";//Token::getCurrentTokenVar('type');
+        $grade = Token::getCurrentTokenVar('type');
         if ($grade == "driver") {
-            $d_id = 4;//Token::getCurrentUid();
-            $records = WalletRecordV::recordsToDriver($page, $size, $d_id,$time_begin, $time_end);
+            $d_id = Token::getCurrentUid();
+            $records = WalletRecordV::recordsToDriver($page, $size, $d_id, $time_begin, $time_end);
 
             return [
                 'records' => $records,
@@ -111,7 +111,7 @@ class WalletService
             DriverT::update(['online' => DriverEnum::OFFLINE], ['id' => $d_id]);
             $push_data = [
                 'type' => 'online',
-                "order_info" => ['msg'=>'余额不足，请充值']
+                "order_info" => ['msg' => '余额不足，请充值']
             ];
             GatewayService::sendToDriverClient($d_id, $push_data);
             return true;

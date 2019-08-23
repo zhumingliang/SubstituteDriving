@@ -4,6 +4,7 @@ namespace app\api\controller\v1;
 
 use app\api\model\DriverT;
 use app\api\model\OrderPushT;
+use app\api\model\OrderT;
 use app\api\model\StartPriceT;
 use app\api\model\TimeIntervalT;
 use app\api\model\WaitPriceT;
@@ -18,10 +19,11 @@ class Index
     public function index()
     {
 
-        $redis = new \Redis();
-        $redis->connect('127.0.0.1', 6379, 60);
-        $location = $redis->rawCommand('geopos', 'drivers_tongling', 8);
-       var_dump($location);
+        $count = OrderT::where('d_id', 4)
+            ->where('state', OrderEnum::ORDER_ING)
+            ->count();
+
+        var_dump($count);
         /* $res = SendSms::instance()->send('18956225230', ['code' => 123], 'login');
  print_r($res);*/
     }

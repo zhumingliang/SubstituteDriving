@@ -149,9 +149,9 @@ class DriverService
             $this->redis->sAdd('driver_order_no', $d_id);
 
         } else {
-       /*     if ($this->checkNoCompleteOrder($d_id)) {
-                throw new UpdateException(['您还有订单进行中，不能下线']);
-            }*/
+            if ($this->checkNoCompleteOrder($d_id)) {
+                throw new UpdateException(['msg' => '您还有订单进行中，不能下线']);
+            }
 
             if ($this->redis->sIsMember('driver_order_no', $d_id)) {
                 $this->redis->sRem('driver_order_no', $d_id);
