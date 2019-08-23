@@ -69,9 +69,9 @@ class WalletService
 
     public function driverRecords($page, $size,$time_begin, $time_end)
     {
-        $grade = Token::getCurrentTokenVar('type');
+        $grade = "driver";//Token::getCurrentTokenVar('type');
         if ($grade == "driver") {
-            $d_id = Token::getCurrentUid();
+            $d_id = 4;//Token::getCurrentUid();
             $records = WalletRecordV::recordsToDriver($page, $size, $d_id,$time_begin, $time_end);
 
             return [

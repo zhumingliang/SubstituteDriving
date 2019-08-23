@@ -16,6 +16,7 @@ class WalletRecordV extends Model
 
     public static function drivers($page, $size, $time_begin, $time_end, $username, $account, $number, $online)
     {
+        $time_end = addDay(1, $time_end);
         $list = self::where(function ($query) use ($username) {
             if (strlen($username)) {
                 $query->where('username', 'like', '%' . $username . '%');
@@ -53,6 +54,7 @@ class WalletRecordV extends Model
 
     public static function recordsToDriver($page, $size, $d_id, $time_begin, $time_end)
     {
+        $time_end = addDay(1, $time_end);
         $list = self::where('id', $d_id)
             ->field('money,type,create_time')
             ->where(function ($query) use ($time_begin, $time_end) {
