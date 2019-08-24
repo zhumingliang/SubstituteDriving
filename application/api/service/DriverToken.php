@@ -52,7 +52,7 @@ class DriverToken extends Token
                     'errorCode' => 30000
                 ]);
             }
-            if (empty($admin->code)) {
+            if (empty($admin->phone_code)) {
                 $admin->phone_code = $this->code;
                 $admin->save();
             } else {
