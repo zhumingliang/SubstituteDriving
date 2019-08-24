@@ -8,6 +8,7 @@ use app\api\model\OrderT;
 use app\api\model\StartPriceT;
 use app\api\model\TimeIntervalT;
 use app\api\model\WaitPriceT;
+use app\api\service\LogService;
 use app\api\service\OrderService;
 use app\api\service\SendSMSService;
 use app\lib\enum\OrderEnum;
@@ -19,13 +20,7 @@ class Index
     public function index()
     {
 
-        $count = OrderT::where('d_id', 4)
-            ->where('state', OrderEnum::ORDER_ING)
-            ->count();
-
-        var_dump($count);
-        /* $res = SendSms::instance()->send('18956225230', ['code' => 123], 'login');
- print_r($res);*/
+        LogService::save('crontab');
     }
 
     public function sendMessage($name)
