@@ -413,7 +413,7 @@ class OrderService
         //查询所有司机并按距离排序
         $lat = $order['start_lat'];
         $lng = $order['start_lng'];
-        $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, '1000000', 'km', 'ASC');
+        $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, config('setting.driver_nearby_km'), 'km', 'ASC');
 
         if (!count($list)) {
             return false;
