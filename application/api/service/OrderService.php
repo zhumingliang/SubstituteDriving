@@ -287,10 +287,8 @@ class OrderService
      */
     public function handelDriverNoAnswer()
     {
-        //处理未发送短信
-
-
         $push = OrderPushT::where('state', OrderEnum::ORDER_PUSH_NO)
+            //->where('receive', CommonEnum::STATE_IS_OK)
             ->where('create_time', '<', date("Y-m-d H:i:s", time() - config('setting.driver_push_expire_in')))
             ->select();
         foreach ($push as $k => $v) {
@@ -340,7 +338,7 @@ class OrderService
         $location = $this->getDriverLocation($d_id);
         $far = $this->prefixFar($order->start_lng, $order->start_lat, $location['lng'], $location['lat']);
 
-        $order->far_distance =$far['far_distance'];
+        $order->far_distance = $far['far_distance'];
         $order->far_money = $far['far_money'];
         $order->save();
     }
@@ -374,7 +372,7 @@ class OrderService
                     'distance' => $this->getDriverDistance($order->start_lng, $order->start_lat, $d_id)
                 ]
             ];
-            GatewayService::sendToMiniClient($u_id,$send_data);
+            GatewayService::sendToMiniClient($u_id, $send_data);
         }
 
     }
@@ -475,6 +473,7 @@ class OrderService
     {
         $pushes = OrderPushT::where('o_id', $o_id)
             ->where('d_id', $d_id)
+            ->where('receive', CommonEnum::STATE_IS_OK)
             ->select()->toArray();
         if (!count($pushes)) {
             return 1;
@@ -484,7 +483,7 @@ class OrderService
                 return 2;
             }
         }
-        if (count($pushes) == 3) {
+        if (count($pushes) >= 3) {
             return 2;
         }
         return 1;

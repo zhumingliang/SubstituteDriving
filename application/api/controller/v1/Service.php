@@ -11,9 +11,9 @@ class Service extends BaseController
 {
     public function orderHandel()
     {
-        (new SendSMS())->sendHandel();
         (new OrderService())->handelDriverNoAnswer();
         (new OrderService())->orderListHandel();
+        (new SendSMS())->sendHandel();
     }
 
     public function failHandel()
