@@ -289,7 +289,7 @@ class OrderService
     {
         $push = OrderPushT::where('state', OrderEnum::ORDER_PUSH_NO)
             //->where('receive', CommonEnum::STATE_IS_OK)
-            ->where('create_time', '<', date("Y-m-d H:i:s", time() - config('setting.driver_push_expire_in')))
+            ->where('create_time', '>', date("Y-m-d H:i:s", time() + config('setting.driver_push_expire_in')))
             ->select();
         foreach ($push as $k => $v) {
             $d_id = $v['d_id'];
@@ -430,8 +430,7 @@ class OrderService
                 }
 
                 //将司机从'未接单'移除，添加到：正在派单
-                $res = $redis->sRem('driver_order_no', $d_id);
-                LogService::save('driver_order_no:' . $d_id . '---res:' . $res);
+                $redis->sRem('driver_order_no', $d_id);
                 $redis->sAdd('driver_order_ing', $d_id);
 
                 $push = OrderPushT::create(

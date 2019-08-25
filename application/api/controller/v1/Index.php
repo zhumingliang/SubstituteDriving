@@ -20,7 +20,8 @@ class Index
     public function index()
     {
 
-        LogService::save('crontab');
+        echo date("Y-m-d H:i:s", time() - config('setting.driver_push_expire_in'));
+
     }
 
     public function sendMessage($name)
