@@ -5,6 +5,7 @@ namespace app\api\controller\v1;
 
 
 use app\api\controller\BaseController;
+use app\api\service\GatewayService;
 use app\api\service\WalletService;
 use app\lib\exception\SuccessMessage;
 use app\lib\exception\SuccessMessageWithData;
@@ -37,6 +38,25 @@ class Gateway extends BaseController
         (new WalletService())->checkDriverBalance($u_id);
 
         return json(new SuccessMessage());
+
+    }
+
+    /**
+     * @api {GET} /api/v1/gateway/checkOnline Android司机端-检测司机websocket服务是否在线
+     * @apiGroup  Android
+     * @apiVersion 1.0.1
+     * @apiDescription   Android司机端-检测司机websocket服务是否在线
+     * @apiExample {get}  请求样例:
+     * https://tonglingok.com/api/v1/gateway/checkOnline
+     * @apiSuccessExample {json} 返回样例:
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"online":1}]}
+     * @apiSuccess (返回参数说明) {int} online 1|在线；0|离线
+     */
+    public function checkOnline()
+    {
+        $u_id = \app\api\service\Token::getCurrentUid();
+        $online = GatewayService::isDriverUidOnline($u_id);
+        return json(new SuccessMessageWithData(['data' => ['online' => $online]]));
 
     }
 

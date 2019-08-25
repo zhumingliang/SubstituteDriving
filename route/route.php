@@ -28,6 +28,7 @@ Route::get('api/:version/users', 'api/:version.User/users');
 
 Route::post('api/:version/gateway/bind', 'api/:version.Gateway/bind');
 Route::get('api/:version/gateway/online', 'api/:version.Gateway/onlineClients');
+Route::get('api/:version/gateway/checkOnline', 'api/:version.Gateway/checkOnline');
 
 Route::post('api/:version/driver/save', 'api/:version.Driver/save');
 Route::post('api/:version/driver/update', 'api/:version.Driver/update');
