@@ -430,7 +430,8 @@ class OrderService
                 }
 
                 //将司机从'未接单'移除，添加到：正在派单
-                $redis->sRem('driver_order_no', $d_id);
+                $res = $redis->sRem('driver_order_no', $d_id);
+                LogService::save('driver_order_no:' . $d_id . '---res:' . $res);
                 $redis->sAdd('driver_order_ing', $d_id);
 
                 $push = OrderPushT::create(

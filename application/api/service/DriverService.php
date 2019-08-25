@@ -465,8 +465,8 @@ class DriverService
 
     public function checkOnline($d_id)
     {
-        $driver = DriverT::where('state', CommonEnum::STATE_IS_OK)
-            ->where('id',$d_id)
+        $driver = DriverT::where('id', $d_id)
+            ->where('state', CommonEnum::STATE_IS_OK)
             ->find();
         if (!$driver) {
             return false;
