@@ -414,8 +414,6 @@ class OrderService
         $lat = $order['start_lat'];
         $lng = $order['start_lng'];
         $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, config('setting.driver_nearby_km'), 'km', 'ASC');
-        LogService::save('km:' . config('setting.driver_nearby_km'));
-        LogService::save(json_encode($list));
         if (!count($list)) {
             return false;
         }
@@ -426,6 +424,7 @@ class OrderService
             if (GatewayService::isDriverUidOnline($d_id) &&
                 $redis->sIsMember('driver_order_no', $d_id)) {
                 $check = $this->checkDriverPush($order->id, $d_id);
+                LogService::save('check:'.$check);
                 if ($check == 2) {
                     continue;
                 }
