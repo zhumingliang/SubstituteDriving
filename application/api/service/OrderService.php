@@ -259,6 +259,7 @@ class OrderService
     {
         //查询待处理订单并将订单状态改为处理中
         $orderList = OrderListT::where('state', OrderEnum::ORDER_LIST_NO)
+            ->order('create_time desc')
             ->find();
         if (!$orderList) {
             return true;
@@ -424,7 +425,6 @@ class OrderService
             if (GatewayService::isDriverUidOnline($d_id) &&
                 $redis->sIsMember('driver_order_no', $d_id)) {
                 $check = $this->checkDriverPush($order->id, $d_id);
-                LogService::save('check:'.$check);
                 if ($check == 2) {
                     continue;
                 }
