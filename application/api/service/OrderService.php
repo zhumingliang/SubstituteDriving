@@ -257,6 +257,7 @@ class OrderService
      */
     public function orderListHandel()
     {
+        LogService::save(time());
         //查询待处理订单并将订单状态改为处理中
         $orderList = OrderListT::where('state', OrderEnum::ORDER_LIST_NO)
             ->order('create_time desc')
@@ -280,6 +281,7 @@ class OrderService
             $orderList->state = OrderEnum::ORDER_LIST_NO;
             $orderList->save();
         }
+        LogService::save(time());
 
     }
 
