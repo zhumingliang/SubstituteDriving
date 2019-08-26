@@ -138,7 +138,7 @@ class Driver extends BaseController
      * @apiDescription  CMS管理端-修改司机状态(停用/启用)
      * @apiExample {POST}  请求样例:
      * {
-     * "id": 1,
+     * "d_id": 1,
      * "state":2
      * }
      * @apiParam (请求参数说明) {int} d_id 司机ID
@@ -385,12 +385,36 @@ class Driver extends BaseController
             $online_time = time() - strtotime($driver->last_online_time);
             $ret['online_time'] = $online_time;
         }
-        return json(new SuccessMessageWithData(['data'=>$ret]));
+        return json(new SuccessMessageWithData(['data' => $ret]));
     }
 
     public function init($d_id)
     {
         (new DriverService())->init($d_id);
+
+    }
+
+    /**
+     * @api {POST} /api/v1/driver/clearPhoneCode CMS管理端-清除司机账号绑定手机号识别码
+     * @apiGroup   CMS
+     * @apiVersion 1.0.1
+     * @apiDescription  CMS管理端-清除司机账号绑定手机号识别码
+     * @apiExample {POST}  请求样例:
+     * {
+     * "d_id":1
+     * }
+     * @apiParam (请求参数说明) {int} d_id 司机ID
+     * @apiSuccessExample {json} 返回样例:
+     * {"msg": "ok","errorCode": 0}
+     * @apiSuccess (返回参数说明) {int} errorCode 错误代码 0 表示没有错误
+     * @apiSuccess (返回参数说明) {String} msg 操作结果描述
+     *
+     */
+    public function clearPhoneCode()
+    {
+        $d_id = Request::param('d_id');
+        DriverT::update(['phone_code' => ''], ['id' => $d_id]);
+        return json(new SuccessMessage());
 
     }
 

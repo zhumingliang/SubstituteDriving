@@ -240,15 +240,19 @@ class OrderService
 
     public function getStartPrice($price)
     {
-        $time_now = date('H:i', time());
         $interval = TimeIntervalT::where('state', CommonEnum::STATE_IS_OK)
-            ->whereTime('time_begin', '<=', $time_now)
-            ->whereTime('time_end', '>=', $time_now)
-            ->find();
+            ->select();
         if (!$interval) {
             return $price;
         }
-        return $interval->price;
+
+        foreach ($interval as $k => $v) {
+            if (strtotime($v['time_begin']) >= time() && time() <= strtotime($v['time_end'])) {
+                return $v['price'];
+            }
+            return $v['price'];
+
+        }
 
     }
 
@@ -257,14 +261,16 @@ class OrderService
      */
     public function orderListHandel()
     {
-        LogService::save(time());
         //查询待处理订单并将订单状态改为处理中
         $orderList = OrderListT::where('state', OrderEnum::ORDER_LIST_NO)
             ->order('create_time desc')
             ->find();
+        // ->limit(0, 3)->select()->toArray();
         if (!$orderList) {
             return true;
         }
+
+
         $orderList->state = OrderEnum::ORDER_LIST_ING;
         $orderList->save();
 
@@ -281,7 +287,6 @@ class OrderService
             $orderList->state = OrderEnum::ORDER_LIST_NO;
             $orderList->save();
         }
-        LogService::save(time());
 
     }
 

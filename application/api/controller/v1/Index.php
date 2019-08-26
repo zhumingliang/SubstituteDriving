@@ -11,16 +11,23 @@ use app\api\model\WaitPriceT;
 use app\api\service\LogService;
 use app\api\service\OrderService;
 use app\api\service\SendSMSService;
+use app\lib\enum\CommonEnum;
 use app\lib\enum\OrderEnum;
 use zml\tp_aliyun\SendSms;
 use zml\tp_tools\Redis;
+use function GuzzleHttp\Psr7\str;
 
 class Index
 {
     public function index()
     {
 
-        echo date("Y-m-d H:i:s", time() - config('setting.driver_push_expire_in'));
+        $interval = TimeIntervalT::where('state', CommonEnum::STATE_IS_OK)
+            ->select();
+        foreach ($interval as $k => $v) {
+            echo date('Y-m-d H:i', strtotime($v['time_begin'])) . '----' . date('Y-m-d H:i', strtotime($v['time_end']));
+
+        }
 
     }
 
