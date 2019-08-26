@@ -259,36 +259,78 @@ class OrderService
     /**
      * 处理等待推送队列-定时服务
      */
+    /*    public function orderListHandel()
+        {
+            //查询待处理订单并将订单状态改为处理中
+            $orderList = OrderListT::where('state', OrderEnum::ORDER_LIST_NO)
+                ->order('create_time desc')
+                // ->find();
+                ->limit(0, 3)->select()->toArray();
+            if (!$orderList) {
+                return true;
+            }
+
+            foreach ($orderList as $k => $v) {
+                OrderListT::update(['state' => OrderEnum::ORDER_LIST_ING], ['id' => $v['id']]);
+            }
+
+
+            $orderList->state = OrderEnum::ORDER_LIST_ING;
+            $orderList->save();
+
+            //获取订单信息并检测订单状态
+            $order = OrderT::getOrder($orderList->o_id);
+            if (!$order || $order->state != OrderEnum::ORDER_NO
+                || $order->stop == OrderEnum::ORDER_STOP) {
+                $orderList->state = OrderEnum::ORDER_LIST_COMPLETE;
+                $orderList->save();
+                return true;
+            }
+            //查找司机并推送
+            if (!$this->findDriverToPush($order)) {
+                $orderList->state = OrderEnum::ORDER_LIST_NO;
+                $orderList->save();
+            }
+
+        }*/
+
+
     public function orderListHandel()
     {
         //查询待处理订单并将订单状态改为处理中
         $orderList = OrderListT::where('state', OrderEnum::ORDER_LIST_NO)
             ->order('create_time desc')
-            ->find();
-        // ->limit(0, 3)->select()->toArray();
+            ->limit(0, 3)->select()->toArray();
         if (!$orderList) {
             return true;
         }
 
+        foreach ($orderList as $k => $v) {
+            OrderListT::update(['state' => OrderEnum::ORDER_LIST_ING], ['id' => $v['id']]);
+        }
 
-        $orderList->state = OrderEnum::ORDER_LIST_ING;
-        $orderList->save();
+        foreach ($orderList as $k => $v) {
+            $this->prefixOrderList($v['o_id'], $v['id']);
+        }
 
+    }
+
+    private function prefixOrderList($o_id, $list_id)
+    {
         //获取订单信息并检测订单状态
-        $order = OrderT::getOrder($orderList->o_id);
+        $order = OrderT::getOrder($o_id);
         if (!$order || $order->state != OrderEnum::ORDER_NO
             || $order->stop == OrderEnum::ORDER_STOP) {
-            $orderList->state = OrderEnum::ORDER_LIST_COMPLETE;
-            $orderList->save();
+            OrderListT::update(['state' => OrderEnum::ORDER_LIST_COMPLETE], ['id' => $list_id]);
             return true;
         }
         //查找司机并推送
         if (!$this->findDriverToPush($order)) {
-            $orderList->state = OrderEnum::ORDER_LIST_NO;
-            $orderList->save();
+            OrderListT::update(['state' => OrderEnum::ORDER_LIST_NO], ['id' => $list_id]);
         }
 
     }
+
 
     /**
      * 处理推送列表-定时服务
