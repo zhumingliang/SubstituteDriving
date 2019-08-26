@@ -247,12 +247,14 @@ class OrderService
         }
 
         foreach ($interval as $k => $v) {
-            if (strtotime($v['time_begin']) >= time() && time() <= strtotime($v['time_end'])) {
-                return $v['price'];
+            if (strtotime($v['time_begin']) <= time() && time() <= strtotime($v['time_end'])) {
+                $price = $v['price'];
+                break;
             }
-            return $v['price'];
+            $price = $v['price'];
 
         }
+        return $price;
 
     }
 

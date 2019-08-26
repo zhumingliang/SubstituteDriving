@@ -469,12 +469,12 @@ class SystemPrice extends BaseController
 
 
     /**
-     * @api {GET} /api/v1/SystemPrice/initPrice/driver  Android司机端-获取初始化价格设置信息
+     * @api {GET} /api/v1/SystemPrice/init/driver  Android司机端-获取初始化价格设置信息
      * @apiGroup   Android
      * @apiVersion 1.0.1
      * @apiDescription   Android司机端-获取初始化价格设置信息
      * @apiExample {get}  请求样例:
-     * https://tonglingok.com/api/v1/SystemPrice/initPrice/driver
+     * https://tonglingok.com/api/v1/SystemPrice/init/driver
      * @apiSuccessExample {json} 返回样例:
      * {"msg":"ok","errorCode":0,"code":200,"data":{"start":[{"id":1,"distance":8,"price":18,"order":1},{"id":2,"distance":1,"price":80,"order":2},{"id":3,"distance":2,"price":15,"order":3}],"wait":{"id":1,"free":30,"price":1}}}
      * @apiSuccess (返回参数说明) {Obj} start  价格信息
