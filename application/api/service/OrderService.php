@@ -5,13 +5,13 @@ namespace app\api\service;
 
 
 use app\api\model\DriverT;
-use app\api\model\DriverTicketT;
 use app\api\model\FarStateT;
 use app\api\model\LocationT;
 use app\api\model\LogT;
 use app\api\model\OrderListT;
 use app\api\model\OrderMoneyT;
 use app\api\model\OrderPushT;
+use app\api\model\OrderRevokeT;
 use app\api\model\OrderT;
 use app\api\model\OrderV;
 use app\api\model\StartPriceT;
@@ -28,6 +28,8 @@ use app\lib\exception\SaveException;
 use app\lib\exception\UpdateException;
 use think\Db;
 use think\Exception;
+use think\process\pipes\Unix;
+use think\Request;
 use zml\tp_tools\CalculateUtil;
 
 class OrderService
@@ -445,7 +447,6 @@ class OrderService
         return $order;
     }
 
-
     private function saveOrderList($o_id, $state)
     {
         $data = [
@@ -540,59 +541,51 @@ class OrderService
 
     public function orderCancel($params)
     {
-        $order = $this->getOrder($params['id']);
-        //检查订单是否可以取消
-        if ($order->begin == CommonEnum::STATE_IS_OK) {
-            throw new UpdateException(['msg' => '订单已经开始，不能撤销']);
-        }
+        try {
+            Db::startTrans();
+            $o_id = $params['id'];
+            $grade = Token::getCurrentTokenVar('type');
+            $order = $this->getOrder($o_id);
 
-        $grade = Token::getCurrentTokenVar('type');
-        $order->state = OrderEnum::ORDER_CANCEL;
-        $order->cancel_remark = $params['remark'];
-        $order->cancel_type = $grade;
-        $res = $order->save();
-        if (!$res) {
-            throw new UpdateException();
-        }
-        if ($order->t_id) {
-            (new TicketService())->prefixTicketHandel($order->t_id, TicketEnum::STATE_NO);
-        }
-        if ($grade == 'manager') {
-            //管理员撤单时已经回滚司机和订单状态
-            return true;
-        }
-        //处理司机状态
-        if ($order->d_id) {
-            $d_id = $order->d_id;
-        } else {
-            $orderPush = OrderPushT::where('o_id', $params['id'])
-                ->where('state', OrderEnum::ORDER_PUSH_NO)
-                ->order('create_time desc')
-                ->find();
-            if ($orderPush) {
-                $d_id = $orderPush->d_id;
-                //处理推送取消
-                //触发器-处理订单/订单处理列表状态
-                $orderPush->state = OrderEnum::ORDER_PUSH_WITHDRAW;
-                $orderPush->save();
-            } else {
-                $d_id = '';
+            //检查订单是否可以取消
+            if ($order->begin == CommonEnum::STATE_IS_OK) {
+                throw new UpdateException(['msg' => '订单已经开始，不能取消']);
             }
-        }
-        if ($d_id) {
-            (new DriverService())->handelDriveStateByCancel($d_id);
-        }
-        //处理订单状态
-        //由接单中/派单中/未接单->订单撤销
-        /* OrderListT::update(['state' => OrderEnum::ORDER_LIST_CANCEL],
-             ['o_id' => $params['id']]);*/
+            $order->state = OrderEnum::ORDER_CANCEL;
+            $order->cancel_remark = $params['remark'];
+            $order->cancel_type = $grade;
+            $res = $order->save();
+            if (!$res) {
+                throw new UpdateException();
+            }
+            //处理优惠券
+            if (!empty($order->t_id)) {
+                (new TicketService())->prefixTicketHandel($order->t_id, TicketEnum::STATE_NO);
+            }
 
+            //处理司机状态和推送状态
+            $d_id = $this->withdraw($o_id);
 
+            //通知司机
+            if (($grade == 'mini' || $grade == 'manager') && $d_id) {
+                $reason = $grade == 'mini' ? '用户取消订单' : '管理员取消订单';
+                $reason .= ",取消原因：" . $params['remark'];
+                $this->pushDriverWithOrderCancel($d_id, $reason);
+            }
+
+            Db::commit();
+        } catch (Exception $e) {
+            Db::rollback();
+            throw $e;
+        }
     }
+
 
     public function orderBegin($params)
     {
-        $order = $this->getOrder($params['id']);
+        $o_id = $params['id'];
+        //检测订单是否被取消
+        $order=$this->checkOrderState($o_id);
         $order->begin = CommonEnum::STATE_IS_OK;
         $order->begin_time = date('Y-m-d H:i:s', time());
         $res = $order->save();
@@ -603,7 +596,7 @@ class OrderService
 
     public function beginWait($params)
     {
-        $order = $this->getOrder($params['id']);
+        $order=$this->checkOrderState($params['id']);
         $order->begin = CommonEnum::STATE_IS_OK;
         $order->begin_wait = date('Y-m-d H:i:s', time());
         $res = $order->save();
@@ -617,15 +610,32 @@ class OrderService
      */
     public function arrivingStart($id)
     {
-        $order = OrderT::get($id);
-        if (!$order) {
-            throw new ParameterException(['msg' => '订单不存在']);
-        }
+        $order= $this->checkOrderState($id);
         $order->arriving_time = date('Y-m-d H:i:s', time());
         $res = $order->save();
         if (!$res) {
             throw new UpdateException();
         }
+    }
+
+
+    private function checkOrderState($o_id)
+    {
+        $order = OrderT::get($o_id);
+        if ($order->state == OrderEnum::ORDER_CANCEL) {
+            $msg = '订单已取消';
+            if (!empty($order->cancel_type)) {
+                $canceler = $order->cancel_type == 'mini' ? "下单用户" : "管理员";
+                $msg = '订单已被' . $canceler . '取消,原因：' . $order->cancel_remark;
+            }
+            throw new UpdateException(['errorCode' => 40011, 'msg' => $msg]);
+        }
+        //检测订单是否被撤回
+        $revoke = OrderRevokeT::where('o_id', $o_id)->where('d_id', Token::getCurrentUid())->count('id');
+        if ($revoke) {
+            throw new UpdateException(['errorCode' => 40012, 'msg' => '订单被撤回']);
+        }
+        return $order;
     }
 
     public function miniOrders($page, $size)
@@ -924,21 +934,7 @@ class OrderService
         if (!$order) {
             throw new UpdateException(['msg' => '订单不存在']);
         }
-        //$grade = Token::getCurrentTokenVar('type');
         return $order;
-        /* if ($grade == 'manager') {
-             return $order;
-         } else {
-             if ($grade == 'driver') {
-                 $field_id = $order->d_id;
-             } else {
-                 $field_id = $order->u_id;
-             }
-             if (Token::getCurrentUid() != $field_id) {
-                 throw new UpdateException(['msg' => '无权限操作此订单']);
-             }
-             return $order;
-         }*/
 
     }
 
@@ -1024,6 +1020,19 @@ class OrderService
         (new SendSMSService())->sendOrderSMS($phone, ['code' => '*****' . substr($order->order_num, 5),
             'order_time' => date('H:i',
                 strtotime($order->create_time))]);
+    }
+
+
+    public function pushDriverWithOrderCancel($d_id, $reason)
+    {
+        //通过websocket推送给司机
+        $push_data = [
+            'type' => 'orderCancel',
+            'order_info' => [
+                'reason' => $reason
+            ]
+        ];
+        GatewayService::sendToDriverClient($d_id, $push_data);
     }
 
     public function choiceDriverByManager($params)
@@ -1117,7 +1126,6 @@ class OrderService
 
     }
 
-
     private function getManagerOrdersStatistic($driver, $time_begin, $time_end)
     {
         $ordersMoney = OrderV::ordersMoney($driver, $time_begin, $time_end);
@@ -1169,7 +1177,6 @@ class OrderService
 
     public function orderLocations($page, $size, $id)
     {
-        // Token::getCurrentUid();
         $order = OrderT::get($id);
         $locations = LocationT::where('o_id', $id)
             ->where('begin', CommonEnum::STATE_IS_OK)
@@ -1217,11 +1224,10 @@ class OrderService
     }
 
     /**
-     * 撤回订单
+     * 管理员撤回订单推送/一已经接单但未开始出发订单
      */
     public function withdraw($o_id)
     {
-
         $order = $this->getOrder($o_id);
 
         //1.检测订单是否被接单
@@ -1249,7 +1255,10 @@ class OrderService
         }
         if ($d_id) {
             (new DriverService())->handelDriveStateByCancel($d_id);
+            return $d_id;
         }
+
+        return false;
     }
 
     public function CMSManagerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from)

@@ -55,7 +55,7 @@ class Order extends BaseController
     public function orderListHandel()
     {
         (new OrderService())->orderListHandel();
-       // return json(new SuccessMessage());
+        // return json(new SuccessMessage());
     }
 
     /**
@@ -64,14 +64,14 @@ class Order extends BaseController
     public function handelDriverNoAnswer()
     {
         (new OrderService())->handelDriverNoAnswer();
-      //  return json(new SuccessMessage());
+        //  return json(new SuccessMessage());
     }
 
     /**
-     * @api {POST} /api/v1/order/cancel 小程序端/Android司机端/Android管理端-撤销订单
+     * @api {POST} /api/v1/order/cancel 小程序端/Android司机端/Android管理端-取消订单
      * @apiGroup   COMMON
      * @apiVersion 1.0.1
-     * @apiDescription   小程序端/Android司机端/Android管理端-撤销订单
+     * @apiDescription    小程序端/Android司机端/Android管理端-取消订单
      * @apiExample {post}  请求样例:
      *    {
      *       "id": 1,
@@ -89,6 +89,30 @@ class Order extends BaseController
         $params = $this->request->param();
         (new OrderService())->orderCancel($params);
         return json(new SuccessMessage());
+    }
+
+
+    /**
+     * @api {POST} /api/v1/order/revoke Android管理端-撤销订单推送
+     * @apiGroup   COMMON
+     * @apiVersion 1.0.1
+     * @apiDescription    Android管理端-撤销订单推送
+     * @apiExample {post}  请求样例:
+     *    {
+     *       "id": 1
+     *     }
+     * @apiParam (请求参数说明) {int} id  订单id
+     * @apiSuccessExample {json} 返回样例:
+     *{"msg":"ok","errorCode":0}
+     * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误
+     * @apiSuccess (返回参数说明) {String} msg 信息描述
+     */
+    public function orderRevoke()
+    {
+        $id = $this->request->param('id');
+        (new OrderService())->orderRevoke($id);
+        return json(new SuccessMessage());
+
     }
 
     /**
@@ -550,7 +574,7 @@ class Order extends BaseController
      */
     public function managerOrders($page = 1, $size = 10, $driver = '', $time_begin = '', $time_end = '', $order_state = 6, $order_from = 5)
     {
-        $data = (new OrderService())->managerOrders($page, $size, $driver, $time_begin, $time_end, $order_state , $order_from);
+        $data = (new OrderService())->managerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from);
         return json(new SuccessMessageWithData(['data' => $data]));
     }
 
@@ -764,7 +788,7 @@ class Order extends BaseController
      * https://tonglingok.com/api/v1/order/push/info?o_id=1
      * @apiParam (请求参数说明) {int} o_id 订单id
      * @apiSuccessExample {json} 返回样例:
-    {"msg":"ok","errorCode":0,"code":200,"data":{"d_id":4,"name":"zml4","create_time":"2019-08-18 00:57:15"}}
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"d_id":4,"name":"zml4","create_time":"2019-08-18 00:57:15"}}
      * @apiSuccess (返回参数说明) {int} d_id 被推送司机ID
      * @apiSuccess (返回参数说明) {string} name 被推送司机姓名
      * @apiSuccess (返回参数说明) {string} create_time 推送时间，从推送时间开始时间计算，做一个倒计时处理20s
