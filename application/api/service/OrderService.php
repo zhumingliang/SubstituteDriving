@@ -28,8 +28,6 @@ use app\lib\exception\SaveException;
 use app\lib\exception\UpdateException;
 use think\Db;
 use think\Exception;
-use think\process\pipes\Unix;
-use think\Request;
 use zml\tp_tools\CalculateUtil;
 
 class OrderService
@@ -364,6 +362,8 @@ class OrderService
         $push_type = $push->type;
 
         if ($type == OrderEnum::ORDER_PUSH_AGREE) {
+            //检测订单状态
+            $this->checkOrderState($push->o_id);
             if ($push_type == "normal") {
                 $this->prefixPushAgree($push->d_id);
                 //处理远程接驾费用
@@ -564,7 +564,7 @@ class OrderService
             }
 
             //处理司机状态和推送状态
-            $d_id = $this->withdraw($o_id);
+            $d_id = $this->withdraw($o_id, 'cancel');
 
             //通知司机
             if (($grade == 'mini' || $grade == 'manager') && $d_id) {
@@ -585,7 +585,7 @@ class OrderService
     {
         $o_id = $params['id'];
         //检测订单是否被取消
-        $order=$this->checkOrderState($o_id);
+        $order = $this->checkOrderState($o_id);
         $order->begin = CommonEnum::STATE_IS_OK;
         $order->begin_time = date('Y-m-d H:i:s', time());
         $res = $order->save();
@@ -596,7 +596,7 @@ class OrderService
 
     public function beginWait($params)
     {
-        $order=$this->checkOrderState($params['id']);
+        $order = $this->checkOrderState($params['id']);
         $order->begin = CommonEnum::STATE_IS_OK;
         $order->begin_wait = date('Y-m-d H:i:s', time());
         $res = $order->save();
@@ -610,7 +610,7 @@ class OrderService
      */
     public function arrivingStart($id)
     {
-        $order= $this->checkOrderState($id);
+        $order = $this->checkOrderState($id);
         $order->arriving_time = date('Y-m-d H:i:s', time());
         $res = $order->save();
         if (!$res) {
@@ -1223,10 +1223,9 @@ class OrderService
 
     }
 
-    /**
-     * 管理员撤回订单推送/一已经接单但未开始出发订单
-     */
-    public function withdraw($o_id)
+
+    // 管理员撤回订单推送/一已经接单但未开始出发订单
+    public function withdraw($o_id, $type = "revoke")
     {
         $order = $this->getOrder($o_id);
 
@@ -1237,7 +1236,12 @@ class OrderService
             throw new UpdateException(['msg' => '订单已开始出发，不能被撤回']);
         }
         if ($order->d_id) {
+            //解除司机订单关系
             $d_id = $order->d_id;
+            if ($type == "revoke") {
+                $order->d_id = '';
+                $order->save();
+            }
         } else {
             $orderPush = OrderPushT::where('o_id', $o_id)
                 ->where('state', CommonEnum::STATE_IS_OK)
@@ -1255,6 +1259,10 @@ class OrderService
         }
         if ($d_id) {
             (new DriverService())->handelDriveStateByCancel($d_id);
+            //记录撤销记录
+            if ($type == "revoke") {
+                OrderRevokeT::create(['d_id' => $d_id, 'o_id' => $o_id]);
+            }
             return $d_id;
         }
 
