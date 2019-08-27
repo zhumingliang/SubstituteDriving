@@ -1241,7 +1241,7 @@ class OrderService
     // 管理员撤回订单推送/一已经接单但未开始出发订单
     public function withdraw($o_id, $type = "revoke")
     {
-        $order = $this->getOrder($o_id);
+        $order = OrderT::get($o_id);
 
         //1.检测订单是否被接单
         //2.修改司机状态
