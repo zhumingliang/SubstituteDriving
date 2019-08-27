@@ -245,4 +245,28 @@ class Ticket extends BaseController
         return json(new SuccessMessageWithData(['data' => $ticks]));
     }
 
+    /**
+     * @api {GET} /api/v1/tickets/phone 司机端/管理端-获取指定手机号可使用卡券
+     * @apiGroup  Android
+     * @apiVersion 1.0.1
+     * @apiDescription  司机端/管理端-获取指定手机号可使用卡券
+     * @apiExample {get}  请求样例:
+     * https://tonglingok.com/api/v1/tickets/phone?phone="18956225230"
+     * @apiParam (请求参数说明) {string} phone 手机号
+     * @apiSuccessExample {json} 返回样例:
+     * [{"id":1,"name":"新用户优惠券","money":5,"time_begin":"2019-06-04 11:06:30","time_end":"2020-06-04 11:06:30"}]
+     * @apiSuccess (返回参数说明) {int} id 卡券id
+     * @apiSuccess (返回参数说明) {String} name 卡券名称
+     * @apiSuccess (返回参数说明) {int} money 卡券面值
+     * @apiSuccess (返回参数说明) {String} time_begin 有效期开始时间
+     * @apiSuccess (返回参数说明) {String} time_end 有效期结束时间
+     */
+    public function phoneTickets()
+    {
+        $phone = Request::param('phone');
+        $ticks = (new TicketService())->phoneTickets($phone);
+        return json(new SuccessMessageWithData(['data' => $ticks]));
+    }
+
+
 }

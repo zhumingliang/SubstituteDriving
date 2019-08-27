@@ -127,5 +127,10 @@ class TicketService
 
     }
 
+    public function phoneTickets($phone)
+    {
+        $ticks = TicketUserT::userPhoneTickets($phone);
+        return $ticks;
+    }
 
 }

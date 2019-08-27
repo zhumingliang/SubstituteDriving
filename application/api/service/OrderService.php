@@ -49,7 +49,7 @@ class OrderService
 
             $order = $this->saveOrder($params);
             $this->saveOrderList($order->id, OrderEnum::ORDER_LIST_NO);
-            if (key_exists('t_id', $params) && $params['t_id']) {
+            if (!empty($params['t_id'])) {
                 (new TicketService())->prefixTicketHandel($params['t_id'], TicketEnum::STATE_ING);
             }
             return $order->id;
@@ -80,6 +80,9 @@ class OrderService
             $params['type'] = OrderEnum::NOT_FIXED_MONEY;
             $params['state'] = OrderEnum::ORDER_ING;
             $params['order_num'] = time();
+            if (!empty($params['t_id'])) {
+                (new TicketService())->prefixTicketHandel($params['t_id'], TicketEnum::STATE_ING);
+            }
             $order = $this->saveOrder($params);
             $o_id = $order->id;
             //新增到订单待处理队列
@@ -118,6 +121,10 @@ class OrderService
             //处理远程接驾费用
             $location = $this->getDriverLocation($d_id);
             $far = $this->prefixFar($params['start_lng'], $params['start_lat'], $location['lng'], $location['lat']);
+
+            if (!empty($params['t_id'])) {
+                (new TicketService())->prefixTicketHandel($params['t_id'], TicketEnum::STATE_ING);
+            }
 
             $params['far_distance'] = $far['far_distance'];
             $params['far_money'] = $far['far_money'];
@@ -687,7 +694,7 @@ class OrderService
     {
 
         try {
-            LogService::save('params：'.json_encode($params));
+            LogService::save('params：' . json_encode($params));
             Db::startTrans();
             $distance = round($params['distance'] / 1000, 1);
             $id = $params['id'];
@@ -705,7 +712,7 @@ class OrderService
                 $wait_money = $params['wait_money'];
                 //处理恶劣天气费用
                 $weather_money = $this->prefixWeather($distance_money);
-                LogService::save('weather_money：'.$weather_money);
+                LogService::save('weather_money：' . $weather_money);
 
                 //处理订单金额
                 $money = $distance_money + $wait_money + $weather_money + $order->far_money;

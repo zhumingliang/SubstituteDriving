@@ -334,6 +334,7 @@ class Order extends BaseController
      *       "start_lat":"12.1212",
      *       "start_lng":"23.121",
      *       "end":铜陵市高速",
+     *       "t_id":1,
      *       "end_lat":"12.1212",
      *       "end_lng":"21.1212",
      *       "phone":"18956225230",
@@ -342,6 +343,7 @@ class Order extends BaseController
      * @apiParam (请求参数说明) {String} start  出发地
      * @apiParam (请求参数说明) {String} start_lat  出发地纬度
      * @apiParam (请求参数说明) {String} start_lng  出发地经度
+     * @apiParam (请求参数说明) {int} t_id  优惠券id
      * @apiParam (请求参数说明) {String} end  目的地
      * @apiParam (请求参数说明) {String} end_lat  目的地纬度
      * @apiParam (请求参数说明) {String} end_lng  目的地经度
@@ -378,6 +380,7 @@ class Order extends BaseController
      *       "name":"詹先生",
      *       "d_id":1,
      *       "type":1,
+     *       "t_id":1,
      *       "money":1000,
      *     }
      * @apiParam (请求参数说明) {String} start  出发地
@@ -391,6 +394,7 @@ class Order extends BaseController
      * @apiParam (请求参数说明) {int} d_id  司机id
      * @apiParam (请求参数说明) {int} type  订单金额类别：1|非固定金额订单；2|固定金额订单
      * @apiParam (请求参数说明) {int} money 固定金额 非固定金额订单为0
+     * @apiParam (请求参数说明) {int} t_id  优惠券id
      * @apiSuccessExample {json} 返回样例:
      *{"id":1,"errorCode":0,"data":{"id":1}}
      * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误

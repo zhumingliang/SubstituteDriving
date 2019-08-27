@@ -53,6 +53,7 @@ Route::post('api/:version/ticket/send', 'api/:version.Ticket/send');
 Route::get('api/:version/tickets/manage', 'api/:version.Ticket/ManageTickets');
 Route::get('api/:version/ticket', 'api/:version.Ticket/ticket');
 Route::get('api/:version/tickets/user', 'api/:version.Ticket/userTickets');
+Route::get('api/:version/tickets/phone', 'api/:version.Ticket/phoneTickets');
 
 Route::post('api/:version/SystemPrice/interval/save', 'api/:version.SystemPrice/intervalSave');
 Route::post('api/:version/SystemPrice/interval/handel', 'api/:version.SystemPrice/intervalHandel');
