@@ -837,10 +837,10 @@ class OrderService
 
     }
 
-    private function prefixWeather($distance_money)
+    public function prefixWeather($distance_money)
     {
         $weather = WeatherT::find();
-        if (!$weather || $weather->state == CommonEnum::STATE_IS_FAIL) {
+        if ((!$weather) || $weather->state == CommonEnum::STATE_IS_FAIL) {
             return 0;
         }
 

@@ -8,6 +8,7 @@ use app\api\model\OrderT;
 use app\api\model\StartPriceT;
 use app\api\model\TimeIntervalT;
 use app\api\model\WaitPriceT;
+use app\api\model\WeatherT;
 use app\api\service\LogService;
 use app\api\service\OrderService;
 use app\api\service\SendSMSService;
@@ -22,13 +23,13 @@ class Index
     public function index()
     {
 
-        $interval = TimeIntervalT::where('state', CommonEnum::STATE_IS_OK)
-            ->select();
-        foreach ($interval as $k => $v) {
-            echo date('Y-m-d H:i', strtotime($v['time_begin'])) . '----' . date('Y-m-d H:i', strtotime($v['time_end']));
-
+        $distance_money = 10;
+        $weather = WeatherT::find();
+        if ((!$weather) || $weather->state == CommonEnum::STATE_IS_FAIL) {
+            return 0;
         }
 
+        return ceil($distance_money * ($weather->ratio - 1));
     }
 
     public function sendMessage($name)

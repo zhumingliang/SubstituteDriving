@@ -468,7 +468,9 @@ class DriverService
 
         foreach ($list as $k => $v) {
             $d_id = $v[0];
-            if (in_array($d_id, $driver_ids) && GatewayService::isDriverUidOnline($d_id) && $this->checkOnline($d_id)) {
+            if (in_array($d_id, $driver_ids) &&
+                GatewayService::isDriverUidOnline($d_id) &&
+                $this->checkOnline($d_id)) {
                 $count++;
             }
         }
@@ -480,15 +482,9 @@ class DriverService
     {
         $driver = DriverT::where('id', $d_id)
             ->where('state', CommonEnum::STATE_IS_OK)
-            ->find();
-        if (!$driver) {
-            return false;
-        }
-
-        if ($driver->online == DriverEnum::ONLINE) {
-            return true;
-        }
-        return false;
+            ->where('online', DriverEnum::ONLINE)
+            ->count('id');
+        return $driver;
 
     }
 
