@@ -13,7 +13,7 @@ class Ticket extends BaseValidate
         'time_begin' => 'require|isNotEmpty',
         'time_end' => 'require|isNotEmpty',
         'count' => 'require|isPositiveInteger',
-        'scene' => 'require|in:1,2',
+        'scene' => 'require|in:1,2,3',
         'source' => 'require|in:1,2',
         'state' => 'require|in:1,2,3',
         'u_id' => 'require|isNotEmpty',

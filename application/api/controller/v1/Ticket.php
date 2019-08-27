@@ -37,7 +37,7 @@ class Ticket extends BaseController
      * @apiParam (请求参数说明) {String} time_begin  有效开始时间
      * @apiParam (请求参数说明) {String} time_end   有效结束时间
      * @apiParam (请求参数说明) {String} count   优惠券数量
-     * @apiParam (请求参数说明) {int} scene   应用场景（暂定）：1 | 新用户优惠券；2|首次关注公众号优惠券
+     * @apiParam (请求参数说明) {int} scene   应用场景（暂定）：1 | 新用户优惠券；2|首次关注公众号优惠券；3|日常补助优惠券
      * @apiParam (请求参数说明) {int} source   操作来源：1 | CMS；2 | Android
      *
      * @apiSuccessExample {json} 返回样例:
@@ -55,7 +55,6 @@ class Ticket extends BaseController
         } else {
             unset($params['id']);
             $ticket = TicketT::create($params);
-
         }
         if (!$ticket) {
             throw new SaveException();
