@@ -71,6 +71,7 @@ class OrderT extends Model
     public static function getDriverOrders($d_id, $page, $size, $time_begin, $time_end)
     {
         $list = self::where('d_id', $d_id)
+            ->whereIn('state','2,4')
             ->where(function ($query) use ($time_begin, $time_end) {
                 if (strlen($time_begin) && strlen($time_end)) {
                     $query->whereBetweenTime('create_time', $time_begin, $time_end);
