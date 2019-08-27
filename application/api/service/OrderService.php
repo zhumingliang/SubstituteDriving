@@ -1037,6 +1037,18 @@ class OrderService
         GatewayService::sendToDriverClient($d_id, $push_data);
     }
 
+    public function pushDriverWithOrderRevoke($d_id)
+    {
+        //通过websocket推送给司机
+        $push_data = [
+            'type' => 'orderRevoke',
+            'order_info' => [
+                'reason' => "订单已被被管理员撤回"
+            ]
+        ];
+        GatewayService::sendToDriverClient($d_id, $push_data);
+    }
+
     public function choiceDriverByManager($params)
     {
         //检测被推送司机状态
@@ -1244,6 +1256,8 @@ class OrderService
                 $order->d_id = '';
                 $order->save();
             }
+            //发送推送给司机说明订单撤销
+            $this->pushDriverWithOrderRevoke($d_id);
         } else {
             $orderPush = OrderPushT::where('o_id', $o_id)
                 ->where('state', CommonEnum::STATE_IS_OK)

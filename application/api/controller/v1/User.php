@@ -123,7 +123,6 @@ class User extends BaseController
         return json(new SuccessMessageWithData(['data' => $ticket]));
     }
 
-
     /**
      * @api {POST} /api/v1/user/check/bind 公众号客户端检测用户是否绑定手机号
      * @apiGroup  PUBLIC
@@ -214,6 +213,5 @@ class User extends BaseController
         return json(new SuccessMessageWithData(['data' => $users]));
 
     }
-
 
 }
