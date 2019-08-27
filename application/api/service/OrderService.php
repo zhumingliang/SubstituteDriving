@@ -718,18 +718,6 @@ class OrderService
                         Db::rollback();
                         throw new SaveException(['msg' => '保存处理优惠券失败']);
                     }
-                    /* //将优惠券金额返回给司机
-                     $driverTicket = DriverTicketT::create([
-                         'o_id' => $id,
-                         't_id' => $order->t_id,
-                         'd_id' => $order->d_id,
-                         'money' => $ticket_money,
-
-                     ]);
-                     if (!$driverTicket) {
-                         Db::rollback();
-                         throw new SaveException(['msg' => '保存处理优惠券失败']);
-                     }*/
                 }
                 $order->distance = $distance;
                 $order->distance_money = $distance_money;
