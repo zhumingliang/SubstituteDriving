@@ -40,12 +40,21 @@ class SendSMSService
 
     public function sendRechargeSMS($phone, $params, $num = 1)
     {
-
         $res = SendSms::instance()->send($phone, $params, 'recharge');
         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
             return true;
         }
         $this->saveSend($phone, $params, 'recharge');
+    }
+
+    public function sendMINISMS($phone, $params='', $num = 1)
+    {
+
+        $res = SendSms::instance()->send($phone, $params, 'mini');
+        if (key_exists('Code', $res) && $res['Code'] == 'OK') {
+            return true;
+        }
+        $this->saveSend($phone, $params, 'mini');
 
     }
 

@@ -22,6 +22,7 @@ return [
         'TemplateLoginCode' => 'SMS_166310720', // 司机端登录
         'TemplateDriverCode' => 'SMS_172884242', // 发送接单通知给司机端
         'TemplateRechargeCode' => 'SMS_171357306', // 充值通知给司机
+        'TemplateMINICode' => 'SMS_173251443', // 发送接单通知给用户
         'SignName' => 'OK代驾'
     ],
 ];

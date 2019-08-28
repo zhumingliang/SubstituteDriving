@@ -458,12 +458,12 @@ class OrderService
                     'distance' => $this->getDriverDistance($order->start_lng, $order->start_lat, $d_id)
                 ]
             ];
-            MiniPushT::create(['u_id' => $u_id, 'message' => json_encode($send_data), 'count' => 1, 'state' => 1]);
+            MiniPushT::create(['u_id' => $u_id, 'message' => json_encode($send_data), 'count' => 1, 'o_id' => $order->id, 'state' => 1]);
             if (GatewayService::isMINIUidOnline($u_id)) {
                 GatewayService::sendToMiniClient($u_id, $send_data);
             }
-
             //发送短消息
+
         }
 
     }

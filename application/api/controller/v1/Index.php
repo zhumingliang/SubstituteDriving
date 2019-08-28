@@ -22,14 +22,7 @@ class Index
 {
     public function index()
     {
-
-        $distance_money = 10;
-        $weather = WeatherT::find();
-        if ((!$weather) || $weather->state == CommonEnum::STATE_IS_FAIL) {
-            return 0;
-        }
-
-        return ceil($distance_money * ($weather->ratio - 1));
+        (new SendSMSService())->sendMINISMS('18956225230');
     }
 
     public function sendMessage($name)
