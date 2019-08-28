@@ -162,6 +162,8 @@ class OrderService
                 'state' => OrderEnum::ORDER_PUSH_NO
             ]
         );
+        $distance_info = $this->getDistanceInfoToPush($order);
+
         //通过websocket推送给司机
         $push_data = [
             'type' => 'order',
@@ -171,6 +173,8 @@ class OrderService
                 'phone' => $order->phone,
                 'start' => $order->start,
                 'end' => $order->end,
+                'distance' => $distance_info['distance'],
+                'distance_money' => $distance_info['distance_money'],
                 'create_time' => $order->create_time,
                 'p_id' => $push->id,
 
@@ -373,7 +377,7 @@ class OrderService
 
         foreach ($push as $k => $v) {
             if (GatewayService::isMINIUidOnline($v['u_id'])) {
-                GatewayService::sendToMiniClient($v['u_id'], json_decode($v['message'],true));
+                GatewayService::sendToMiniClient($v['u_id'], json_decode($v['message'], true));
 
                 MiniPushT::update(['count' => $v['count'] + 1],
                     ['id' => $v['id']]);
@@ -1071,6 +1075,7 @@ class OrderService
                 'reason' => "订单已被被管理员撤回"
             ]
         ];
+
         GatewayService::sendToDriverClient($d_id, $push_data);
     }
 
