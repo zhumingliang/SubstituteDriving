@@ -24,8 +24,14 @@ class TicketService
         }
         $data = array();
         foreach ($u_id_arr as $k => $v) {
+            $user = UserT::get($v);
+            if (empty($user->phone)) {
+                continue;
+
+            }
             $data[] = [
                 'u_id' => $v,
+                'phone' => $user->phone,
                 't_id' => $t_id,
                 'name' => $ticket->name,
                 'money' => $ticket->price,
@@ -55,15 +61,17 @@ class TicketService
 
     public function userTickets()
     {
-        $u_id = Token::getCurrentUid();
-        $scene = Token::getCurrentTokenVar('scene');
-        $phone = Token::getCurrentTokenVar('phone');
-        if (empty($phone)) {
-            $ticks = TicketUserT::userTickets($u_id, $scene);
+        /* $u_id = Token::getCurrentUid();
+         $scene = Token::getCurrentTokenVar('scene');
+         $phone = Token::getCurrentTokenVar('phone');
+         if (empty($phone)) {
+             $ticks = TicketUserT::userTickets($u_id, $scene);
 
-        } else {
-            $ticks = TicketUserT::userPhoneTickets($phone);
-        }
+         } else {
+             $ticks = TicketUserT::userPhoneTickets($phone);
+         }*/
+        $phone = Token::getCurrentTokenVar('phone');
+        $ticks = TicketUserT::userPhoneTickets($phone);
         return $ticks;
     }
 
