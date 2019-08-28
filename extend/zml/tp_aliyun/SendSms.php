@@ -23,6 +23,8 @@ class SendSms
     protected $TemplateDriverCode;
     protected $TemplateRechargeCode;
     protected $TemplateMINICode;
+    protected $TemplateDriverCreateOrderCode;
+    protected $TemplateOrderCompleteCode;
     protected $signName;
     protected $requestHost = "http://dysmsapi.aliyuncs.com";
     protected $requestUrl;
@@ -41,6 +43,8 @@ class SendSms
         isset($options["TemplateDriverCode"]) && $this->TemplateDriverCode = $options["TemplateDriverCode"];
         isset($options["TemplateRechargeCode"]) && $this->TemplateRechargeCode = $options["TemplateRechargeCode"];
         isset($options["TemplateMINICode"]) && $this->TemplateMINICode = $options["TemplateMINICode"];
+        isset($options["TemplateDriverCreateOrderCode"]) && $this->TemplateDriverCreateOrderCode = $options["TemplateDriverCreateOrderCode"];
+        isset($options["TemplateOrderCompleteCode"]) && $this->TemplateOrderCompleteCode = $options["TemplateOrderCompleteCode"];
         isset($options["SignName"]) && $this->signName = $options["SignName"];
     }
 
@@ -142,6 +146,10 @@ class SendSms
                 $templateCode = $this->TemplateRechargeCode;
             } else if ($type == 'mini') {
                 $templateCode = $this->TemplateMINICode;
+            } else if ($type == 'driveCreateOrder') {
+                $templateCode = $this->TemplateDriverCreateOrderCode;
+            } else if ($type == 'orderComplete') {
+                $templateCode = $this->TemplateOrderCompleteCode;
             } else {
                 $templateCode = $this->TemplateDriverCode;
             }

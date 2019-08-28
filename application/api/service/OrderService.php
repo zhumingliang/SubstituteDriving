@@ -92,6 +92,8 @@ class OrderService
             //处理司机状态
             //未接单状态->已接单状态
             (new DriverService())->handelDriveStateByReceive($d_id);
+            //发送短信
+            (new SendSMSService())->sendDriveCreateOrderSMS($params['phone'], '');
             return $o_id;
         } catch (Exception $e) {
             LogT::create(['msg' => 'save_order_driver:' . $e->getMessage()]);
@@ -184,7 +186,7 @@ class OrderService
         //通过短信推送给司机
         $driver = DriverT::where('id', $d_id)->find();
         $phone = $driver->phone;
-        (new SendSMSService())->sendOrderSMS($phone, ['code' => '*****' . substr($order->order_num, 5), 'order_time' => date('H:i', strtotime($order->create_time))]);
+        (new SendSMSService())->sendOrderSMS($phone, ['code' => 'OK' . $order->order_num, 'order_time' => date('H:i', strtotime($order->create_time))]);
     }
 
     private function prefixFar($start_lng, $start_lat, $driver_lng, $driver_lat)
@@ -794,6 +796,7 @@ class OrderService
             Db::commit();
             (new DriverService())->handelDriveStateByComplete($order->d_id);
             (new WalletService())->checkDriverBalance(Token::getCurrentUid());
+            (new SendSMSService())->sendOrderCompleteSMS($order->phone, ['distance' => $distance, 'money' => $money]);
             return $this->prepareOrderInfo($order);
 
         } catch (Exception $e) {

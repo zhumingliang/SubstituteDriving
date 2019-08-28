@@ -47,7 +47,25 @@ class SendSMSService
         $this->saveSend($phone, $params, 'recharge');
     }
 
-    public function sendMINISMS($phone, $params='', $num = 1)
+    public function sendDriveCreateOrderSMS($phone, $params, $num = 1)
+    {
+        $res = SendSms::instance()->send($phone, $params, 'driveCreateOrder');
+        if (key_exists('Code', $res) && $res['Code'] == 'OK') {
+            return true;
+        }
+        $this->saveSend($phone, $params, 'driveCreateOrder');
+    }
+
+    public function sendOrderCompleteSMS($phone, $params, $num = 1)
+    {
+        $res = SendSms::instance()->send($phone, $params, 'orderComplete');
+        if (key_exists('Code', $res) && $res['Code'] == 'OK') {
+            return true;
+        }
+        $this->saveSend($phone, $params, 'orderComplete');
+    }
+
+    public function sendMINISMS($phone, $params = '', $num = 1)
     {
 
         $res = SendSms::instance()->send($phone, $params, 'mini');
