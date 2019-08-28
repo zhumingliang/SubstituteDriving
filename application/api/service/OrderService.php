@@ -365,20 +365,17 @@ class OrderService
      */
     public function handelMiniNoAnswer()
     {
-        $push = MiniPushT::where('state', '=', 1)
-            ->where('count', '<', 5)
+        $push = MiniPushT::where('state', '<>', 3)
+            ->where('count', '<', 4)
             ->select()
             ->toArray();
 
-        foreach ($push as $k => $v) {
-            MiniPushT::update(['state' => 2], ['id' => $v['id']]);
-        }
 
         foreach ($push as $k => $v) {
             if (GatewayService::isMINIUidOnline($v['u_id'])) {
                 GatewayService::sendToMiniClient($v['u_id'], json_decode($v['message']));
             }
-            MiniPushT::update(['count' => $v['count'] + 1, 'state' => 1],
+            MiniPushT::update(['count' => $v['count'] + 1],
                 ['id' => $v['id']]);
         }
     }
@@ -465,6 +462,7 @@ class OrderService
                 GatewayService::sendToMiniClient($u_id, $send_data);
             }
             //发送短消息
+            (new SendSMSService())->sendMINISMS($order->driver->phone);
 
         }
 

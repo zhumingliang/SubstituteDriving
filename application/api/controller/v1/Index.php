@@ -23,8 +23,7 @@ class Index
 {
     public function index()
     {
-        MiniPushT::update(['state'=>1],['id'=>1]);
-        //(new SendSMSService())->sendMINISMS('18956225230');
+
     }
 
     public function sendMessage($name)
