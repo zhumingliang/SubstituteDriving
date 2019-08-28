@@ -367,7 +367,8 @@ class OrderService
     {
         $push = MiniPushT::where('state', '=', 1)
             ->where('count', '<', 5)
-            ->select()->toArray();
+            ->select()
+            ->toArray();
 
         foreach ($push as $k => $v) {
             MiniPushT::update(['state' => 2], ['id' => $v['id']]);
@@ -377,7 +378,8 @@ class OrderService
             if (GatewayService::isMINIUidOnline($v['u_id'])) {
                 GatewayService::sendToMiniClient($v['u_id'], json_decode($v['message']));
             }
-            OrderPushT::update(['count' => $v['count'] + 1, 'state' => 1], ['id' => $v['id']]);
+            MiniPushT::update(['count' => $v['count'] + 1, 'state' => 1],
+                ['id' => $v['id']]);
         }
     }
 

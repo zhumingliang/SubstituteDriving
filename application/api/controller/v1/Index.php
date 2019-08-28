@@ -3,6 +3,7 @@
 namespace app\api\controller\v1;
 
 use app\api\model\DriverT;
+use app\api\model\MiniPushT;
 use app\api\model\OrderPushT;
 use app\api\model\OrderT;
 use app\api\model\StartPriceT;
@@ -22,7 +23,8 @@ class Index
 {
     public function index()
     {
-        (new SendSMSService())->sendMINISMS('18956225230');
+        MiniPushT::update(['state'=>1],['id'=>1]);
+        //(new SendSMSService())->sendMINISMS('18956225230');
     }
 
     public function sendMessage($name)
