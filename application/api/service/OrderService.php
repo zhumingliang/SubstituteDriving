@@ -374,10 +374,10 @@ class OrderService
         foreach ($push as $k => $v) {
             if (GatewayService::isMINIUidOnline($v['u_id'])) {
                 GatewayService::sendToMiniClient($v['u_id'], json_decode($v['message']));
+
+                MiniPushT::update(['count' => $v['count'] + 1],
+                    ['id' => $v['id']]);
             }
-            MiniPushT::update(['count' => $v['count'] + 1],
-                ['id' => $v['id']]);
-            LogService::save($v['id']);
         }
     }
 
@@ -725,7 +725,6 @@ class OrderService
     {
 
         try {
-            LogService::save('params：' . json_encode($params));
             Db::startTrans();
             $distance = round($params['distance'] / 1000, 1);
             $id = $params['id'];
@@ -743,8 +742,6 @@ class OrderService
                 $wait_money = $params['wait_money'];
                 //处理恶劣天气费用
                 $weather_money = $this->prefixWeather($distance_money);
-                LogService::save('weather_money：' . $weather_money);
-
                 //处理订单金额
                 $money = $distance_money + $wait_money + $weather_money + $order->far_money;
 
