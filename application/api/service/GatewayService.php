@@ -25,6 +25,12 @@ class GatewayService
 
     }
 
+    public static function isMINIUidOnline($u_id)
+    {
+        return Gateway::isUidOnline('mini' . '-' . $u_id);
+
+    }
+
     private static function prefixMessage($message)
     {
         $data = [

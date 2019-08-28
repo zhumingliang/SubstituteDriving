@@ -8,6 +8,7 @@ use app\api\model\DriverT;
 use app\api\model\FarStateT;
 use app\api\model\LocationT;
 use app\api\model\LogT;
+use app\api\model\MiniPushT;
 use app\api\model\OrderListT;
 use app\api\model\OrderMoneyT;
 use app\api\model\OrderPushT;
@@ -348,12 +349,35 @@ class OrderService
     {
         $push = OrderPushT::where('state', OrderEnum::ORDER_PUSH_NO)
             //->where('receive', CommonEnum::STATE_IS_OK)
+            ->where('type', '<>', 'mini')
             ->where('create_time', '>', date("Y-m-d H:i:s", time() + config('setting.driver_push_expire_in')))
             ->select();
         foreach ($push as $k => $v) {
             $d_id = $v['d_id'];
             $this->prefixPushRefuse($d_id);
             OrderPushT::update(['state' => OrderEnum::ORDER_PUSH_INVALID], ['id' => $d_id]);
+        }
+    }
+
+
+    /**
+     * 处理接单通知推送列表-定时服务
+     */
+    public function handelMiniNoAnswer()
+    {
+        $push = MiniPushT::where('state', '=', 1)
+            ->where('count', '<', 5)
+            ->select()->toArray();
+
+        foreach ($push as $k => $v) {
+            MiniPushT::update(['state' => 2], ['id' => $v['id']]);
+        }
+
+        foreach ($push as $k => $v) {
+            if (GatewayService::isMINIUidOnline($v['u_id'])) {
+                GatewayService::sendToMiniClient($v['u_id'], json_decode($v['message']));
+            }
+            OrderPushT::update(['count' => $v['count'] + 1, 'state' => 1], ['id' => $v['id']]);
         }
     }
 
@@ -428,12 +452,18 @@ class OrderService
                 'type' => 'order',
                 'order_info' => [
                     'id' => $order->id,
+                    'u_id' => $u_id,
                     'driver_name' => $order->driver->username,
                     'driver_phone' => $order->driver->phone,
                     'distance' => $this->getDriverDistance($order->start_lng, $order->start_lat, $d_id)
                 ]
             ];
-            GatewayService::sendToMiniClient($u_id, $send_data);
+            MiniPushT::create(['u_id' => $u_id, 'message' => json_encode($send_data), 'count' => 1, 'state' => 1]);
+            if (GatewayService::isMINIUidOnline($u_id)) {
+                GatewayService::sendToMiniClient($u_id, $send_data);
+            }
+
+            //发送短消息
         }
 
     }
