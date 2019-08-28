@@ -23,7 +23,7 @@ class OrderT extends Model
     public function getFromAttr($value)
     {
         if ($value) {
-            $data = [1 => '小程序下单', 2 => '司机自主简单', 3 => '管理员自主建单', 4 => '公众号下单'];
+            $data = [1 => '小程序下单', 2 => '司机自主建单', 3 => '管理员自主建单', 4 => '公众号下单'];
             return $data[$value];
         }
 

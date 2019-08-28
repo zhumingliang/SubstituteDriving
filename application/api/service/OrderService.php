@@ -1240,6 +1240,7 @@ class OrderService
     {
         if (!empty($data)) {
             foreach ($data as $k => $v) {
+
                 if (empty($v['d_id'])) {
                     $push = OrderPushT::where('o_id', $v['id'])
                         ->with(['driver' => function ($query) {
@@ -1279,6 +1280,7 @@ class OrderService
             $d_id = $order->d_id;
             if ($type == "revoke") {
                 $order->d_id = '';
+                $order->state = OrderEnum::ORDER_NO;
                 $order->save();
             }
             //发送推送给司机说明订单撤销
