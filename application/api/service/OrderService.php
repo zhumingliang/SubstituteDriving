@@ -377,6 +377,7 @@ class OrderService
             }
             MiniPushT::update(['count' => $v['count'] + 1],
                 ['id' => $v['id']]);
+            LogService::save($v['id']);
         }
     }
 
