@@ -373,7 +373,7 @@ class OrderService
 
         foreach ($push as $k => $v) {
             if (GatewayService::isMINIUidOnline($v['u_id'])) {
-                GatewayService::sendToMiniClient($v['u_id'], json_decode($v['message']));
+                GatewayService::sendToMiniClient($v['u_id'], json_decode($v['message'],true));
 
                 MiniPushT::update(['count' => $v['count'] + 1],
                     ['id' => $v['id']]);
