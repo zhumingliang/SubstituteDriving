@@ -366,7 +366,7 @@ class OrderService
     public function handelMiniNoAnswer()
     {
         $push = MiniPushT::where('state', '<>', 3)
-            ->where('count', '<', 4)
+            ->where('count', '<', 10)
             ->select()
             ->toArray();
 
