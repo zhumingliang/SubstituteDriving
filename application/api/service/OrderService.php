@@ -321,7 +321,8 @@ class OrderService
         //查询待处理订单并将订单状态改为处理中
         $orderList = OrderListT::where('state', OrderEnum::ORDER_LIST_NO)
             ->order('create_time desc')
-            ->limit(0, 3)->select()->toArray();
+            ->limit(0, 3)->select()
+            ->toArray();
         if (!$orderList) {
             return true;
         }
@@ -348,6 +349,7 @@ class OrderService
             }
             //查找司机并推送
             if (!$this->findDriverToPush($order)) {
+                LogService::save('push_false');
                 OrderListT::update(['state' => OrderEnum::ORDER_LIST_NO], ['id' => $list_id]);
             }
         } catch (Exception $e) {
@@ -564,7 +566,6 @@ class OrderService
                 $driver = DriverT::where('id', $d_id)->find();
                 $phone = $driver->phone;
                 (new SendSMSService())->sendOrderSMS($phone, ['code' => 'OK' . $order->order_num, 'order_time' => date('H:i', strtotime($order->create_time))]);
-
 
                 $orderPush = OrderPushT::create(
                     [
