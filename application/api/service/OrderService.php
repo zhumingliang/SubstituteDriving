@@ -469,7 +469,7 @@ class OrderService
                 GatewayService::sendToMiniClient($u_id, $send_data);
             }
             //发送短消息
-            (new SendSMSService())->sendMINISMS($order->driver->phone);
+            (new SendSMSService())->sendMINISMS($order->phone);
 
         }
 
@@ -511,6 +511,7 @@ class OrderService
         $lat = $order['start_lat'];
         $lng = $order['start_lng'];
         $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, config('setting.driver_nearby_km'), 'km', 'ASC');
+        LogService::save(json_encode($list));
         if (!count($list)) {
             return false;
         }
