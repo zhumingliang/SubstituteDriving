@@ -381,6 +381,7 @@ class DriverService
                 }
             }
         }
+        LogService::save(json_encode($online));
         return $online;
 
     }
