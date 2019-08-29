@@ -499,15 +499,15 @@ class DriverService
     public function checkDriverCanReceiveOrder($d_id)
     {
         if (!GatewayService::isDriverUidOnline($d_id)) {
-            return false;
+            return 2;
         }
         if (!$this->redis->sIsMember('driver_order_no', $d_id)) {
-            return false;
+            return 2;
         }
         if (!$this->checkOnline($d_id)) {
-            return false;
+            return 2;
         }
-        return true;
+        return 1;
     }
 
 
