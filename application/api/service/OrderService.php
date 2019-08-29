@@ -374,8 +374,10 @@ class OrderService
                         $this->prefixPushRefuse($d_id);
                         OrderPushT::update(['state' => OrderEnum::ORDER_PUSH_INVALID], ['id' => $v['id']]);
                     } else {
-                        if ($v['receive'] == 2 && !empty($v['message']) && GatewayService::isDriverUidOnline($v['d_id'])) {
-                            GatewayService::sendToDriverClient($v['d_id'], json_decode($v['message'], true));
+                        if ($v['receive'] == 2 && !empty($v['message'])
+                            && (new DriverService())->checkDriverCanReceiveOrder($v['d_id'])) {
+                            GatewayService::sendToDriverClient($v['d_id'],
+                                json_decode($v['message'], true));
                         }
                     }
 
@@ -547,8 +549,7 @@ class OrderService
         //设置三个set: 司机未接单 driver_order_no；司机正在派单 driver_order_ing；司机已经接单 driver_order_receive
         foreach ($list as $k => $v) {
             $d_id = $v;
-            if (GatewayService::isDriverUidOnline($d_id) &&
-                $redis->sIsMember('driver_order_no', $d_id)) {
+            if ((new DriverService())->checkDriverCanReceiveOrder($d_id)) {
                 $check = $this->checkDriverPush($order->id, $d_id);
                 if ($check == 2) {
                     continue;
@@ -1095,7 +1096,7 @@ class OrderService
         //通过短信推送给司机
         $driver = DriverT::where('id', $d_id)->find();
         $phone = $driver->phone;
-        (new SendSMSService())->sendOrderSMS($phone, ['code' => '*****' . substr($order->order_num, 5),
+        (new SendSMSService())->sendOrderSMS($phone, ['code' => 'OK' . $order->order_num,
             'order_time' => date('H:i',
                 strtotime($order->create_time))]);
     }
