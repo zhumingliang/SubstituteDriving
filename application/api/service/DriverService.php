@@ -269,6 +269,7 @@ class DriverService
                 array_push($return_data, $data);
             }
         }
+        $return_data = $this->handelSort($return_data);
         return $return_data;
     }
 
@@ -309,6 +310,7 @@ class DriverService
                 array_push($return_data, $data);
             }
         }
+        $return_data = $this->handelSort($return_data);
         return $return_data;
     }
 
@@ -360,7 +362,7 @@ class DriverService
                 if (in_array($v[0], $order_no_arr)) {
                     $state = 1;//可以接单
                 }
-                array_unshift($online, [
+                array_push($online, [
                     'id' => $v[0],
                     'state' => $state,
                     'location' => ['lng' => $v[1][0], 'lat' => $v[1][1]]
@@ -381,8 +383,19 @@ class DriverService
                 }
             }
         }
+        $online = $this->handelSort($online);
         LogService::save(json_encode($online));
         return $online;
+
+    }
+
+    private function handelSort($data)
+    {
+        $value = array();
+        for ($i = count($data) - 1; $i >= 0; $i--) {
+            $value[] = $data[$i];
+        }
+        return $value;
 
     }
 
