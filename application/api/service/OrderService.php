@@ -354,9 +354,8 @@ class OrderService
     public function handelDriverNoAnswer()
     {
         $push = OrderPushT::where('state', OrderEnum::ORDER_PUSH_NO)
-            //->where('receive', CommonEnum::STATE_IS_OK)
-            ->where('type', '<>', 'mini')
-            ->where('create_time', '>', date("Y-m-d H:i:s", time() + config('setting.driver_push_expire_in')))
+            ->where('create_time', '<', date("Y-m-d H:i:s", time() - config('setting.driver_push_expire_in')))
+            ->fetchSql(true)
             ->select();
         foreach ($push as $k => $v) {
             $d_id = $v['d_id'];
@@ -511,7 +510,6 @@ class OrderService
         $lat = $order['start_lat'];
         $lng = $order['start_lng'];
         $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, config('setting.driver_nearby_km'), 'km', 'ASC');
-        LogService::save('push-'.json_encode($list));
         if (!count($list)) {
             return false;
         }
@@ -557,7 +555,7 @@ class OrderService
                 //通过短信推送给司机
                 $driver = DriverT::where('id', $d_id)->find();
                 $phone = $driver->phone;
-                (new SendSMSService())->sendOrderSMS($phone, ['code' => '*****' . substr($order->order_num, 5), 'order_time' => date('H:i', strtotime($order->create_time))]);
+                (new SendSMSService())->sendOrderSMS($phone, ['code' => 'OK' . $order->order_num, 'order_time' => date('H:i', strtotime($order->create_time))]);
                 $push = true;
                 break;
             }
