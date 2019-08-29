@@ -24,8 +24,7 @@ class CalculateUtil
     */
     public static function GetDistance($lat1, $lng1, $lat2, $lng2)
     {
-        LogService::save('lat1:' . $lat1 . 'lng1:' . $lng1 . 'lat2:' . $lat2 . 'lng2:' . $lng2);
-        if (!strlen($lat1) || !strlen($lng1) || !strlen($lat2) || !strlen($lng2)) {
+        if (is_null($lat1) || is_null($lng1) || is_null($lat2) || is_null($lng2)) {
             return 0;
         }
         $radLat1 = self::rad($lat1);
