@@ -10,6 +10,7 @@ use app\api\model\StartPriceT;
 use app\api\model\TimeIntervalT;
 use app\api\model\WaitPriceT;
 use app\api\model\WeatherT;
+use app\api\service\GatewayService;
 use app\api\service\LogService;
 use app\api\service\OrderService;
 use app\api\service\SendSMSService;
@@ -28,10 +29,15 @@ class Index
         $lng='117.8491539171';
         $lat='30.937638346354';
         //查询所有司机并按距离排序（包括在线和不在线）
-        $list = $redis->rawCommand('georadius',
+        $drivers = $redis->rawCommand('georadius',
             'drivers_tongling', $lng, $lat, 100, 'km', 'WITHCOORD');
 
-      print_r($list);
+        foreach ($drivers as $k => $v) {
+            echo $v[0];
+           /* if (GatewayService::isDriverUidOnline($v[0]) && $this->checkOnline($v[0])) {
+
+            }*/
+        }
     }
 
     public function sendMessage($name)
