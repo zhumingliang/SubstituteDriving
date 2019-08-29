@@ -353,7 +353,6 @@ class DriverService
                 array_push($order_no_arr, $v);
             }
         }
-        LogService::save(json_encode($drivers));
         foreach ($drivers as $k => $v) {
             if (GatewayService::isDriverUidOnline($v[0]) && $this->checkOnline($v[0])) {
                 $state = 2;//不可接单
@@ -381,7 +380,6 @@ class DriverService
                 }
             }
         }
-        $online = $this->handelSort($online);
         return $online;
 
     }
