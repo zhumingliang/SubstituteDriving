@@ -378,6 +378,7 @@ class OrderService
                             && (new DriverService())->checkDriverCanReceiveOrder($v['d_id'])) {
                             GatewayService::sendToDriverClient($v['d_id'],
                                 json_decode($v['message'], true));
+                            LogService::save('from:2');
                         }
                     }
 
@@ -590,6 +591,7 @@ class OrderService
                 ];
 
                 GatewayService::sendToDriverClient($d_id, $push_data);
+                LogService::save('from:1');
                 $orderPush->message = json_encode($push_data);
                 $orderPush->save();
                 $push = true;
