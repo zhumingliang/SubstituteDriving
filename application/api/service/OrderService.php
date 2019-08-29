@@ -369,7 +369,7 @@ class OrderService
                 ->select()->toArray();
             if (count($push)) {
                 foreach ($push as $k => $v) {
-                    if (time() > strtotime($v['create_time'] + config('setting.driver_push_expire_in'))) {
+                    if (time() > strtotime($v['create_time']) + config('setting.driver_push_expire_in')) {
                         $d_id = $v['d_id'];
                         $this->prefixPushRefuse($d_id);
                         OrderPushT::update(['state' => OrderEnum::ORDER_PUSH_INVALID], ['id' => $v['id']]);
