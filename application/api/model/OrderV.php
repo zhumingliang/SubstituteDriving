@@ -45,6 +45,7 @@ class OrderV extends Model
             })
             ->where(function ($query) use ($time_begin, $time_end) {
                 if (strlen($time_begin) && strlen($time_end)) {
+                    $time_end = addDay(1, $time_end);
                     $query->whereBetweenTime('create_time', $time_begin, $time_end);
                 }
             })
@@ -59,6 +60,7 @@ class OrderV extends Model
         $list = self::where('state', OrderEnum::ORDER_COMPLETE)
             ->where(function ($query) use ($time_begin, $time_end) {
                 if (strlen($time_begin) && strlen($time_end)) {
+                    $time_end = addDay(1, $time_end);
                     $query->whereBetweenTime('create_time', $time_begin, $time_end);
                 }
             })
@@ -78,6 +80,7 @@ class OrderV extends Model
             })
             ->where(function ($query) use ($time_begin, $time_end) {
                 if (strlen($time_begin) && strlen($time_end)) {
+                    $time_end = addDay(1, $time_end);
                     $query->whereBetweenTime('create_time', $time_begin, $time_end);
                 }
             })
@@ -98,6 +101,7 @@ class OrderV extends Model
             })
             ->where(function ($query) use ($time_begin, $time_end) {
                 if (strlen($time_begin) && strlen($time_end)) {
+                    $time_end = addDay(1, $time_end);
                     $query->whereBetweenTime('create_time', $time_begin, $time_end);
                 }
             })
@@ -118,6 +122,7 @@ class OrderV extends Model
             })
             ->where(function ($query) use ($time_begin, $time_end) {
                 if (strlen($time_begin) && strlen($time_end)) {
+                    $time_end = addDay(1, $time_end);
                     $query->whereBetweenTime('create_time', $time_begin, $time_end);
                 }
             })
@@ -155,6 +160,7 @@ class OrderV extends Model
             }
         })->where(function ($query) use ($time_begin, $time_end) {
             if (strlen($time_begin) && strlen($time_end)) {
+                $time_end = addDay(1, $time_end);
                 $query->whereBetweenTime('create_time', $time_begin, $time_end);
             }
         })

@@ -70,11 +70,11 @@ class OrderT extends Model
 
     public static function getDriverOrders($d_id, $page, $size, $time_begin, $time_end)
     {
-        $time_end = addDay(1, $time_end);
         $list = self::where('d_id', $d_id)
             ->whereIn('state', '2,4')
             ->where(function ($query) use ($time_begin, $time_end) {
                 if (strlen($time_begin) && strlen($time_end)) {
+                    $time_end = addDay(1, $time_end);
                     $query->whereBetweenTime('create_time', $time_begin, $time_end);
                 }
             })
@@ -87,11 +87,11 @@ class OrderT extends Model
 
     public static function driverOrderCount($d_id, $time_begin, $time_end)
     {
-        $time_end = addDay(1, $time_end);
         $counts = $list = self::where('state', OrderEnum::ORDER_COMPLETE)
             ->where('d_id', $d_id)
             ->where(function ($query) use ($time_begin, $time_end) {
                 if (strlen($time_begin) && strlen($time_end)) {
+                    $time_end = addDay(1, $time_end);
                     $query->whereBetweenTime('create_time', $time_begin, $time_end);
                 }
             })
@@ -105,11 +105,11 @@ class OrderT extends Model
 
     public static function driverOrdersMoney($d_id, $time_begin, $time_end)
     {
-        $time_end = addDay(1, $time_end);
         $money = $list = self::where('d_id', $d_id)
             ->where('state', OrderEnum::ORDER_COMPLETE)
             ->where(function ($query) use ($time_begin, $time_end) {
                 if (strlen($time_begin) && strlen($time_end)) {
+                    $time_end = addDay(1, $time_end);
                     $query->whereBetweenTime('create_time', $time_begin, $time_end);
                 }
             })
