@@ -511,7 +511,7 @@ class OrderService
         $lat = $order['start_lat'];
         $lng = $order['start_lng'];
         $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, config('setting.driver_nearby_km'), 'km', 'ASC');
-        LogService::save(json_encode($list));
+        LogService::save('push-'.json_encode($list));
         if (!count($list)) {
             return false;
         }
