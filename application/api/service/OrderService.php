@@ -363,14 +363,13 @@ class OrderService
      */
     public function handelDriverNoAnswer()
     {
-        try {
+      //  try {
             $push = OrderPushT::where('state', OrderEnum::ORDER_PUSH_NO)
                 // ->where('create_time', '<', date("Y-m-d H:i:s", time() - config('setting.driver_push_expire_in')))
                 ->select()->toArray();
             if (count($push)) {
                 foreach ($push as $k => $v) {
                     if (time() > strtotime($v['create_time']) + config('setting.driver_push_expire_in')) {
-                        LogService::save('now:' . time() . '---' . 'c_time:' . strtotime($v['create_time']) + config('setting.driver_push_expire_in'));
                         $d_id = $v['d_id'];
                         $this->prefixPushRefuse($d_id);
                         OrderPushT::update(['state' => OrderEnum::ORDER_PUSH_INVALID], ['id' => $v['id']]);
@@ -385,9 +384,9 @@ class OrderService
 
                 }
             }
-        } catch (Exception $e) {
+       /* } catch (Exception $e) {
             LogService::save('handelDriverNoAnswer:' . $e->getMessage());
-        }
+        }*/
 
 
     }
