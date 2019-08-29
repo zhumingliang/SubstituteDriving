@@ -375,9 +375,12 @@ class OrderService
                     $this->prefixPushRefuse($d_id);
                     OrderPushT::update(['state' => OrderEnum::ORDER_PUSH_INVALID], ['id' => $v['id']]);
                 } else {
+                    $check = (new DriverService())->checkDriverCanReceiveOrder($v['d_id']);
+                    LogService::save('check:'.$check);
+
                     if ($v['receive'] == 2 && !empty($v['message'])
                         && (new DriverService())->checkDriverCanReceiveOrder($v['d_id'])) {
-                       LogService::save('send:2');
+                        LogService::save('send:2');
                         GatewayService::sendToDriverClient($v['d_id'],
                             json_decode($v['message'], true));
                     }
