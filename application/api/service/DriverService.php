@@ -353,10 +353,7 @@ class DriverService
                 array_push($order_no_arr, $v);
             }
         }
-        if (!count($drivers)) {
-            return array();
-        }
-
+        LogService::save(json_encode($drivers));
         foreach ($drivers as $k => $v) {
             if (GatewayService::isDriverUidOnline($v[0]) && $this->checkOnline($v[0])) {
                 $state = 2;//不可接单
