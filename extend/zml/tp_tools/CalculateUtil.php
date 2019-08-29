@@ -4,6 +4,8 @@
 namespace zml\tp_tools;
 
 
+use app\api\service\LogService;
+
 class CalculateUtil
 {
     public static $EARTH_RADIUS = 6378.137;//地球半径
@@ -22,6 +24,7 @@ class CalculateUtil
     */
     public static function GetDistance($lat1, $lng1, $lat2, $lng2)
     {
+        LogService::save('lat1:' . $lat1 . 'lng1:' . $lng1 . 'lat2:' . $lat2 . 'lng2:' . $lng2);
         if (!strlen($lat1) || !strlen($lng1) || !strlen($lat2) || !strlen($lng2)) {
             return 0;
         }
