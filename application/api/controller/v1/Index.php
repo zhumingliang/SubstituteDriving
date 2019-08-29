@@ -23,7 +23,7 @@ class Index
 {
     public function index()
     {
-        $redis=new Redis();
+        $redis=new \Redis();
         $lng='117.8491539171';
         $lat='30.937638346354';
         //查询所有司机并按距离排序（包括在线和不在线）
