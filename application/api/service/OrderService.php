@@ -355,13 +355,15 @@ class OrderService
     {
         $push = OrderPushT::where('state', OrderEnum::ORDER_PUSH_NO)
             ->where('create_time', '<', date("Y-m-d H:i:s", time() - config('setting.driver_push_expire_in')))
-            ->fetchSql(true)
-            ->select();
-        foreach ($push as $k => $v) {
-            $d_id = $v['d_id'];
-            $this->prefixPushRefuse($d_id);
-            OrderPushT::update(['state' => OrderEnum::ORDER_PUSH_INVALID], ['id' => $d_id]);
+            ->select()->toArray();
+        if (count($push)) {
+            foreach ($push as $k => $v) {
+                $d_id = $v['d_id'];
+                $this->prefixPushRefuse($d_id);
+                OrderPushT::update(['state' => OrderEnum::ORDER_PUSH_INVALID], ['id' => $d_id]);
+            }
         }
+
     }
 
 
@@ -374,16 +376,18 @@ class OrderService
             ->where('count', '<', 10)
             ->select()
             ->toArray();
+        if (count($push)) {
+            foreach ($push as $k => $v) {
+                if (GatewayService::isMINIUidOnline($v['u_id'])) {
+                    GatewayService::sendToMiniClient($v['u_id'], json_decode($v['message'], true));
 
-
-        foreach ($push as $k => $v) {
-            if (GatewayService::isMINIUidOnline($v['u_id'])) {
-                GatewayService::sendToMiniClient($v['u_id'], json_decode($v['message'], true));
-
-                MiniPushT::update(['count' => $v['count'] + 1],
-                    ['id' => $v['id']]);
+                    MiniPushT::update(['count' => $v['count'] + 1],
+                        ['id' => $v['id']]);
+                }
             }
         }
+
+
     }
 
     /**
