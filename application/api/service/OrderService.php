@@ -367,7 +367,7 @@ class OrderService
                 foreach ($push as $k => $v) {
                     $d_id = $v['d_id'];
                     $this->prefixPushRefuse($d_id);
-                    OrderPushT::update(['state' => OrderEnum::ORDER_PUSH_INVALID], ['id' => $push->id]);
+                    OrderPushT::update(['state' => OrderEnum::ORDER_PUSH_INVALID], ['id' => $push['id']]);
                 }
             }
         } catch (Exception $e) {
