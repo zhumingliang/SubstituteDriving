@@ -5,6 +5,7 @@ namespace app\api\controller\v1;
 
 
 use app\api\controller\BaseController;
+use app\api\service\LogService;
 use app\api\service\SendSMSService;
 use app\lib\exception\SuccessMessage;
 use think\Cache;
@@ -62,6 +63,8 @@ class SendSMS extends BaseController
      */
     public function sendHandel()
     {
+        LogService::save('sendHandel_begin');
+
         (new SendSMSService())->sendHandel();
 
     }

@@ -334,6 +334,8 @@ class OrderService
     private function prefixOrderList($o_id, $list_id)
     {
         try {
+            LogService::save('prefixOrderList_begin');
+
             //获取订单信息并检测订单状态
             $order = OrderT::getOrder($o_id);
             if (!$order || $order->state != OrderEnum::ORDER_NO
@@ -359,6 +361,7 @@ class OrderService
     public function handelDriverNoAnswer()
     {
         try {
+            LogService::save('handelDriverNoAnswer_begin');
             $push = OrderPushT::where('state', OrderEnum::ORDER_PUSH_NO)
                 ->where('create_time', '<', date("Y-m-d H:i:s", time() - config('setting.driver_push_expire_in')))
                 ->select()->toArray();
@@ -383,6 +386,7 @@ class OrderService
     public function handelMiniNoAnswer()
     {
         try {
+            LogService::save('handelMiniNoAnswer_begin');
 
             $push = MiniPushT::where('state', '<>', 3)
                 ->where('count', '<', 10)
