@@ -203,6 +203,7 @@ class OrderService
             ];
         }
 
+
         $farRule = StartPriceT::where('type', 2)
             ->where('state', CommonEnum::STATE_IS_OK)
             ->order('order')
@@ -546,6 +547,12 @@ class OrderService
                 $redis->sRem('driver_order_no', $d_id);
                 $redis->sAdd('driver_order_ing', $d_id);
 
+                //通过短信推送给司机
+                $driver = DriverT::where('id', $d_id)->find();
+                $phone = $driver->phone;
+                (new SendSMSService())->sendOrderSMS($phone, ['code' => 'OK' . $order->order_num, 'order_time' => date('H:i', strtotime($order->create_time))]);
+
+
                 $push = OrderPushT::create(
                     [
                         'd_id' => $d_id,
@@ -570,11 +577,9 @@ class OrderService
                     ]
                 ];
                 GatewayService::sendToDriverClient($d_id, $push_data);
-                //通过短信推送给司机
-                $driver = DriverT::where('id', $d_id)->find();
-                $phone = $driver->phone;
-                (new SendSMSService())->sendOrderSMS($phone, ['code' => 'OK' . $order->order_num, 'order_time' => date('H:i', strtotime($order->create_time))]);
-                $push = true;
+
+
+              $push = true;
                 break;
             }
 

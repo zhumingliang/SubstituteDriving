@@ -28,7 +28,7 @@ class Order extends BaseValidate
         'orderLocations' => ['id'],
         'orderBegin' => ['id'],
         'saveMiniOrder' => ['start', 'start_lng', 'start_lat'],
-        'saveDriverOrder' => ['start', 'start_lng', 'start_lat'],
+        'saveDriverOrder' => ['phone'],
         //'orderComplete' => ['id', 'wait_time', 'wait_money', 'distance', 'distance_money'],
     ];
 }

@@ -22,7 +22,7 @@ class CalculateUtil
     */
     public static function GetDistance($lat1, $lng1, $lat2, $lng2)
     {
-        if (empty($lat1) || empty($lng1) || empty($lat2) || empty($lng2)) {
+        if (!strlen($lat1) || !strlen($lng1) || !strlen($lat2) || !strlen($lng2)) {
             return 0;
         }
         $radLat1 = self::rad($lat1);
