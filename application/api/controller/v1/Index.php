@@ -28,7 +28,9 @@ class Index
         //查询所有司机并按距离排序（包括在线和不在线）
         $list = $this->redis->rawCommand('georadius',
             'drivers_tongling', $lng, $lat, 10, 'km', 'WITHCOORD');
-        return $list;    }
+
+        print_r($list);
+    }
 
     public function sendMessage($name)
     {
