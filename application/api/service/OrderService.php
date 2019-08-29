@@ -333,17 +333,22 @@ class OrderService
 
     private function prefixOrderList($o_id, $list_id)
     {
-        //获取订单信息并检测订单状态
-        $order = OrderT::getOrder($o_id);
-        if (!$order || $order->state != OrderEnum::ORDER_NO
-            || $order->stop == OrderEnum::ORDER_STOP) {
-            OrderListT::update(['state' => OrderEnum::ORDER_LIST_COMPLETE], ['id' => $list_id]);
-            return true;
+        try {
+            //获取订单信息并检测订单状态
+            $order = OrderT::getOrder($o_id);
+            if (!$order || $order->state != OrderEnum::ORDER_NO
+                || $order->stop == OrderEnum::ORDER_STOP) {
+                OrderListT::update(['state' => OrderEnum::ORDER_LIST_COMPLETE], ['id' => $list_id]);
+                return true;
+            }
+            //查找司机并推送
+            if (!$this->findDriverToPush($order)) {
+                OrderListT::update(['state' => OrderEnum::ORDER_LIST_NO], ['id' => $list_id]);
+            }
+        } catch (Exception $e) {
+            LogService::save('prefixOrderList:' . $e->getMessage());
         }
-        //查找司机并推送
-        if (!$this->findDriverToPush($order)) {
-            OrderListT::update(['state' => OrderEnum::ORDER_LIST_NO], ['id' => $list_id]);
-        }
+
 
     }
 
@@ -353,16 +358,21 @@ class OrderService
      */
     public function handelDriverNoAnswer()
     {
-        $push = OrderPushT::where('state', OrderEnum::ORDER_PUSH_NO)
-            ->where('create_time', '<', date("Y-m-d H:i:s", time() - config('setting.driver_push_expire_in')))
-            ->select()->toArray();
-        if (count($push)) {
-            foreach ($push as $k => $v) {
-                $d_id = $v['d_id'];
-                $this->prefixPushRefuse($d_id);
-                OrderPushT::update(['state' => OrderEnum::ORDER_PUSH_INVALID], ['id' => $d_id]);
+        try {
+            $push = OrderPushT::where('state', OrderEnum::ORDER_PUSH_NO)
+                ->where('create_time', '<', date("Y-m-d H:i:s", time() - config('setting.driver_push_expire_in')))
+                ->select()->toArray();
+            if (count($push)) {
+                foreach ($push as $k => $v) {
+                    $d_id = $v['d_id'];
+                    $this->prefixPushRefuse($d_id);
+                    OrderPushT::update(['state' => OrderEnum::ORDER_PUSH_INVALID], ['id' => $d_id]);
+                }
             }
+        } catch (Exception $e) {
+            LogService::save('handelDriverNoAnswer:' . $e->getMessage());
         }
+
 
     }
 
@@ -372,21 +382,25 @@ class OrderService
      */
     public function handelMiniNoAnswer()
     {
-        $push = MiniPushT::where('state', '<>', 3)
-            ->where('count', '<', 10)
-            ->select()
-            ->toArray();
-        if (count($push)) {
-            foreach ($push as $k => $v) {
-                if (GatewayService::isMINIUidOnline($v['u_id'])) {
-                    GatewayService::sendToMiniClient($v['u_id'], json_decode($v['message'], true));
+        try {
 
-                    MiniPushT::update(['count' => $v['count'] + 1],
-                        ['id' => $v['id']]);
+            $push = MiniPushT::where('state', '<>', 3)
+                ->where('count', '<', 10)
+                ->select()
+                ->toArray();
+            if (count($push)) {
+                foreach ($push as $k => $v) {
+                    if (GatewayService::isMINIUidOnline($v['u_id'])) {
+                        GatewayService::sendToMiniClient($v['u_id'], json_decode($v['message'], true));
+
+                        MiniPushT::update(['count' => $v['count'] + 1],
+                            ['id' => $v['id']]);
+                    }
                 }
             }
+        } catch (Exception $e) {
+            LogService::save('handelMiniNoAnswer:' . $e->getMessage());
         }
-
 
     }
 
