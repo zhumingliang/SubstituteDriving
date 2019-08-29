@@ -24,19 +24,19 @@ class Index
 {
     public function index()
     {
+       echo date('Y-m-d H:i:s', 1567103461);
+        /* $redis = new \Redis();
+         $redis->connect('127.0.0.1', 6379, 60);
+         $lng='117.8491539171';
+         $lat='30.937638346354';
+         //查询所有司机并按距离排序（包括在线和不在线）
+         $drivers = $redis->rawCommand('georadius',
+             'drivers_tongling', $lng, $lat, 100, 'km', 'WITHCOORD');
 
-       /* $redis = new \Redis();
-        $redis->connect('127.0.0.1', 6379, 60);
-        $lng='117.8491539171';
-        $lat='30.937638346354';
-        //查询所有司机并按距离排序（包括在线和不在线）
-        $drivers = $redis->rawCommand('georadius',
-            'drivers_tongling', $lng, $lat, 100, 'km', 'WITHCOORD');
+         foreach ($drivers as $k => $v) {
+             echo $v[0];
 
-        foreach ($drivers as $k => $v) {
-            echo $v[0];
-
-        }*/
+         }*/
     }
 
     public function sendMessage($name)

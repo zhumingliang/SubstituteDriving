@@ -377,6 +377,7 @@ class OrderService
                 } else {
                     if ($v['receive'] == 2 && !empty($v['message'])
                         && (new DriverService())->checkDriverCanReceiveOrder($v['d_id'])) {
+                       LogService::save('send:2');
                         GatewayService::sendToDriverClient($v['d_id'],
                             json_decode($v['message'], true));
                     }
