@@ -286,12 +286,18 @@ class Order extends BaseController
      * @apiExample {post}  请求样例:
      *    {
      *       "id":1,
+     *       "end":铜陵市高速",
+     *       "end_lat":"12.1212",
+     *       "end_lng":"21.1212",
      *       "wait_time":360
      *       "wait_money":10,
      *       "distance":10.01,
      *       "distance_money":30,
      *     }
      * @apiParam (请求参数说明) {int} id 订单id
+     * @apiParam (请求参数说明) {String} end  目的地
+     * @apiParam (请求参数说明) {String} end_lat  目的地纬度
+     * @apiParam (请求参数说明) {String} end_lng  目的地经度
      * @apiParam (请求参数说明) {int} wait_time 等待时间 单位分，不足一分钟按一分钟算
      * @apiParam (请求参数说明) {Float} wait_money 等待产生费用
      * @apiParam (请求参数说明) {Float} distance 行驶距离

@@ -753,6 +753,16 @@ class OrderService
             $id = $params['id'];
             $wait_time = $params['wait_time'];
             $order = $this->getOrder($id);
+            if (!empty($params['end'])) {
+                $order->end = $params['end'];
+            }
+            if (!empty($params['end_lat'])) {
+                $order->end_lat = $params['end_lat'];
+            }
+            if (!empty($params['end_lng'])) {
+                $order->end_lng = $params['end_lng'];
+            }
+
             if ($order->state == OrderEnum::ORDER_COMPLETE) {
                 return $this->prepareOrderInfo($order);
             }
