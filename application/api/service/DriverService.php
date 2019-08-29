@@ -269,7 +269,6 @@ class DriverService
                 array_push($return_data, $data);
             }
         }
-        $return_data = $this->handelSort($return_data);
         return $return_data;
     }
 
@@ -310,7 +309,6 @@ class DriverService
                 array_push($return_data, $data);
             }
         }
-        $return_data = $this->handelSort($return_data);
         return $return_data;
     }
 
@@ -384,17 +382,18 @@ class DriverService
             }
         }
         $online = $this->handelSort($online);
-        LogService::save(json_encode($online));
         return $online;
 
     }
 
     private function handelSort($data)
     {
+        LogService::save(json_encode($data));
         $value = array();
         for ($i = count($data) - 1; $i >= 0; $i--) {
             $value[] = $data[$i];
         }
+        LogService::save(json_encode($value));
         return $value;
 
     }
