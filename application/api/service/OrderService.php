@@ -157,7 +157,12 @@ class OrderService
      */
     private function pushToDriver($d_id, $order)
     {
-        $push = OrderPushT::create(
+        //通过短信推送给司机
+        $driver = DriverT::where('id', $d_id)->find();
+        $phone = $driver->phone;
+        (new SendSMSService())->sendOrderSMS($phone, ['code' => 'OK' . $order->order_num, 'order_time' => date('H:i', strtotime($order->create_time))]);
+
+        $orderPush = OrderPushT::create(
             [
                 'd_id' => $d_id,
                 'o_id' => $order->id,
@@ -178,15 +183,14 @@ class OrderService
                 'distance' => $distance_info['distance'],
                 'distance_money' => $distance_info['distance_money'],
                 'create_time' => $order->create_time,
-                'p_id' => $push->id,
+                'p_id' => $orderPush->id,
 
             ]
         ];
         GatewayService::sendToDriverClient($d_id, $push_data);
-        //通过短信推送给司机
-        $driver = DriverT::where('id', $d_id)->find();
-        $phone = $driver->phone;
-        (new SendSMSService())->sendOrderSMS($phone, ['code' => 'OK' . $order->order_num, 'order_time' => date('H:i', strtotime($order->create_time))]);
+
+        $orderPush->message = json_encode($push_data);
+        $orderPush->save();
     }
 
     private function prefixFar($start_lng, $start_lat, $driver_lng, $driver_lat)
@@ -360,15 +364,22 @@ class OrderService
     public function handelDriverNoAnswer()
     {
         try {
-            LogService::save('handelDriverNoAnswer_begin');
             $push = OrderPushT::where('state', OrderEnum::ORDER_PUSH_NO)
-                ->where('create_time', '<', date("Y-m-d H:i:s", time() - config('setting.driver_push_expire_in')))
+                // ->where('create_time', '<', date("Y-m-d H:i:s", time() - config('setting.driver_push_expire_in')))
                 ->select()->toArray();
             if (count($push)) {
                 foreach ($push as $k => $v) {
-                    $d_id = $v['d_id'];
-                    $this->prefixPushRefuse($d_id);
-                    OrderPushT::update(['state' => OrderEnum::ORDER_PUSH_INVALID], ['id' => $v['id']]);
+                    if (time() > strtotime($v['create_time'] + config('setting.driver_push_expire_in'))) {
+                        $d_id = $v['d_id'];
+                        $this->prefixPushRefuse($d_id);
+                        OrderPushT::update(['state' => OrderEnum::ORDER_PUSH_INVALID], ['id' => $v['id']]);
+                    } else {
+                        if ($v['receive'] == 2 && !empty($v['message']) && GatewayService::isDriverUidOnline($v['d_id'])) {
+                            GatewayService::sendToDriverClient($v['d_id'], json_decode($v['message'], true));
+                        }
+                    }
+
+
                 }
             }
         } catch (Exception $e) {
@@ -553,7 +564,7 @@ class OrderService
                 (new SendSMSService())->sendOrderSMS($phone, ['code' => 'OK' . $order->order_num, 'order_time' => date('H:i', strtotime($order->create_time))]);
 
 
-                $push = OrderPushT::create(
+                $orderPush = OrderPushT::create(
                     [
                         'd_id' => $d_id,
                         'o_id' => $order->id,
@@ -572,14 +583,15 @@ class OrderService
                         'start' => $order->start,
                         'end' => $order->end,
                         'create_time' => $order->create_time,
-                        'p_id' => $push->id
+                        'p_id' => $orderPush->id
 
                     ]
                 ];
+
                 GatewayService::sendToDriverClient($d_id, $push_data);
-
-
-              $push = true;
+                $orderPush->message = json_encode($push_data);
+                $orderPush->save();
+                $push = true;
                 break;
             }
 

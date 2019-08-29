@@ -163,7 +163,6 @@ class Order extends BaseController
 
     }
 
-
     /**
      * @api {POST} /api/v1/order/begin/wait  Android司机端-到达目的地，点击开始等待
      * @apiGroup   Android
