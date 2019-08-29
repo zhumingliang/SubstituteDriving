@@ -30,7 +30,7 @@ class Index
         $list = $redis->rawCommand('georadius',
             'drivers_tongling', $lng, $lat, 100, 'km', 'WITHCOORD');
 
-        print_r($list);
+      var_dump($list);
     }
 
     public function sendMessage($name)
