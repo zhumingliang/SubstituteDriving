@@ -63,8 +63,6 @@ class SendSMS extends BaseController
      */
     public function sendHandel()
     {
-        LogService::save('sendHandel_begin');
-
         (new SendSMSService())->sendHandel();
 
     }

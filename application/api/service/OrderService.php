@@ -334,8 +334,6 @@ class OrderService
     private function prefixOrderList($o_id, $list_id)
     {
         try {
-            LogService::save('prefixOrderList_begin');
-
             //获取订单信息并检测订单状态
             $order = OrderT::getOrder($o_id);
             if (!$order || $order->state != OrderEnum::ORDER_NO
@@ -369,7 +367,7 @@ class OrderService
                 foreach ($push as $k => $v) {
                     $d_id = $v['d_id'];
                     $this->prefixPushRefuse($d_id);
-                    OrderPushT::update(['state' => OrderEnum::ORDER_PUSH_INVALID], ['id' => $d_id]);
+                    OrderPushT::update(['state' => OrderEnum::ORDER_PUSH_INVALID], ['id' => $push->id]);
                 }
             }
         } catch (Exception $e) {
@@ -386,8 +384,6 @@ class OrderService
     public function handelMiniNoAnswer()
     {
         try {
-            LogService::save('handelMiniNoAnswer_begin');
-
             $push = MiniPushT::where('state', '<>', 3)
                 ->where('count', '<', 10)
                 ->select()
