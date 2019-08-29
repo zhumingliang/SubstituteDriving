@@ -350,7 +350,7 @@ class OrderService
             //查找司机并推送
             $push = $this->findDriverToPush($order);
             LogService::save($push);
-            if (!$push) {
+            if ($push == CommonEnum::STATE_IS_FAIL) {
                 OrderListT::update(['state' => OrderEnum::ORDER_LIST_NO], ['id' => $list_id]);
             }
         } catch (Exception $e) {
@@ -547,9 +547,9 @@ class OrderService
         $lng = $order['start_lng'];
         $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, config('setting.driver_nearby_km'), 'km', 'ASC');
         if (!count($list)) {
-            return false;
+            return CommonEnum::STATE_IS_FAIL;
         }
-        $push = false;
+        $push = CommonEnum::STATE_IS_FAIL;
         //设置三个set: 司机未接单 driver_order_no；司机正在派单 driver_order_ing；司机已经接单 driver_order_receive
         foreach ($list as $k => $v) {
             $d_id = $v;
@@ -596,7 +596,7 @@ class OrderService
                 LogService::save('from:1');
                 $orderPush->message = json_encode($push_data);
                 $orderPush->save();
-                $push = true;
+                $push = CommonEnum::STATE_IS_OK;
                 break;
             }
 
