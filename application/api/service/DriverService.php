@@ -388,12 +388,12 @@ class DriverService
 
     private function handelSort($data)
     {
-        LogService::save(json_encode($data));
+        LogService::save('begin-'.json_encode($data));
         $value = array();
         for ($i = count($data) - 1; $i >= 0; $i--) {
             $value[] = $data[$i];
         }
-        LogService::save(json_encode($value));
+        LogService::save('end-'.json_encode($value));
         return $value;
 
     }
