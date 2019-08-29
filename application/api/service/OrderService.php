@@ -570,7 +570,8 @@ class OrderService
                         'd_id' => $d_id,
                         'o_id' => $order->id,
                         'type' => 'normal',
-                        'state' => OrderEnum::ORDER_PUSH_NO
+                        'state' => OrderEnum::ORDER_PUSH_NO,
+                        'create_time' => date('Y-m-d H:i:s')
                     ]
                 );
                 //通过websocket推送给司机
