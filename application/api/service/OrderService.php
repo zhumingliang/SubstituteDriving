@@ -349,7 +349,6 @@ class OrderService
             }
             //查找司机并推送
             $push = $this->findDriverToPush($order);
-            LogService::save($push);
             if ($push == CommonEnum::STATE_IS_FAIL) {
                 OrderListT::update(['state' => OrderEnum::ORDER_LIST_NO], ['id' => $list_id]);
             }
@@ -368,7 +367,6 @@ class OrderService
     {
         //  try {
         $push = OrderPushT::where('state', OrderEnum::ORDER_PUSH_NO)
-            // ->where('create_time', '<', date("Y-m-d H:i:s", time() - config('setting.driver_push_expire_in')))
             ->select()->toArray();
         if (count($push)) {
             foreach ($push as $k => $v) {
@@ -381,7 +379,6 @@ class OrderService
                         && (new DriverService())->checkDriverCanReceiveOrder($v['d_id'])) {
                         GatewayService::sendToDriverClient($v['d_id'],
                             json_decode($v['message'], true));
-                        LogService::save('from:2');
                     }
                 }
 
@@ -592,8 +589,7 @@ class OrderService
                     ]
                 ];
 
-                GatewayService::sendToDriverClient($d_id, $push_data);
-                LogService::save('from:1');
+               // GatewayService::sendToDriverClient($d_id, $push_data);
                 $orderPush->message = json_encode($push_data);
                 $orderPush->save();
                 $push = CommonEnum::STATE_IS_OK;
