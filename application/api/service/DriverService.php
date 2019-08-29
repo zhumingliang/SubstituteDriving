@@ -353,6 +353,9 @@ class DriverService
                 array_push($order_no_arr, $v);
             }
         }
+        if (!count($drivers)) {
+            return array();
+        }
 
         foreach ($drivers as $k => $v) {
             if (GatewayService::isDriverUidOnline($v[0]) && $this->checkOnline($v[0])) {
