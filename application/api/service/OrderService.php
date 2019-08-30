@@ -166,11 +166,11 @@ class OrderService
             [
                 'd_id' => $d_id,
                 'o_id' => $order->id,
-                'state' => OrderEnum::ORDER_PUSH_NO
+                'state' => OrderEnum::ORDER_PUSH_NO,
+                'limit_time'=>time()
             ]
         );
         $distance_info = $this->getDistanceInfoToPush($order);
-
         //通过websocket推送给司机
         $push_data = [
             'type' => 'order',
@@ -188,7 +188,6 @@ class OrderService
             ]
         ];
         GatewayService::sendToDriverClient($d_id, $push_data);
-
         $orderPush->message = json_encode($push_data);
         $orderPush->save();
     }
