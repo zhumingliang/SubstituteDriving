@@ -498,10 +498,12 @@ class DriverService
 
     public function checkDriverCanReceiveOrder($d_id)
     {
+        LogService::save('d_id:'.$d_id.'-----check:'.GatewayService::isDriverUidOnline($d_id));
         if (!(GatewayService::isDriverUidOnline($d_id))) {
             LogService::save('gl');
             return 2;
         }
+
         if (!($this->redis->sIsMember('driver_order_no', $d_id))) {
             LogService::save('nm');
             return 2;
