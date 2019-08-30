@@ -1322,13 +1322,19 @@ class OrderService
                             $query->field('id,username');
                         }])
                         ->order('create_time desc')->find();
-                    $data[$k]['push'] = array();
                     if ($push) {
                         $data[$k]['push'] = [
                             'd_id' => $push->d_id,
                             'name' => $push->driver->username,
                             'create_time' => $push->create_time,
                             'state' => $push->state
+                        ];
+                    }else{
+                        $data[$k]['push'] = [
+                            'd_id' => '',
+                            'name' => '',
+                            'create_time' => '',
+                            'state' =>''
                         ];
                     }
                 }
