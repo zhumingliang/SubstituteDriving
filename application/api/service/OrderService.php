@@ -374,7 +374,7 @@ class OrderService
                     LogService::save('handelDriverNoAnswer：' . $v['id']);
 
                     if (time() > $v['limit_time'] + config('setting.driver_push_expire_in')) {
-                        LogService::save('time:' . time() - $v['limit_time']);
+                        LogService::save('time:' . (time() - $v['limit_time']));
 
                         $this->prefixPushRefuse($d_id);
                         OrderPushT::update(['state' => OrderEnum::ORDER_PUSH_INVALID], ['id' => $v['id']]);
