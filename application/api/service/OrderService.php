@@ -1083,13 +1083,22 @@ class OrderService
         } else if ($push_type == "manager") {
             $from_name = "管理员";
         }
-        $push = OrderPushT::create(
+
+        //通过短信推送给司机
+        $driver = DriverT::where('id', $d_id)->find();
+        $phone = $driver->phone;
+        (new SendSMSService())->sendOrderSMS($phone, ['code' => 'OK' . $order->order_num,
+            'order_time' => date('H:i',
+                strtotime($order->create_time))]);
+
+        $orderPush = OrderPushT::create(
             [
                 'f_d_id' => $order->d_id,
                 'd_id' => $d_id,
                 'o_id' => $order->id,
                 'type' => 'transfer',
-                'state' => OrderEnum::ORDER_PUSH_NO
+                'state' => OrderEnum::ORDER_PUSH_NO,
+                'limit_time' => time()
             ]
         );
         //通过websocket推送给司机
@@ -1104,18 +1113,15 @@ class OrderService
                 'start' => $order->start,
                 'end' => $order->end,
                 'create_time' => $order->create_time,
-                'p_id' => $push->id,
+                'p_id' => $orderPush->id,
                 'distance' => $distance_info['distance'],
                 'distance_money' => $distance_info['distance_money']
             ]
         ];
+
         GatewayService::sendToDriverClient($d_id, $push_data);
-        //通过短信推送给司机
-        $driver = DriverT::where('id', $d_id)->find();
-        $phone = $driver->phone;
-        (new SendSMSService())->sendOrderSMS($phone, ['code' => 'OK' . $order->order_num,
-            'order_time' => date('H:i',
-                strtotime($order->create_time))]);
+        $orderPush->message = json_encode($push_data);
+        $orderPush->save();
     }
 
 
