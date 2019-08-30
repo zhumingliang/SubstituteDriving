@@ -10,6 +10,7 @@
 namespace zml\tp_aliyun;
 
 use app\api\model\LogT;
+use app\api\service\LogService;
 use think\Exception;
 use think\Validate;
 
@@ -124,6 +125,7 @@ class SendSms
             if ($this->createRequestUrl($phone, $params, $type) && $this->signature) {
                 $url = "{$this->requestHost}/?Signature={$this->signature}{$this->requestUrl}";
                 $res = $this->fetchContent($url);
+                LogService::save($res);
                 return json_decode($res, true);
             } else {
                 LogT::create(['msg' => '参数错误']);

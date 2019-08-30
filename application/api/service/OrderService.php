@@ -578,7 +578,8 @@ class OrderService
                 //通过短信推送给司机
                 $driver = DriverT::where('id', $d_id)->find();
                 $phone = $driver->phone;
-                (new SendSMSService())->sendOrderSMS($phone, ['code' => 'OK' . $order->order_num, 'order_time' => date('H:i', strtotime($order->create_time))]);
+                (new SendSMSService())->sendOrderSMS($phone, ['code' => 'OK' . $order->order_num,
+                    'order_time' => $order->create_time]);
 
                 $orderPush = OrderPushT::create(
                     [
