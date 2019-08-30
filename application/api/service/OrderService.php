@@ -167,7 +167,7 @@ class OrderService
                 'd_id' => $d_id,
                 'o_id' => $order->id,
                 'state' => OrderEnum::ORDER_PUSH_NO,
-                'limit_time'=>time()
+                'limit_time' => time()
             ]
         );
         $distance_info = $this->getDistanceInfoToPush($order);
@@ -1307,6 +1307,7 @@ class OrderService
     public function current($page, $size)
     {
         $orders = Orderv::currentOrders($page, $size);
+        print_r($orders);
         $orders['data'] = $this->prefixCurrentPush($orders['data']);
         return $orders;
     }
@@ -1322,14 +1323,15 @@ class OrderService
                             $query->field('id,username');
                         }])
                         ->order('create_time desc')->find();
-
-                    $data[$k]['push'] = [
-                        'd_id' => $push->d_id,
-                        'name' => $push->driver->username,
-                        'create_time' => $push->create_time,
-                        'state' => $push->state
-                    ];
-
+                    $data[$k]['push'] = array();
+                    if ($push) {
+                        $data[$k]['push'] = [
+                            'd_id' => $push->d_id,
+                            'name' => $push->driver->username,
+                            'create_time' => $push->create_time,
+                            'state' => $push->state
+                        ];
+                    }
                 }
             }
 

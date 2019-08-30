@@ -26,22 +26,7 @@ class Index
 {
     public function index()
     {
-        $orderPush = OrderPushT::where('o_id', 250)
-            ->where('state', CommonEnum::STATE_IS_OK)
-            ->order('create_time desc')
-            ->find();
-        if ($orderPush) {
-            $d_id = $orderPush->d_id;
-            //处理推送取消
-            //触发器-处理订单/订单处理列表状态
-            $orderPush->state = OrderEnum::ORDER_PUSH_WITHDRAW;
-            $orderPush->save();
-        } else {
-            $d_id = '';
-        }
-
-(new DriverService())->handelDriveStateByCancel($d_id);
-    //记录撤销记录
+        
     }
 
     public function sendMessage($name)
