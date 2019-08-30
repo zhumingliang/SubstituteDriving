@@ -375,6 +375,14 @@ class OrderService
                     $this->prefixPushRefuse($d_id);
                     OrderPushT::update(['state' => OrderEnum::ORDER_PUSH_INVALID], ['id' => $v['id']]);
                 } else {
+                    $res = [
+                        'd_id' => $d_id,
+                        'receive' => $v['receive'],
+                        'donline' => GatewayService::isDriverUidOnline($d_id),
+                        'online' => checkOnline($d_id)
+                    ];
+                    LogService::save(json($res));
+
                     if ($v['receive'] == 2 && !empty($v['message'])
                         && GatewayService::isDriverUidOnline($d_id)
                         && (new DriverService())->checkOnline($d_id)) {
