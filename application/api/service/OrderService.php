@@ -381,7 +381,7 @@ class OrderService
                         'donline' => GatewayService::isDriverUidOnline($d_id),
                         'online' => checkOnline($d_id)
                     ];
-                    LogService::save(json($res));
+                    LogService::save(json_encode($res));
 
                     if ($v['receive'] == 2 && !empty($v['message'])
                         && GatewayService::isDriverUidOnline($d_id)
