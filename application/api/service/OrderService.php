@@ -372,6 +372,8 @@ class OrderService
             foreach ($push as $k => $v) {
                 $d_id = $v['d_id'];
                 if (time() > $v['limit_time'] + config('setting.driver_push_expire_in')) {
+                    LogService::save(time()-$v['limit_time']);
+
                     $this->prefixPushRefuse($d_id);
                     OrderPushT::update(['state' => OrderEnum::ORDER_PUSH_INVALID], ['id' => $v['id']]);
                 } else {
