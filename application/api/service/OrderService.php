@@ -371,6 +371,8 @@ class OrderService
         if (count($push)) {
             foreach ($push as $k => $v) {
                 $d_id = $v['d_id'];
+                LogService::save('handelDriverNoAnswer：'.$v['id']);
+
                 if (time() > $v['limit_time'] + config('setting.driver_push_expire_in')) {
                     LogService::save(time()-$v['limit_time']);
 
@@ -389,7 +391,7 @@ class OrderService
                         && GatewayService::isDriverUidOnline($d_id)
                         && (new DriverService())->checkOnline($d_id)) {
                         LogService::save('send:2');
-                        GatewayService::sendToDriverClient($v['d_id'],
+                        GatewayService::sendToDriverClient($d_id,
                             json_decode($v['message'], true));
                     }
                 }
