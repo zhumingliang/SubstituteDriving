@@ -383,7 +383,7 @@ class OrderService
                             'd_id' => $d_id,
                             'receive' => $v['receive'],
                             'donline' => GatewayService::isDriverUidOnline($d_id),
-                            'online' => checkOnline($d_id)
+                            'online' => (new DriverService())->checkOnline($d_id)
                         ];
                         LogService::save(json_encode($res));
 
