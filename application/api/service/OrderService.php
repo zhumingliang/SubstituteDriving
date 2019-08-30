@@ -1307,7 +1307,6 @@ class OrderService
     public function current($page, $size)
     {
         $orders = Orderv::currentOrders($page, $size);
-        print_r($orders);
         $orders['data'] = $this->prefixCurrentPush($orders['data']);
         return $orders;
     }
