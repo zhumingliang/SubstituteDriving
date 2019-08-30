@@ -500,18 +500,18 @@ class DriverService
     {
         if (!(GatewayService::isDriverUidOnline($d_id))) {
             LogService::save('gl');
-            return 2;
+            return false;
         }
 
         if (!($this->redis->sIsMember('driver_order_no', $d_id))) {
             LogService::save('nm');
-            return 2;
+            return false;
         }
         if (!($this->checkOnline($d_id))) {
             LogService::save('ol');
-            return 2;
+            return false;
         }
-        return 1;
+        return true;
     }
 
 
