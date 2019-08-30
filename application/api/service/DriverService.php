@@ -499,7 +499,7 @@ class DriverService
     public function checkDriverCanReceiveOrder($d_id)
     {
         if (!(GatewayService::isDriverUidOnline($d_id))) {
-            LogService::save('gl');
+            LogService::save('d_id:' . $d_id . 'gl');
             return false;
         }
 
