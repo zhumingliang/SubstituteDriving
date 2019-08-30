@@ -1315,7 +1315,6 @@ class OrderService
     {
         if (!empty($data)) {
             foreach ($data as $k => $v) {
-
                 if (empty($v['d_id'])) {
                     $push = OrderPushT::where('o_id', $v['id'])
                         ->with(['driver' => function ($query) {
