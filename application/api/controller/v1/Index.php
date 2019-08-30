@@ -5,11 +5,13 @@ namespace app\api\controller\v1;
 use app\api\model\DriverT;
 use app\api\model\MiniPushT;
 use app\api\model\OrderPushT;
+use app\api\model\OrderRevokeT;
 use app\api\model\OrderT;
 use app\api\model\StartPriceT;
 use app\api\model\TimeIntervalT;
 use app\api\model\WaitPriceT;
 use app\api\model\WeatherT;
+use app\api\service\DriverService;
 use app\api\service\GatewayService;
 use app\api\service\LogService;
 use app\api\service\OrderService;
@@ -24,19 +26,22 @@ class Index
 {
     public function index()
     {
-       echo date('Y-m-d H:i:s', 1567132275);
-        /* $redis = new \Redis();
-         $redis->connect('127.0.0.1', 6379, 60);
-         $lng='117.8491539171';
-         $lat='30.937638346354';
-         //查询所有司机并按距离排序（包括在线和不在线）
-         $drivers = $redis->rawCommand('georadius',
-             'drivers_tongling', $lng, $lat, 100, 'km', 'WITHCOORD');
+        $orderPush = OrderPushT::where('o_id', 250)
+            ->where('state', CommonEnum::STATE_IS_OK)
+            ->order('create_time desc')
+            ->find();
+        if ($orderPush) {
+            $d_id = $orderPush->d_id;
+            //处理推送取消
+            //触发器-处理订单/订单处理列表状态
+            $orderPush->state = OrderEnum::ORDER_PUSH_WITHDRAW;
+            $orderPush->save();
+        } else {
+            $d_id = '';
+        }
 
-         foreach ($drivers as $k => $v) {
-             echo $v[0];
-
-         }*/
+(new DriverService())->handelDriveStateByCancel($d_id);
+    //记录撤销记录
     }
 
     public function sendMessage($name)
