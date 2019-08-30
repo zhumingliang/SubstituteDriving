@@ -370,16 +370,14 @@ class OrderService
             ->select()->toArray();
         if (count($push)) {
             foreach ($push as $k => $v) {
+                $d_id = $v['d_id'];
                 if (time() > $v['limit_time'] + config('setting.driver_push_expire_in')) {
-                    $d_id = $v['d_id'];
                     $this->prefixPushRefuse($d_id);
                     OrderPushT::update(['state' => OrderEnum::ORDER_PUSH_INVALID], ['id' => $v['id']]);
                 } else {
-                    $check = (new DriverService())->checkDriverCanReceiveOrder($v['d_id']);
-                    LogService::save('check:' . $check);
-
                     if ($v['receive'] == 2 && !empty($v['message'])
-                        && (new DriverService())->checkDriverCanReceiveOrder($v['d_id'])) {
+                        && GatewayService::isDriverUidOnline($d_id)
+                        && (new DriverService())->checkOnline($d_id)) {
                         LogService::save('send:2');
                         GatewayService::sendToDriverClient($v['d_id'],
                             json_decode($v['message'], true));
@@ -555,10 +553,8 @@ class OrderService
         foreach ($list as $k => $v) {
             $d_id = $v;
             $checkDriver = (new DriverService())->checkDriverCanReceiveOrder($d_id);
-            LogService::save('d_id:' . $d_id . '-----check:' . $checkDriver);
             if ($checkDriver) {
                 $check = $this->checkDriverPush($order->id, $d_id);
-                LogService::save('d_id:' . $d_id . '-----check:' . $checkDriver . '---push' . $check);
                 if ($check == 2) {
                     continue;
                 }
@@ -597,7 +593,7 @@ class OrderService
                     ]
                 ];
 
-                // GatewayService::sendToDriverClient($d_id, $push_data);
+                GatewayService::sendToDriverClient($d_id, $push_data);
                 $orderPush->message = json_encode($push_data);
                 $orderPush->save();
                 $push = CommonEnum::STATE_IS_OK;
