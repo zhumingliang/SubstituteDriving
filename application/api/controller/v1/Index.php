@@ -24,7 +24,7 @@ class Index
 {
     public function index()
     {
-       echo date('Y-m-d H:i:s', 1567103461);
+       echo date('Y-m-d H:i:s', 1567132275);
         /* $redis = new \Redis();
          $redis->connect('127.0.0.1', 6379, 60);
          $lng='117.8491539171';

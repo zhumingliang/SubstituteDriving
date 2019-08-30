@@ -365,7 +365,7 @@ class OrderService
      */
     public function handelDriverNoAnswer()
     {
-        //  try {
+          try {
         $push = OrderPushT::where('state', OrderEnum::ORDER_PUSH_NO)
             ->select()->toArray();
         if (count($push)) {
@@ -397,9 +397,9 @@ class OrderService
 
             }
         }
-        /* } catch (Exception $e) {
+         } catch (Exception $e) {
              LogService::save('handelDriverNoAnswer:' . $e->getMessage());
-         }*/
+         }
 
 
     }
