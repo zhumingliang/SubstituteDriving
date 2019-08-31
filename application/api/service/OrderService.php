@@ -1050,7 +1050,7 @@ class OrderService
         }
 
         //处理撤单状态：解决上次派单撤单之后，再派单给同-司机问题
-        OrderRevokeT::destroy(function ($query, $o_id, $d_id) {
+        OrderRevokeT::destroy(function ($query)use ($o_id, $d_id) {
             $query->where('o_id', $o_id)->where('d_id', $d_id);
         });
 
