@@ -26,7 +26,11 @@ class Index
 {
     public function index()
     {
-        
+        $o_id=1116;
+        $d_id=4;
+        OrderRevokeT::destroy(function ($query)use ($o_id, $d_id) {
+            $query->where('o_id', $o_id)->where('d_id', $d_id);
+        });
     }
 
     public function sendMessage($name)
