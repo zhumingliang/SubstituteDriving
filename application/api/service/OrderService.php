@@ -728,7 +728,9 @@ class OrderService
             throw new UpdateException(['errorCode' => 40011, 'msg' => $msg]);
         }
         //检测订单是否被撤回
-        $revoke = OrderRevokeT::where('o_id', $o_id)->where('d_id', Token::getCurrentUid())->count('id');
+        $revoke = OrderRevokeT::where('o_id', $o_id)
+            ->where('d_id', Token::getCurrentUid())
+            ->count('id');
         if ($revoke) {
             throw new UpdateException(['errorCode' => 40012, 'msg' => '订单被撤回']);
         }
@@ -1036,7 +1038,8 @@ class OrderService
     public function transferOrder($params)
     {
         //检查订单是否开始
-        $order = $this->getOrder($params['id']);
+        $o_id = $params['id'];
+        $order = $this->getOrder($o_id);
         if ($order->state != OrderEnum::ORDER_NO) {
             throw  new SaveException(['msg' => '订单已开始，不能转单']);
         }
@@ -1045,6 +1048,11 @@ class OrderService
         if (!$this->updateDriverCanReceive($d_id)) {
             throw  new SaveException(['msg' => '该司机有订单派送中，暂时不能接单']);
         }
+
+        //处理撤单状态：解决上次派单撤单之后，再派单给同-司机问题
+        OrderRevokeT::destroy(function ($query, $o_id, $d_id) {
+            $query->where('o_id', $o_id)->where('d_id', $d_id);
+        });
 
         //计算距离和价格
         $distance_info = $this->getDistanceInfoToPush($order);
@@ -1327,13 +1335,6 @@ class OrderService
                             'name' => $push->driver->username,
                             'create_time' => $push->create_time,
                             'state' => $push->state
-                        ];
-                    }else{
-                        $data[$k]['push'] = [
-                            'd_id' => '',
-                            'name' => '',
-                            'create_time' => '',
-                            'state' =>''
                         ];
                     }
                 }
