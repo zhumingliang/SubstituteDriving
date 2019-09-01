@@ -47,13 +47,7 @@ class OrderService
             $params['type'] = OrderEnum::NOT_FIXED_MONEY;
             $params['state'] = OrderEnum::ORDER_NO;
             $params['order_num'] = time();
-
-            $order = $this->saveOrder($params);
-            $this->saveOrderList($order->id, OrderEnum::ORDER_LIST_NO);
-            if (!empty($params['t_id'])) {
-                (new TicketService())->prefixTicketHandel($params['t_id'], TicketEnum::STATE_ING);
-            }
-            return $order->id;
+          return $this->createOrderWithoutDriver($params);
         } catch (Exception $e) {
             LogT::create(['msg' => 'save_order_mini:' . $e->getMessage()]);
             throw  $e;
@@ -107,10 +101,7 @@ class OrderService
     public function saveManagerOrder($params)
     {
         try {
-            $d_id = $params['d_id'];
-            if (!(new DriverService())->checkDriverOrderNo($d_id)) {
-                throw new SaveException(['msg' => '该司机已有订单，不能重复接单']);
-            }
+
             if (key_exists('phone', $params) && strlen($params['phone'])) {
                 $params['u_id'] = (new UserInfo('', ''))->checkUserByPhone($params['phone'], $params['name'], 4, "管理员");
             }
@@ -132,7 +123,15 @@ class OrderService
             $params['far_distance'] = $far['far_distance'];
             $params['far_money'] = $far['far_money'];
 
+            //处理无司机订单
+            if (empty($params['d_id'])){
+                return $this->createOrderWithoutDriver($params);
+            }
 
+            $d_id = $params['d_id'];
+            if (!(new DriverService())->checkDriverOrderNo($d_id)) {
+                throw new SaveException(['msg' => '该司机已有订单，不能重复接单']);
+            }
             unset($params['d_id']);
             $order = $this->saveOrder($params);
             $o_id = $order->id;
@@ -150,6 +149,15 @@ class OrderService
             LogT::create(['msg' => 'save_order__manager:' . $e->getMessage()]);
             throw  $e;
         }
+    }
+
+    private function createOrderWithoutDriver($params){
+        $order = $this->saveOrder($params);
+        $this->saveOrderList($order->id, OrderEnum::ORDER_LIST_NO);
+        if (!empty($params['t_id'])) {
+            (new TicketService())->prefixTicketHandel($params['t_id'], TicketEnum::STATE_ING);
+        }
+        return $order->id;
     }
 
     /**
