@@ -122,14 +122,13 @@ class SendSms
 
                  throw  new  Exception($this->error);
              }*/
-           /* if ($this->createRequestUrl($phone, $params, $type) && $this->signature) {
+            if ($this->createRequestUrl($phone, $params, $type) && $this->signature) {
                 $url = "{$this->requestHost}/?Signature={$this->signature}{$this->requestUrl}";
                 $res = $this->fetchContent($url);
                 return json_decode($res, true);
             } else {
                 LogT::create(['msg' => '参数错误']);
-            }*/
-           return true;
+            }
         } catch (Exception $e) {
             LogT::create(['msg' => $e->getMessage()]);
         }
