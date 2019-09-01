@@ -27,6 +27,7 @@ use app\lib\exception\AuthException;
 use app\lib\exception\ParameterException;
 use app\lib\exception\SaveException;
 use app\lib\exception\UpdateException;
+use GuzzleHttp\Handler\CurlHandler;
 use think\Db;
 use think\Exception;
 use zml\tp_tools\CalculateUtil;
@@ -43,9 +44,9 @@ class OrderService
             $params['u_id'] = Token::getCurrentUid();
             $params['name'] = '先生/女士';
             $params['phone'] = Token::getCurrentTokenVar('phone');
-            $params['order_lat'] =empty($params['start_lat'])?'':$params['start_lat'];
-            $params['order_lng'] = empty($params['start_lng'])?'':$params['start_lng'];
-            $params['order_address'] = empty($params['start'])?'':$params['start'];
+            $params['order_lat'] = empty($params['start_lat']) ? '' : $params['start_lat'];
+            $params['order_lng'] = empty($params['start_lng']) ? '' : $params['start_lng'];
+            $params['order_address'] = empty($params['start']) ? '' : $params['start'];
             $params['from'] = OrderEnum::FROM_MINI;
             $params['type'] = OrderEnum::NOT_FIXED_MONEY;
             $params['state'] = OrderEnum::ORDER_NO;
@@ -78,9 +79,9 @@ class OrderService
             $params['type'] = OrderEnum::NOT_FIXED_MONEY;
             $params['state'] = OrderEnum::ORDER_ING;
             $params['order_num'] = time();
-            $params['order_lat'] =empty($params['start_lat'])?'':$params['start_lat'];
-            $params['order_lng'] = empty($params['start_lng'])?'':$params['start_lng'];
-            $params['order_address'] = empty($params['start'])?'':$params['start'];
+            $params['order_lat'] = empty($params['start_lat']) ? '' : $params['start_lat'];
+            $params['order_lng'] = empty($params['start_lng']) ? '' : $params['start_lng'];
+            $params['order_address'] = empty($params['start']) ? '' : $params['start'];
             if (!empty($params['t_id'])) {
                 (new TicketService())->prefixTicketHandel($params['t_id'], TicketEnum::STATE_ING);
             }
@@ -117,9 +118,9 @@ class OrderService
             $params['from'] = OrderEnum::FROM_MANAGER;
             $params['state'] = OrderEnum::ORDER_NO;
             $params['order_num'] = time();
-            $params['order_lat'] =empty($params['start_lat'])?'':$params['start_lat'];
-            $params['order_lng'] = empty($params['start_lng'])?'':$params['start_lng'];
-            $params['order_address'] = empty($params['start'])?'':$params['start'];
+            $params['order_lat'] = empty($params['start_lat']) ? '' : $params['start_lat'];
+            $params['order_lng'] = empty($params['start_lng']) ? '' : $params['start_lng'];
+            $params['order_address'] = empty($params['start']) ? '' : $params['start'];
 
             if (!empty($params['t_id'])) {
                 (new TicketService())->prefixTicketHandel($params['t_id'], TicketEnum::STATE_ING);
@@ -181,7 +182,7 @@ class OrderService
                 'limit_time' => time()
             ]
         );
-        $distance_info = $this->getDistanceInfoToPush($order);
+        $distance_info = $this->getDistanceInfoToPush($order,$d_id);
         //通过websocket推送给司机
         $push_data = [
             'type' => 'order',
@@ -191,8 +192,8 @@ class OrderService
                 'phone' => $order->phone,
                 'start' => $order->start,
                 'end' => $order->end,
-                'distance' => $distance_info['distance'],
-                'distance_money' => $distance_info['distance_money'],
+                'distance' =>$distance_info['distance'] ,
+                'distance_money' => 0,
                 'create_time' => $order->create_time,
                 'p_id' => $orderPush->id,
 
@@ -601,6 +602,7 @@ class OrderService
                         'limit_time' => time()
                     ]
                 );
+                $driver_location = $this->getDriverLocation($d_id);
                 //通过websocket推送给司机
                 $push_data = [
                     'type' => 'order',
@@ -611,6 +613,7 @@ class OrderService
                         'phone' => $order->phone,
                         'start' => $order->start,
                         'end' => $order->end,
+                        'distance' => CalculateUtil::GetDistance($lat, $lng, $driver_location['lat'], $driver_location['lng']),
                         'create_time' => $order->create_time,
                         'p_id' => $orderPush->id
 
@@ -1076,7 +1079,7 @@ class OrderService
 
 
         //计算距离和价格
-        $distance_info = $this->getDistanceInfoToPush($order);
+        $distance_info = $this->getDistanceInfoToPush($order,$d_id);
         //新增推送状态
         $this->pushToDriverWithTransfer($d_id, $order, $distance_info);
 
@@ -1207,26 +1210,31 @@ class OrderService
         //推送给司机
         $d_id = $params['d_id'];
         $order = $this->getOrder($o_id);
-        $distance_info = $this->getDistanceInfoToPush($order);
+        $distance_info = $this->getDistanceInfoToPush($order,$d_id);
         $this->pushToDriverWithTransfer($d_id, $order, $distance_info, "manager");
 
     }
 
-    private function getDistanceInfoToPush($order)
+    private function getDistanceInfoToPush($order, $d_id)
     {
         $distance = 0;
+        $distance_money = 0;
         $start_lng = $order->start_lng;
         $start_lat = $order->start_lat;
-        $end_lng = $order->end_lng;
-        $end_lat = $order->end_lat;
-        if (strlen($end_lng) && strlen($end_lat)) {
-            $distance = CalculateUtil::GetDistance($start_lat, $start_lng, $end_lat, $end_lng);
+        if (strlen($start_lng) && strlen($start_lat)) {
+            $driver_location = $this->getDriverLocation($d_id);
+            $distance = CalculateUtil::GetDistance($start_lat, $start_lng, $driver_location['lat'], $driver_location['lng']);
         }
-        $startRule = StartPriceT::where('type', 1)
-            ->where('state', CommonEnum::STATE_IS_OK)
-            ->order('order')
-            ->select();
-        $distance_money = $this->prefixStartPriceWithDistance($distance, $startRule, 'start');
+        /*     $end_lng = $order->end_lng;
+             $end_lat = $order->end_lat;
+             if (strlen($end_lng) && strlen($end_lat)) {
+                 $distance = CalculateUtil::GetDistance($start_lat, $start_lng, $end_lat, $end_lng);
+             }
+             $startRule = StartPriceT::where('type', 1)
+                 ->where('state', CommonEnum::STATE_IS_OK)
+                 ->order('order')
+                 ->select();
+             $distance_money = $this->prefixStartPriceWithDistance($distance, $startRule, 'start');*/
 
         return [
             'distance' => $distance,
