@@ -370,8 +370,6 @@ class OrderService
             if (count($push)) {
                 foreach ($push as $k => $v) {
                     $d_id = $v['d_id'];
-                    LogService::save('handelDriverNoAnswer：' . $v['id']);
-
                     if (time() > $v['limit_time'] + config('setting.driver_push_expire_in')) {
                         LogService::save('time:' . (time() - $v['limit_time']));
 
@@ -384,12 +382,9 @@ class OrderService
                             'donline' => GatewayService::isDriverUidOnline($d_id),
                             'online' => (new DriverService())->checkOnline($d_id)
                         ];
-                        LogService::save(json_encode($res));
-
                         if ($v['receive'] == 2 && !empty($v['message'])
                             && GatewayService::isDriverUidOnline($d_id)
                             && (new DriverService())->checkOnline($d_id)) {
-                            LogService::save('send:2');
                             GatewayService::sendToDriverClient($d_id,
                                 json_decode($v['message'], true));
                         }
@@ -1037,6 +1032,8 @@ class OrderService
 
     public function transferOrder($params)
     {
+        LogService::save('transferOrder:');
+
         //检查订单是否开始
         $o_id = $params['id'];
         $order = $this->getOrder($o_id);
