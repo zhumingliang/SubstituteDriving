@@ -8,6 +8,7 @@ use app\api\controller\BaseController;
 use app\api\service\WalletService;
 use app\lib\exception\SuccessMessage;
 use app\lib\exception\SuccessMessageWithData;
+use think\facade\Request;
 
 class Wallet extends BaseController
 {
@@ -61,7 +62,8 @@ class Wallet extends BaseController
      */
     public function recharges($page = 1, $size = 10)
     {
-        $list = (new WalletService())->recharges($page, $size);
+        $d_id=Request::param('d_id');
+        $list = (new WalletService())->recharges($d_id,$page, $size);
         return json(new SuccessMessageWithData(['data' => $list]));
 
     }

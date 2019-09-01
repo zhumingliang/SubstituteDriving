@@ -41,9 +41,9 @@ class WalletService
         (new SendSMSService())->sendRechargeSMS($phone, $data);
     }
 
-    public function recharges($page, $size)
+    public function recharges($d_id,$page, $size)
     {
-        $list = RechargeT::rechargesForManager($page, $size);
+        $list = RechargeT::rechargesForManager($d_id,$page, $size);
         return $list;
 
     }

@@ -14,12 +14,13 @@ class RechargeT extends Model
         return $this->belongsTo('DriverT', 'd_id', 'id');
     }
 
-    public static function rechargesForManager($page, $size)
+    public static function rechargesForManager($d_id,$page, $size)
     {
         $list = self::where('state', CommonEnum::STATE_IS_OK)
             ->with(['driver' => function ($query) {
                 $query->field('id,username');
             }])
+            ->where('d_id',$d_id)
             ->field('id,money,d_id,create_time')
             ->order('create_time desc')
             ->paginate($size, false, ['page' => $page]);
