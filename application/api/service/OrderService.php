@@ -955,7 +955,7 @@ class OrderService
             $info = [
                 'driver_name' => $order->driver->username,
                 'driver_phone' => $order->driver->phone,
-                'phone_code' => $order->phone_code,
+                'phone_code' =>  $order->driver->phone_code,
                 'start' => $order->start,
                 'start_lat' => $order->start_lat,
                 'start_lng' => $order->start_lng,
