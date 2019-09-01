@@ -1269,7 +1269,7 @@ class OrderService
         }
 
         foreach ($data as $k => $v) {
-
+            $data[$k]['phone_code']=Token::getCurrentTokenVar('phone_code');
             if ($v['superior_id']) {
                 $data[$k]['transfer'] = 1;
                 $data[$k]['superior'] = DriverT::field('username')

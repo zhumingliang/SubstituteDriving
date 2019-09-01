@@ -164,7 +164,7 @@ class OrderV extends Model
                 $query->whereBetweenTime('create_time', $time_begin, $time_end);
             }
         })
-            ->field('id,d_id,superior_id,null as superior,2 as transfer ,from,state,start,end,name,money,cancel_type,cancel_remark,create_time')
+            ->field('id,d_id,superior_id,null as superior,2 as transfer ,from,state,start,end,name,money,cancel_type,cancel_remark,create_time,phone_code')
             ->order('create_time desc')
             ->paginate($size, false, ['page' => $page])->toArray();
         return $list;
