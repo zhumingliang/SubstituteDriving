@@ -1047,8 +1047,9 @@ class OrderService
         //处理撤单状态：解决上次派单撤单之后，再派单给同-司机问题
         $cancel=OrderRevokeT::where('d_id',$d_id)->where('o_id',$o_id)->find();
         if ($cancel){
-            $cancel->delete();
+          $res=  $cancel->delete();
         }
+        LogService::save('d_id:'.$d_id.'---o_id:'.$o_id.'----res'.$res);
 
         //检查新司机状态是否有订单，修改司机状态
         if (!$this->updateDriverCanReceive($d_id)) {
