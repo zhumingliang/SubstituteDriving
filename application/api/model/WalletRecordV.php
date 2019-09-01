@@ -43,6 +43,7 @@ class WalletRecordV extends Model
 
                 }
             })
+            ->whereIn('type', '1,2,3,5')
             ->field('id ,account,number,username,phone,sum(money) as money,state,create_time')
             ->group('id')
             ->order('create_time desc')
