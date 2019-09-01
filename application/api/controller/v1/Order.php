@@ -146,9 +146,15 @@ class Order extends BaseController
      * @apiDescription   Android司机端-开始出发
      * @apiExample {post}  请求样例:
      *    {
-     *       "id": 1
+     *       "id": 1,
+     *       "start":"铜陵市维也纳大酒店",
+     *       "start_lat":"12.1212",
+     *       "start_lng":"23.121",
      *     }
      * @apiParam (请求参数说明) {int} id  订单id
+     * @apiParam (请求参数说明) {String} start  出发地
+     * @apiParam (请求参数说明) {String} start_lat  出发地纬度
+     * @apiParam (请求参数说明) {String} start_lng  出发地经度
      * @apiSuccessExample {json} 返回样例:
      *{"msg":"ok","errorCode":0}
      * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误

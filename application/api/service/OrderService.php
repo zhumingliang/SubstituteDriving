@@ -43,11 +43,14 @@ class OrderService
             $params['u_id'] = Token::getCurrentUid();
             $params['name'] = '先生/女士';
             $params['phone'] = Token::getCurrentTokenVar('phone');
+            $params['order_lat'] =empty($params['start_lat'])?'':$params['start_lat'];
+            $params['order_lng'] = empty($params['start_lng'])?'':$params['start_lng'];
+            $params['order_address'] = empty($params['start'])?'':$params['start'];
             $params['from'] = OrderEnum::FROM_MINI;
             $params['type'] = OrderEnum::NOT_FIXED_MONEY;
             $params['state'] = OrderEnum::ORDER_NO;
             $params['order_num'] = time();
-          return $this->createOrderWithoutDriver($params);
+            return $this->createOrderWithoutDriver($params);
         } catch (Exception $e) {
             LogT::create(['msg' => 'save_order_mini:' . $e->getMessage()]);
             throw  $e;
@@ -64,10 +67,10 @@ class OrderService
             if ((new DriverService())->checkNoCompleteOrder($d_id)) {
                 throw new SaveException(['msg' => '创建订单失败,已有未完成的订单']);
             }
-            if (key_exists('phone', $params) && strlen($params['phone'])) {
+            if (!empty($params['phone'])) {
                 $params['u_id'] = (new UserInfo('', ''))->checkUserByPhone($params['phone'], $params['name'], 3, Token::getCurrentTokenVar('username'));
             }
-            if (key_exists('name', $params) && !strlen($params['name'])) {
+            if (empty($params['name'])) {
                 $params['name'] = '先生/女士';
             }
             $params['d_id'] = $d_id;
@@ -75,6 +78,9 @@ class OrderService
             $params['type'] = OrderEnum::NOT_FIXED_MONEY;
             $params['state'] = OrderEnum::ORDER_ING;
             $params['order_num'] = time();
+            $params['order_lat'] =empty($params['start_lat'])?'':$params['start_lat'];
+            $params['order_lng'] = empty($params['start_lng'])?'':$params['start_lng'];
+            $params['order_address'] = empty($params['start'])?'':$params['start'];
             if (!empty($params['t_id'])) {
                 (new TicketService())->prefixTicketHandel($params['t_id'], TicketEnum::STATE_ING);
             }
@@ -111,20 +117,16 @@ class OrderService
             $params['from'] = OrderEnum::FROM_MANAGER;
             $params['state'] = OrderEnum::ORDER_NO;
             $params['order_num'] = time();
-
-            //处理远程接驾费用
-            $location = $this->getDriverLocation($d_id);
-            $far = $this->prefixFar($params['start_lng'], $params['start_lat'], $location['lng'], $location['lat']);
+            $params['order_lat'] =empty($params['start_lat'])?'':$params['start_lat'];
+            $params['order_lng'] = empty($params['start_lng'])?'':$params['start_lng'];
+            $params['order_address'] = empty($params['start'])?'':$params['start'];
 
             if (!empty($params['t_id'])) {
                 (new TicketService())->prefixTicketHandel($params['t_id'], TicketEnum::STATE_ING);
             }
 
-            $params['far_distance'] = $far['far_distance'];
-            $params['far_money'] = $far['far_money'];
-
             //处理无司机订单
-            if (empty($params['d_id'])){
+            if (empty($params['d_id'])) {
                 return $this->createOrderWithoutDriver($params);
             }
 
@@ -151,7 +153,8 @@ class OrderService
         }
     }
 
-    private function createOrderWithoutDriver($params){
+    private function createOrderWithoutDriver($params)
+    {
         $order = $this->saveOrder($params);
         $this->saveOrderList($order->id, OrderEnum::ORDER_LIST_NO);
         if (!empty($params['t_id'])) {
@@ -457,6 +460,7 @@ class OrderService
                 $this->prefixPushAgree($push->d_id);
                 //处理远程接驾费用
                 $this->prefixFarDistance($push->o_id, $push->d_id);
+
                 $this->sendToMini($push);
 
             } else if ($push_type == "transfer") {
@@ -476,6 +480,9 @@ class OrderService
     private function prefixFarDistance($o_id, $d_id)
     {
         $order = $this->getOrder($o_id);
+        if ($order->from == OrderEnum::FROM_DRIVER) {
+            return true;
+        }
         $location = $this->getDriverLocation($d_id);
         $far = $this->prefixFar($order->start_lng, $order->start_lat, $location['lng'], $location['lat']);
 
@@ -689,6 +696,16 @@ class OrderService
         //检测订单是否被取消
         $order = $this->checkOrderState($o_id);
         $order->begin = CommonEnum::STATE_IS_OK;
+        if (!empty($params['start'])) {
+            $order->start = CommonEnum::STATE_IS_OK;
+        }
+        if (!empty($params['start_lng'])) {
+            $order->start_lng = CommonEnum::STATE_IS_OK;
+        }
+        if (!empty($params['start_lat'])) {
+            $order->start_lat = CommonEnum::STATE_IS_OK;
+        }
+
         $order->begin_time = date('Y-m-d H:i:s', time());
         $res = $order->save();
         if (!$res) {
@@ -955,7 +972,7 @@ class OrderService
             $info = [
                 'driver_name' => $order->driver->username,
                 'driver_phone' => $order->driver->phone,
-                'phone_code' =>  $order->driver->phone_code,
+                'phone_code' => $order->driver->phone_code,
                 'start' => $order->start,
                 'start_lat' => $order->start_lat,
                 'start_lng' => $order->start_lng,
@@ -1163,8 +1180,8 @@ class OrderService
 
     public function choiceDriverByManager($params)
     {
-        $d_id=$params['d_id'];
-        $o_id=$params['o_id'];
+        $d_id = $params['d_id'];
+        $o_id = $params['o_id'];
         //检测被推送司机状态
         if (!(new DriverService())->checkDriverOrderNo($d_id)) {
             throw new SaveException(['msg' => '司机已有订单，不能接单']);
@@ -1278,7 +1295,7 @@ class OrderService
         }
 
         foreach ($data as $k => $v) {
-            $data[$k]['phone_code']=Token::getCurrentTokenVar('phone_code');
+            $data[$k]['phone_code'] = Token::getCurrentTokenVar('phone_code');
             if ($v['superior_id']) {
                 $data[$k]['transfer'] = 1;
                 $data[$k]['superior'] = DriverT::field('username')
