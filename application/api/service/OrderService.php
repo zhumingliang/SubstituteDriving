@@ -857,6 +857,7 @@ class OrderService
                 $order->wait_money = $wait_money;
                 $order->weather_money = $weather_money;
                 $order->money = $money;
+                $order->end_time = date('Y-m-d H:i:s');
             }
 
             /*  //处理 订单距离/距离产生的价格
@@ -971,7 +972,7 @@ class OrderService
     private function prepareOrderInfo($order)
     {
 
-        if ($order->state == OrderEnum::ORDER_COMPLETE) {
+       // if ($order->state == OrderEnum::ORDER_COMPLETE) {
             $info = [
                 'driver_name' => $order->driver->username,
                 'driver_phone' => $order->driver->phone,
@@ -996,9 +997,11 @@ class OrderService
                 'wait_time' => $order->wait_time,
                 'wait_money' => $order->wait_money,
                 'weather_money' => $order->weather_money,
+                'begin_time' => $order->begin_time,
+                'end_time' => $order->end_time,
 
             ];
-        } else {
+       /* } else {
             $info = [
                 'driver_name' => $order->driver ? $order->driver->username : '',
                 'driver_phone' => $order->driver ? $order->driver->phone : '',
@@ -1014,7 +1017,7 @@ class OrderService
                 'create_time' => $order->create_time,
                 'state' => $order->state
             ];
-        }
+        }*/
 
         return $info;
 
