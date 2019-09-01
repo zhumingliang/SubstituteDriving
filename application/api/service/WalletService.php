@@ -4,6 +4,7 @@
 namespace app\api\service;
 
 
+use app\api\model\DriverIncomeV;
 use app\api\model\DriverT;
 use app\api\model\RechargeT;
 use app\api\model\WalletRecordV;
@@ -76,7 +77,8 @@ class WalletService
 
             return [
                 'records' => $records,
-                'balance' => $this->driverBalance($d_id)
+                'balance' => $this->driverBalance($d_id),
+                'income' =>DriverIncomeV::TimeIncome($d_id, $time_begin, $time_end),
             ];
         } else {
             throw  new AuthException();

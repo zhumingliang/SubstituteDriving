@@ -30,4 +30,14 @@ class DriverIncomeV extends Model
 
     }
 
+    public static function TimeIncome($d_id, $time_begin,$time_end)
+    {
+        $time_end=addDay(1,$time_end);
+        $money = self::where('d_id', $d_id)
+            ->whereBetweenTime('create_time', $time_begin,$time_end)
+            ->sum('ac_money');
+        return $money;
+
+    }
+
 }
