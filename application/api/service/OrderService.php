@@ -342,7 +342,8 @@ class OrderService
             //获取订单信息并检测订单状态
             $order = OrderT::getOrder($o_id);
             if (!$order || $order->state != OrderEnum::ORDER_NO
-                || $order->stop == OrderEnum::ORDER_STOP) {
+                || $order->stop == OrderEnum::ORDER_STOP
+            ) {
                 OrderListT::update(['state' => OrderEnum::ORDER_LIST_COMPLETE], ['id' => $list_id]);
                 return true;
             }
@@ -384,7 +385,8 @@ class OrderService
                         ];
                         if ($v['receive'] == 2 && !empty($v['message'])
                             && GatewayService::isDriverUidOnline($d_id)
-                            && (new DriverService())->checkOnline($d_id)) {
+                            && (new DriverService())->checkOnline($d_id)
+                        ) {
                             GatewayService::sendToDriverClient($d_id,
                                 json_decode($v['message'], true));
                         }
@@ -1032,7 +1034,6 @@ class OrderService
 
     public function transferOrder($params)
     {
-        LogService::save('transferOrder:');
 
         //检查订单是否开始
         $o_id = $params['id'];
@@ -1041,12 +1042,6 @@ class OrderService
             throw  new SaveException(['msg' => '订单已开始，不能转单']);
         }
         $d_id = $params['d_id'];
-        //处理撤单状态：解决上次派单撤单之后，再派单给同-司机问题
-        $cancel=OrderRevokeT::where('d_id',$d_id)->where('o_id',$o_id)->find();
-        if ($cancel){
-          $res=  $cancel->delete();
-        }
-        LogService::save('d_id:'.$d_id.'---o_id:'.$o_id.'----res'.$res);
 
         //检查新司机状态是否有订单，修改司机状态
         if (!$this->updateDriverCanReceive($d_id)) {
@@ -1159,14 +1154,21 @@ class OrderService
 
     public function choiceDriverByManager($params)
     {
+        $d_id=$params['d_id'];
+        $o_id=$params['o_id'];
         //检测被推送司机状态
-        if (!(new DriverService())->checkDriverOrderNo($params['d_id'])) {
+        if (!(new DriverService())->checkDriverOrderNo($d_id)) {
             throw new SaveException(['msg' => '司机已有订单，不能接单']);
+        }
+
+        //处理撤单状态：解决上次派单撤单之后，再派单给同-司机问题
+        $cancel = OrderRevokeT::where('d_id', $d_id)->where('o_id', $o_id)->find();
+        if ($cancel) {
+            $cancel->delete();
         }
 
         //清除订单信息
         //1.清除司机信息
-        $o_id = $params['o_id'];
         $push = OrderPushT::where('o_id', $o_id)
             ->order('create_time')
             ->find();
