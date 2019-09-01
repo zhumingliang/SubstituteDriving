@@ -106,7 +106,7 @@ class Wallet extends BaseController
      * @apiParam (请求参数说明) {String} time_begin 查询开始时间
      * @apiParam (请求参数说明) {String} time_end 查询结束时间
      * @apiSuccessExample {json} 返回样例:
-     * {"msg":"ok","errorCode":0,"code":200,"data":{"records":{"total":3,"per_page":10,"current_page":1,"last_page":1,"data":[{"money":"-2.30","type":"保险费用","create_time":"2019-07-17 16:04:41"},{"money":"-26.20","type":"订单服务费","create_time":"2019-07-17 16:04:41"},{"money":"100.00","type":"账户余额充值","create_time":"2019-07-04 18:39:40"}]},"balance":71.5}}
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"records":{"total":3,"per_page":10,"current_page":1,"last_page":1,"data":[{"money":"-2.30","type":"保险费用","create_time":"2019-07-17 16:04:41"},{"money":"-26.20","type":"订单服务费","create_time":"2019-07-17 16:04:41"},{"money":"100.00","type":"账户余额充值","create_time":"2019-07-04 18:39:40"}]},"balance":71.5,"income":71.5}}
      * @apiSuccess (返回参数说明) {Obj} records 列表数据
      * @apiSuccess (返回参数说明) {int} total 数据总数
      * @apiSuccess (返回参数说明) {int} per_page 每页多少条数据
@@ -116,6 +116,7 @@ class Wallet extends BaseController
      * @apiSuccess (返回参数说明) {String} create_time 创建时间
      * @apiSuccess (返回参数说明) {int} type 明细类型
      * @apiSuccess (返回参数说明) {int} balance 账户余额
+     * @apiSuccess (返回参数说明) {int}  income 收入
      */
     public function driverRecords($page = 1, $size = 10,$time_begin = '', $time_end = '')
     {
@@ -136,15 +137,17 @@ class Wallet extends BaseController
      * @apiParam (请求参数说明) {String} time_begin 查询开始时间
      * @apiParam (请求参数说明) {String} time_end 查询结束时间
      * @apiSuccessExample {json} 返回样例:
-     * {"msg":"ok","errorCode":0,"code":200,"data":{"total":1,"per_page":10,"current_page":1,"last_page":1,"data":[{"d_id":1,"money":"100.00","username":"朱明良","create_time":"2019-07-04 18:39:40"}]}}
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"records":{"total":3,"per_page":10,"current_page":1,"last_page":1,"data":[{"money":"-2.30","type":"保险费用","create_time":"2019-07-17 16:04:41"},{"money":"-26.20","type":"订单服务费","create_time":"2019-07-17 16:04:41"},{"money":"100.00","type":"账户余额充值","create_time":"2019-07-04 18:39:40"}]},"balance":71.5,"income":71.5}}
+     * @apiSuccess (返回参数说明) {Obj} records 列表数据
      * @apiSuccess (返回参数说明) {int} total 数据总数
      * @apiSuccess (返回参数说明) {int} per_page 每页多少条数据
      * @apiSuccess (返回参数说明) {int} current_page 当前页码
      * @apiSuccess (返回参数说明) {int} last_page 最后页码
      * @apiSuccess (返回参数说明) {Float} money 金额
      * @apiSuccess (返回参数说明) {String} create_time 创建时间
-     * @apiSuccess (返回参数说明) {String} username 司机姓名
      * @apiSuccess (返回参数说明) {int} type 明细类型
+     * @apiSuccess (返回参数说明) {int} balance 账户余额
+     * @apiSuccess (返回参数说明) {int}  income 收入
      */
     public function managerRecords($page = 1, $size = 10, $driver = '', $time_begin = '', $time_end = '')
     {

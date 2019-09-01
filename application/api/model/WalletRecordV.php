@@ -81,16 +81,16 @@ class WalletRecordV extends Model
 
     }
 
-    public static function managerRecords($page, $size, $driver, $time_begin, $time_end)
+    public static function managerRecords($page, $size, $driver_id, $time_begin, $time_end)
     {
-        $time_end = addDay(1, $time_end);
-        $list = self::where(function ($query) use ($driver) {
-            if (strlen($driver)) {
-                $query->where('username', 'like', '%' . $driver . '%');
+        $list = self::where(function ($query) use ($driver_id) {
+            if ($driver_id) {
+                $query->where('id', $driver_id);
             }
         })
             ->where(function ($query) use ($time_begin, $time_end) {
                 if (strlen($time_begin) && strlen($time_end)) {
+                    $time_end = addDay(1, $time_end);
                     $query->whereBetweenTime('create_time', $time_begin, $time_end);
 
                 }
