@@ -1044,15 +1044,15 @@ class OrderService
             throw  new SaveException(['msg' => '订单已开始，不能转单']);
         }
         $d_id = $params['d_id'];
+        //处理撤单状态：解决上次派单撤单之后，再派单给同-司机问题
+        OrderRevokeT::destroy(function ($query)use ($o_id, $d_id) {
+            $query->where('o_id', $o_id)->where('d_id', $d_id);
+        });
         //检查新司机状态是否有订单，修改司机状态
         if (!$this->updateDriverCanReceive($d_id)) {
             throw  new SaveException(['msg' => '该司机有订单派送中，暂时不能接单']);
         }
 
-        //处理撤单状态：解决上次派单撤单之后，再派单给同-司机问题
-        OrderRevokeT::destroy(function ($query)use ($o_id, $d_id) {
-            $query->where('o_id', $o_id)->where('d_id', $d_id);
-        });
 
         //计算距离和价格
         $distance_info = $this->getDistanceInfoToPush($order);
