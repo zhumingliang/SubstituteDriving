@@ -972,7 +972,7 @@ class OrderService
     private function prepareOrderInfo($order)
     {
 
-       // if ($order->state == OrderEnum::ORDER_COMPLETE) {
+        if ($order->state == OrderEnum::ORDER_COMPLETE) {
             $info = [
                 'driver_name' => $order->driver->username,
                 'driver_phone' => $order->driver->phone,
@@ -1001,7 +1001,7 @@ class OrderService
                 'end_time' => $order->end_time,
 
             ];
-       /* } else {
+        } else {
             $info = [
                 'driver_name' => $order->driver ? $order->driver->username : '',
                 'driver_phone' => $order->driver ? $order->driver->phone : '',
@@ -1017,7 +1017,7 @@ class OrderService
                 'create_time' => $order->create_time,
                 'state' => $order->state
             ];
-        }*/
+        }
 
         return $info;
 
