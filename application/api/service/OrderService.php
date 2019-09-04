@@ -570,7 +570,7 @@ class OrderService
         $lng = $order['start_lng'];
         $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, config('setting.driver_nearby_km'), 'km', 'ASC');
         if (!count($list)) {
-            return CommonEnum::STATE_IS_FAIL;
+             return CommonEnum::STATE_IS_FAIL;
         }
         $push = CommonEnum::STATE_IS_FAIL;
         //设置三个set: 司机未接单 driver_order_no；司机正在派单 driver_order_ing；司机已经接单 driver_order_receive
