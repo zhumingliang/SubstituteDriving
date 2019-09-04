@@ -228,7 +228,7 @@ class DriverService
 
     public function acceptableOrder($o_id)
     {
-
+        LogService::save('o_i:d'.$o_id);
         $order = OrderT::get($o_id);
         if (!$order) {
             throw new ParameterException(['msg' => '订单不存在']);
@@ -288,7 +288,8 @@ class DriverService
             $d_id = $v[0];
             if (in_array($d_id, $driver_ids)
                 && GatewayService::isDriverUidOnline($d_id)
-                && $this->checkOnline($d_id)) {
+                && $this->checkOnline($d_id)
+            ) {
                 $driver = $redis->lPop("driver:$d_id:location");
                 if ($driver) {
                     $driver = json_decode($driver, true);
@@ -478,7 +479,8 @@ class DriverService
             $d_id = $v[0];
             if (in_array($d_id, $driver_ids) &&
                 GatewayService::isDriverUidOnline($d_id) &&
-                $this->checkOnline($d_id)) {
+                $this->checkOnline($d_id)
+            ) {
                 $count++;
             }
         }
