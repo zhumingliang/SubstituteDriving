@@ -26,12 +26,12 @@ class Index
 {
     public function index()
     {
-        $o_id=269;
-        $d_id=2;
-        $cancel=OrderRevokeT::where('d_id',$d_id)->where('o_id',$o_id)->find();
-        if ($cancel){
-            $cancel->delete();
-        }
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1', 6379, 60);
+        $lat = '30.937638346354';
+        $lng = '117.84915581597';
+        $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, config('setting.driver_nearby_km'), 'km', 'ASC');
+        print_r($list);
     }
 
     public function sendMessage($name)
