@@ -31,6 +31,7 @@ use GuzzleHttp\Handler\CurlHandler;
 use think\Db;
 use think\Exception;
 use zml\tp_tools\CalculateUtil;
+use zml\tp_tools\Redis;
 
 class OrderService
 {
@@ -182,7 +183,7 @@ class OrderService
                 'limit_time' => time()
             ]
         );
-        $distance_info = $this->getDistanceInfoToPush($order,$d_id);
+        $distance_info = $this->getDistanceInfoToPush($order, $d_id);
         //通过websocket推送给司机
         $push_data = [
             'type' => 'order',
@@ -192,7 +193,7 @@ class OrderService
                 'phone' => $order->phone,
                 'start' => $order->start,
                 'end' => $order->end,
-                'distance' =>$distance_info['distance'] ,
+                'distance' => $distance_info['distance'],
                 'distance_money' => 0,
                 'create_time' => $order->create_time,
                 'p_id' => $orderPush->id,
@@ -570,7 +571,7 @@ class OrderService
         $lng = $order['start_lng'];
         $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, config('setting.driver_nearby_km'), 'km', 'ASC');
         if (!count($list)) {
-             return CommonEnum::STATE_IS_FAIL;
+            return CommonEnum::STATE_IS_FAIL;
         }
         $push = CommonEnum::STATE_IS_FAIL;
         //设置三个set: 司机未接单 driver_order_no；司机正在派单 driver_order_ing；司机已经接单 driver_order_receive
@@ -1082,7 +1083,7 @@ class OrderService
 
 
         //计算距离和价格
-        $distance_info = $this->getDistanceInfoToPush($order,$d_id);
+        $distance_info = $this->getDistanceInfoToPush($order, $d_id);
         //新增推送状态
         $this->pushToDriverWithTransfer($d_id, $order, $distance_info);
 
@@ -1213,7 +1214,7 @@ class OrderService
         //推送给司机
         $d_id = $params['d_id'];
         $order = $this->getOrder($o_id);
-        $distance_info = $this->getDistanceInfoToPush($order,$d_id);
+        $distance_info = $this->getDistanceInfoToPush($order, $d_id);
         $this->pushToDriverWithTransfer($d_id, $order, $distance_info, "manager");
 
     }
@@ -1448,6 +1449,25 @@ class OrderService
         $orders['statistic'] = OrderV::orderCount('', $time_begin, $time_end);
         return $orders;
 
+    }
+
+    public function getOrderNumber()
+    {
+        $key = date('Ymd');
+        if (Redis::instance()->exists($key)) {
+            $value = Redis::instance()->get($key);
+            $len = strlen($value);
+            $number = $key;
+            for ($i = 0; $i < 3-$len; $i++) {
+                $number.='0';
+            }
+            $number.=$value;
+        }else{
+            Redis::instance()->set($key,1);
+            $number=$key.'001';
+        }
+        Redis::instance()->incre($key);
+        return $number;
     }
 
 }

@@ -26,13 +26,8 @@ class Index
 {
     public function index()
     {
-        $redis = new \Redis();
-        $redis->connect('127.0.0.1', 6379, 60);
-        $lat = '30.937638346354';
-        $lng = '117.84915581597';
-        $list = $redis->rawCommand('georadius',
-            'drivers_tongling', $lat, $lng, 100000, 'km', 'WITHDIST', 'WITHCOORD');
-        var_dump($list);
+
+       echo (new OrderService())->getOrderNumber();
     }
 
     public function sendMessage($name)
