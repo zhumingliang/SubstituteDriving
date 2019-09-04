@@ -102,7 +102,7 @@ class WalletService
         $income=0;
         $driver_id=0;
         if (!empty($driver_name)){
-            $driver=DriverT::where('name',$driver_name);
+            $driver=DriverT::where('username',$driver_name)->find();
             if ($driver){
                 $driver_id=$driver->id;
                 $balance=$this->driverBalance($driver_id);
