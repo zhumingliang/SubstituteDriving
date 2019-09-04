@@ -51,7 +51,7 @@ class OrderService
             $params['from'] = OrderEnum::FROM_MINI;
             $params['type'] = OrderEnum::NOT_FIXED_MONEY;
             $params['state'] = OrderEnum::ORDER_NO;
-            $params['order_num'] = time();
+            $params['order_num'] = $this->getOrderNumber();
             return $this->createOrderWithoutDriver($params);
         } catch (Exception $e) {
             LogT::create(['msg' => 'save_order_mini:' . $e->getMessage()]);
@@ -79,7 +79,7 @@ class OrderService
             $params['from'] = OrderEnum::FROM_DRIVER;
             $params['type'] = OrderEnum::NOT_FIXED_MONEY;
             $params['state'] = OrderEnum::ORDER_ING;
-            $params['order_num'] = time();
+            $params['order_num'] = $this->getOrderNumber();
             $params['order_lat'] = empty($params['start_lat']) ? '' : $params['start_lat'];
             $params['order_lng'] = empty($params['start_lng']) ? '' : $params['start_lng'];
             $params['order_address'] = empty($params['start']) ? '' : $params['start'];
@@ -118,7 +118,7 @@ class OrderService
             }
             $params['from'] = OrderEnum::FROM_MANAGER;
             $params['state'] = OrderEnum::ORDER_NO;
-            $params['order_num'] = time();
+            $params['order_num'] =$this->getOrderNumber();
             $params['order_lat'] = empty($params['start_lat']) ? '' : $params['start_lat'];
             $params['order_lng'] = empty($params['start_lng']) ? '' : $params['start_lng'];
             $params['order_address'] = empty($params['start']) ? '' : $params['start'];
