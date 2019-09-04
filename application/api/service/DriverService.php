@@ -237,7 +237,6 @@ class DriverService
 
         $list = $this->redis->rawCommand('georadius',
             'drivers_tongling', $start_lng, $start_lat, 100000, 'km', 'WITHDIST', 'WITHCOORD');
-        LogService::save(json_encode($list));
         $driver_ids = $this->redis->sMembers('driver_order_no');
         if (!$driver_ids || !count($list)) {
             return array();
@@ -254,7 +253,7 @@ class DriverService
                 $driver = json_decode($driver, true);
                 $data = [
                     'id' => $d_id,
-                    'distance' => $v[1],
+                    'distance' =>round( $v[1],2),
                     'name' => empty($driver['username']) ? '' : $driver['username'],
                     'phone' => empty($driver['phone']) ? '' : $driver['phone'],
                     'citycode' => empty($driver['citycode']) ? '' : $driver['citycode'],
