@@ -32,7 +32,7 @@ class Index
         $lng = '117.84915581597';
         $list = $redis->rawCommand('georadius',
             'drivers_tongling', $lat, $lng, 100000, 'km', 'WITHDIST', 'WITHCOORD');
-        print_r($list);
+        var_dump($list);
     }
 
     public function sendMessage($name)
