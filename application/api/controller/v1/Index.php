@@ -30,7 +30,8 @@ class Index
         $redis->connect('127.0.0.1', 6379, 60);
         $lat = '30.937638346354';
         $lng = '117.84915581597';
-        $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, config('setting.driver_nearby_km'), 'km', 'ASC');
+        $list = $this->redis->rawCommand('georadius',
+            'drivers_tongling', $lat, $lng, 100000, 'km', 'WITHDIST', 'WITHCOORD');
         print_r($list);
     }
 

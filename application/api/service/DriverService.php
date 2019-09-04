@@ -228,7 +228,6 @@ class DriverService
 
     public function acceptableOrder($o_id)
     {
-        LogService::save('o_i:d'.$o_id);
         $order = OrderT::get($o_id);
         if (!$order) {
             throw new ParameterException(['msg' => '订单不存在']);
