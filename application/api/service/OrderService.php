@@ -385,8 +385,6 @@ class OrderService
                 foreach ($push as $k => $v) {
                     $d_id = $v['d_id'];
                     if (time() > $v['limit_time'] + config('setting.driver_push_expire_in')) {
-                        LogService::save('time:' . (time() - $v['limit_time']));
-
                         $this->prefixPushRefuse($d_id);
                         OrderPushT::update(['state' => OrderEnum::ORDER_PUSH_INVALID], ['id' => $v['id']]);
                     } else {
@@ -478,7 +476,6 @@ class OrderService
                 $this->prefixPushRefuse($push->f_d_id);
                 //处理原订单状态
                 //由触发器解决
-
                 $send_data = [
                     'type' => 'orderTransfer',
                     'order_info' => [
@@ -497,8 +494,6 @@ class OrderService
                 ]);
 
             }
-
-
         } else if ($type == OrderEnum::ORDER_PUSH_REFUSE) {
             $this->prefixPushRefuse($push->d_id);
         }
@@ -1213,7 +1208,6 @@ class OrderService
                 'distance_money' => $distance_info['distance_money']
             ]
         ];
-
         GatewayService::sendToDriverClient($d_id, $push_data);
         $orderPush->message = json_encode($push_data);
         $orderPush->save();

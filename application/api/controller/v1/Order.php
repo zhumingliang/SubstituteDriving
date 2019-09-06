@@ -91,7 +91,6 @@ class Order extends BaseController
         return json(new SuccessMessage());
     }
 
-
     /**
      * @api {POST} /api/v1/order/revoke Android管理端-撤销订单推送
      * @apiGroup   COMMON
