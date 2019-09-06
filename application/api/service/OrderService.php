@@ -529,9 +529,9 @@ class OrderService
         //更新司机状态:从正在派单移除；添加到已接单
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
+        $redis->sRem('driver_order_no', $d_id);
         $redis->sRem('driver_order_ing', $d_id);
         $redis->sAdd('driver_order_receive', $d_id);
-        LogService::save($d_id);
 
     }
 
@@ -570,6 +570,7 @@ class OrderService
         //更新司机状态:从正在派单移除；添加到未接单
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
+        $redis->sRem('driver_order_receive', $d_id);
         $redis->sRem('driver_order_ing', $d_id);
         $redis->sAdd('driver_order_no', $d_id);
     }
@@ -620,6 +621,7 @@ class OrderService
 
                 //将司机从'未接单'移除，添加到：正在派单
                 $redis->sRem('driver_order_no', $d_id);
+                $redis->sRem('driver_order_receive', $d_id);
                 $redis->sAdd('driver_order_ing', $d_id);
 
                 //通过短信推送给司机
@@ -1156,6 +1158,7 @@ class OrderService
             return false;
         }
         //将被转单司机从'未接单'移除，添加到：正在派单
+        $redis->sRem('driver_order_receive', $d_id);
         $redis->sRem('driver_order_no', $d_id);
         $redis->sAdd('driver_order_ing', $d_id);
         return true;

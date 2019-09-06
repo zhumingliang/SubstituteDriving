@@ -183,6 +183,9 @@ class DriverService
         if ($this->redis->sIsMember('driver_order_receive', $d_id)) {
             $this->redis->sRem('driver_order_receive', $d_id);
         }
+        if ($this->redis->sIsMember('driver_order_ing', $d_id)) {
+            $this->redis->sRem('driver_order_ing', $d_id);
+        }
         $this->redis->sAdd('driver_order_no', $d_id);
 
     }
@@ -196,6 +199,9 @@ class DriverService
         if ($this->redis->sIsMember('driver_order_no', $d_id)) {
             $this->redis->sRem('driver_order_no', $d_id);
         }
+        if ($this->redis->sIsMember('driver_order_ing', $d_id)) {
+            $this->redis->sRem('driver_order_ing', $d_id);
+        }
         $this->redis->sAdd('driver_order_receive', $d_id);
     }
 
@@ -207,6 +213,9 @@ class DriverService
     {
         if ($this->redis->sIsMember('driver_order_no', $d_id)) {
             $this->redis->sRem('driver_order_no', $d_id);
+        }
+        if ($this->redis->sIsMember('driver_order_receive', $d_id)) {
+            $this->redis->sRem('driver_order_receive', $d_id);
         }
         $this->redis->sAdd('driver_order_ing', $d_id);
     }
