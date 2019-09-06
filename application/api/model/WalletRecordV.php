@@ -95,7 +95,7 @@ class WalletRecordV extends Model
 
                 }
             })
-            ->where('type', '<>', 4)
+            ->whereIn('type', '1,2,4,3,5')
             ->field('id as d_id,username, money,create_time')
             ->order('create_time desc')
             ->paginate($size, false, ['page' => $page]);
@@ -105,7 +105,7 @@ class WalletRecordV extends Model
     public static function driverBalance($d_id)
     {
         $balance = self::where('id', $d_id)
-            ->whereIn('type', '1,2,3,5')
+            ->whereIn('type', '1,2,4,3,5')
             ->sum('money');
         return $balance;
 
