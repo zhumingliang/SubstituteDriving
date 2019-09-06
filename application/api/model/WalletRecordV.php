@@ -95,7 +95,7 @@ class WalletRecordV extends Model
 
                 }
             })
-            ->whereIn('type', '1,2,4,3,5')
+            ->where('type', '<>', 4)
             ->field('id as d_id,username, money,create_time')
             ->order('create_time desc')
             ->paginate($size, false, ['page' => $page]);
