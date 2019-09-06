@@ -118,7 +118,7 @@ class OrderService
             }
             $params['from'] = OrderEnum::FROM_MANAGER;
             $params['state'] = OrderEnum::ORDER_NO;
-            $params['order_num'] =$this->getOrderNumber();
+            $params['order_num'] = $this->getOrderNumber();
             $params['order_lat'] = empty($params['start_lat']) ? '' : $params['start_lat'];
             $params['order_lng'] = empty($params['start_lng']) ? '' : $params['start_lng'];
             $params['order_address'] = empty($params['start']) ? '' : $params['start'];
@@ -404,8 +404,6 @@ class OrderService
                                 json_decode($v['message'], true));
                         }
                     }
-
-
                 }
             }
         } catch (Exception $e) {
@@ -429,7 +427,12 @@ class OrderService
             if (count($push)) {
                 foreach ($push as $k => $v) {
                     if (GatewayService::isMINIUidOnline($v['u_id'])) {
-                        GatewayService::sendToMiniClient($v['u_id'], json_decode($v['message'], true));
+                        if ($v['send_to'] == 1) {
+                            GatewayService::sendToMiniClient($v['u_id'], json_decode($v['message'], true));
+
+                        } else if ($v['send_to'] == 2) {
+                            GatewayService::sendToDriverClient($v['u_id'], json_decode($v['message'], true));
+                        }
 
                         MiniPushT::update(['count' => $v['count'] + 1],
                             ['id' => $v['id']]);
@@ -470,6 +473,17 @@ class OrderService
                 $this->prefixPushRefuse($push->f_d_id);
                 //处理原订单状态
                 //由触发器解决
+
+                $send_data=[
+                    'type' => 'orderRevoke',
+                    'order_info' => [
+                        'id' => $push->o_id,
+                        'u_id' => $push->f_d_id,
+                        'msg'=>'转单成功'
+                    ]
+                ];
+                MiniPushT::create(['u_id' => $push->f_d_id, 'message' => json_encode($send_data), 'count' => 1,'state' => 1]);
+
             }
 
 
@@ -753,6 +767,10 @@ class OrderService
             }
             throw new UpdateException(['errorCode' => 40011, 'msg' => $msg]);
         }
+        if ($order->d_id != Token::getCurrentUid()) {
+            throw new UpdateException(['errorCode' => 40012, 'msg' => '订单被转派或者撤回']);
+        }
+
         //检测订单是否被撤回
         $revoke = OrderRevokeT::where('o_id', $o_id)
             ->where('d_id', Token::getCurrentUid())
@@ -1458,13 +1476,13 @@ class OrderService
             $value = Redis::instance()->get($key);
             $len = strlen($value);
             $number = $key;
-            for ($i = 0; $i < 3-$len; $i++) {
-                $number.='0';
+            for ($i = 0; $i < 3 - $len; $i++) {
+                $number .= '0';
             }
-            $number.=$value;
-        }else{
-            Redis::instance()->set($key,1);
-            $number=$key.'001';
+            $number .= $value;
+        } else {
+            Redis::instance()->set($key, 1);
+            $number = $key . '001';
         }
         Redis::instance()->incre($key);
         return $number;
