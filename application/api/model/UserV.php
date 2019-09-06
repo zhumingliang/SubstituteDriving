@@ -41,7 +41,7 @@ class UserV extends Model
                     $query->whereBetweenTime('create_time', $time_begin, $time_end);
                 }
             })
-            ->order('create_time desc')
+            ->order('count desc')
             ->paginate($size, false, ['page' => $page])->toArray();
         return $list;
 
