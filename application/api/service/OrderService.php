@@ -426,14 +426,20 @@ class OrderService
                 ->toArray();
             if (count($push)) {
                 foreach ($push as $k => $v) {
-                    if (GatewayService::isMINIUidOnline($v['u_id'])) {
-                        if ($v['send_to'] == 1) {
+                    $online = false;
+                    if ($v['send_to'] == 1) {
+                        if (GatewayService::isMINIUidOnline($v['u_id'])) {
+                            $online = true;
                             GatewayService::sendToMiniClient($v['u_id'], json_decode($v['message'], true));
-
-                        } else if ($v['send_to'] == 2) {
+                        }
+                    } else if ($v['send_to'] == 2) {
+                        if (GatewayService::isDriverUidOnline($v['u_id'])) {
+                            $online = true;
                             GatewayService::sendToDriverClient($v['u_id'], json_decode($v['message'], true));
                         }
+                    }
 
+                    if ($online) {
                         MiniPushT::update(['count' => $v['count'] + 1],
                             ['id' => $v['id']]);
                     }
@@ -448,7 +454,8 @@ class OrderService
     /**
      * 司机处理推送请求
      */
-    public function orderPushHandel($params)
+    public
+    function orderPushHandel($params)
     {
         $p_id = $params['p_id'];
         $type = $params['type'];
@@ -499,7 +506,8 @@ class OrderService
 
     }
 
-    private function prefixFarDistance($o_id, $d_id)
+    private
+    function prefixFarDistance($o_id, $d_id)
     {
         $order = $this->getOrder($o_id);
         if ($order->from == OrderEnum::FROM_DRIVER) {
@@ -514,7 +522,8 @@ class OrderService
     }
 
 
-    private function prefixPushAgree($d_id)
+    private
+    function prefixPushAgree($d_id)
     {
         //更新order表状态 - 用触发器：update_order_state 解决
 
@@ -526,7 +535,8 @@ class OrderService
 
     }
 
-    private function sendToMini($push)
+    private
+    function sendToMini($push)
     {
         $order = $this->getOrder($push->o_id);
         $u_id = $order->u_id;
@@ -554,7 +564,8 @@ class OrderService
 
     }
 
-    private function prefixPushRefuse($d_id)
+    private
+    function prefixPushRefuse($d_id)
     {
         //更新司机状态:从正在派单移除；添加到未接单
         $redis = new \Redis();
@@ -563,7 +574,8 @@ class OrderService
         $redis->sAdd('driver_order_no', $d_id);
     }
 
-    private function saveOrder($data)
+    private
+    function saveOrder($data)
     {
         $order = OrderT::create($data);
         if (!$order) {
@@ -572,7 +584,8 @@ class OrderService
         return $order;
     }
 
-    private function saveOrderList($o_id, $state)
+    private
+    function saveOrderList($o_id, $state)
     {
         $data = [
             'o_id' => $o_id,
@@ -582,7 +595,8 @@ class OrderService
 
     }
 
-    private function findDriverToPush($order)
+    private
+    function findDriverToPush($order)
     {
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
@@ -652,7 +666,8 @@ class OrderService
         return $push;
     }
 
-    private function checkDriverPush($o_id, $d_id)
+    private
+    function checkDriverPush($o_id, $d_id)
     {
         $pushes = OrderPushT::where('o_id', $o_id)
             ->where('d_id', $d_id)
@@ -672,7 +687,8 @@ class OrderService
         return 1;
     }
 
-    public function orderCancel($params)
+    public
+    function orderCancel($params)
     {
         try {
             Db::startTrans();
@@ -714,7 +730,8 @@ class OrderService
     }
 
 
-    public function orderBegin($params)
+    public
+    function orderBegin($params)
     {
         $o_id = $params['id'];
         //检测订单是否被取消
@@ -737,7 +754,8 @@ class OrderService
         }
     }
 
-    public function beginWait($params)
+    public
+    function beginWait($params)
     {
         $order = $this->checkOrderState($params['id']);
         $order->begin = CommonEnum::STATE_IS_OK;
@@ -751,7 +769,8 @@ class OrderService
     /**
      * 到达起点
      */
-    public function arrivingStart($id)
+    public
+    function arrivingStart($id)
     {
         $order = $this->checkOrderState($id);
         $order->arriving_time = date('Y-m-d H:i:s', time());
@@ -762,7 +781,8 @@ class OrderService
     }
 
 
-    private function checkOrderState($o_id)
+    private
+    function checkOrderState($o_id)
     {
         $order = OrderT::get($o_id);
         if ($order->state == OrderEnum::ORDER_CANCEL) {
@@ -787,7 +807,8 @@ class OrderService
         return $order;
     }
 
-    public function miniOrders($page, $size)
+    public
+    function miniOrders($page, $size)
     {
         $u_id = Token::getCurrentUid();
         $orders = OrderT::miniOrders($u_id, $page, $size);
@@ -795,7 +816,8 @@ class OrderService
 
     }
 
-    public function miniOrder($id)
+    public
+    function miniOrder($id)
     {
         $order = $this->getOrder($id);
         if ($order->state == OrderEnum::ORDER_NO) {
@@ -830,7 +852,8 @@ class OrderService
         return $info;
     }
 
-    public function driverCompleteOrder($params)
+    public
+    function driverCompleteOrder($params)
     {
 
         try {
@@ -920,7 +943,8 @@ class OrderService
 
     }
 
-    public function prefixOrderCharge($o_id, $d_id, $money, $ticket_money)
+    public
+    function prefixOrderCharge($o_id, $d_id, $money, $ticket_money)
     {
 
         $orderCharge = SystemOrderChargeT::find();
@@ -970,7 +994,8 @@ class OrderService
 
     }
 
-    private function prefixWait($wait_time)
+    private
+    function prefixWait($wait_time)
     {
         $wait = WaitPriceT::where('state', CommonEnum::STATE_IS_OK)
             ->find();
@@ -983,7 +1008,8 @@ class OrderService
 
     }
 
-    public function prefixWeather($distance_money)
+    public
+    function prefixWeather($distance_money)
     {
         $weather = WeatherT::find();
         if ((!$weather) || $weather->state == CommonEnum::STATE_IS_FAIL) {
@@ -994,7 +1020,8 @@ class OrderService
 
     }
 
-    private function prepareOrderInfo($order)
+    private
+    function prepareOrderInfo($order)
     {
 
         if ($order->state == OrderEnum::ORDER_COMPLETE) {
@@ -1049,7 +1076,8 @@ class OrderService
     }
 
 
-    public function getDriverLocation($u_id)
+    public
+    function getDriverLocation($u_id)
     {
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
@@ -1068,7 +1096,8 @@ class OrderService
         ];
     }
 
-    private function getDriverDistance($user_lng, $user_lat, $d_id)
+    private
+    function getDriverDistance($user_lng, $user_lat, $d_id)
     {
         $location = $this->getDriverLocation($d_id);
         if ($location['lng'] && $location['lat']) {
@@ -1079,7 +1108,8 @@ class OrderService
 
     }
 
-    private function getOrder($id)
+    private
+    function getOrder($id)
     {
         $order = OrderT::with(['ticket', 'driver'])->get($id);
         if (!$order) {
@@ -1089,7 +1119,8 @@ class OrderService
 
     }
 
-    public function transferOrder($params)
+    public
+    function transferOrder($params)
     {
 
         //检查订单是否开始
@@ -1113,7 +1144,8 @@ class OrderService
 
     }
 
-    private function updateDriverCanReceive($d_id)
+    private
+    function updateDriverCanReceive($d_id)
     {
         //检查新司机状态是否有订单，修改司机状态
         $redis = new \Redis();
@@ -1132,7 +1164,8 @@ class OrderService
     /**
      * 向司机推送服务-转单服务-websocket/短信
      */
-    private function pushToDriverWithTransfer($d_id, $order, $distance_info, $push_type = "transfer")
+    private
+    function pushToDriverWithTransfer($d_id, $order, $distance_info, $push_type = "transfer")
     {
 
         $from_name = '';
@@ -1184,7 +1217,8 @@ class OrderService
     }
 
 
-    public function pushDriverWithOrderCancel($d_id, $reason)
+    public
+    function pushDriverWithOrderCancel($d_id, $reason)
     {
         //通过websocket推送给司机
         $push_data = [
@@ -1196,7 +1230,8 @@ class OrderService
         GatewayService::sendToDriverClient($d_id, $push_data);
     }
 
-    public function pushDriverWithOrderRevoke($d_id)
+    public
+    function pushDriverWithOrderRevoke($d_id)
     {
         //通过websocket推送给司机
         $push_data = [
@@ -1209,7 +1244,8 @@ class OrderService
         GatewayService::sendToDriverClient($d_id, $push_data);
     }
 
-    public function choiceDriverByManager($params)
+    public
+    function choiceDriverByManager($params)
     {
         $d_id = $params['d_id'];
         $o_id = $params['o_id'];
@@ -1243,7 +1279,8 @@ class OrderService
 
     }
 
-    private function getDistanceInfoToPush($order, $d_id)
+    private
+    function getDistanceInfoToPush($order, $d_id)
     {
         $distance = 0;
         $distance_money = 0;
@@ -1270,7 +1307,8 @@ class OrderService
         ];
     }
 
-    public function driverOrders($page, $size, $time_begin, $time_end)
+    public
+    function driverOrders($page, $size, $time_begin, $time_end)
     {
         $d_id = Token::getCurrentUid();
         $orders = OrderT::getDriverOrders($d_id, $page, $size, $time_begin, $time_end);
@@ -1280,14 +1318,16 @@ class OrderService
 
     }
 
-    public function orderInfo($id)
+    public
+    function orderInfo($id)
     {
         $order = $this->getOrder($id);
         $info = $this->prepareOrderInfo($order);
         return $info;
     }
 
-    public function managerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from)
+    public
+    function managerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from)
     {
         $grade = Token::getCurrentTokenVar('type');
         if ($grade != 'manager') {
@@ -1301,7 +1341,8 @@ class OrderService
 
     }
 
-    private function getDriverOrdersStatistic($d_id, $time_begin, $time_end)
+    private
+    function getDriverOrdersStatistic($d_id, $time_begin, $time_end)
     {
         $ordersMoney = OrderT::driverOrdersMoney($d_id, $time_begin, $time_end);
         return [
@@ -1312,7 +1353,8 @@ class OrderService
 
     }
 
-    private function getManagerOrdersStatistic($driver, $time_begin, $time_end)
+    private
+    function getManagerOrdersStatistic($driver, $time_begin, $time_end)
     {
         $ordersMoney = OrderV::ordersMoney($driver, $time_begin, $time_end);
         return [
@@ -1324,7 +1366,8 @@ class OrderService
 
     }
 
-    private function prefixTransferInfo($data)
+    private
+    function prefixTransferInfo($data)
     {
         if (!count($data)) {
             return $data;
@@ -1344,14 +1387,16 @@ class OrderService
 
     }
 
-    public function recordsOfConsumption($page, $size, $phone)
+    public
+    function recordsOfConsumption($page, $size, $phone)
     {
         $list = OrderT::recordsOfConsumption($page, $size, $phone);
         $list['statistic'] = $this->recordsOfConsumptionStatistic($phone);
         return $list;
     }
 
-    private function recordsOfConsumptionStatistic($phone)
+    private
+    function recordsOfConsumptionStatistic($phone)
     {
         return [
             'count' => OrderT::ConsumptionCount($phone),
@@ -1361,7 +1406,8 @@ class OrderService
 
     }
 
-    public function orderLocations($page, $size, $id)
+    public
+    function orderLocations($page, $size, $id)
     {
         $order = OrderT::get($id);
         $locations = LocationT::where('o_id', $id)
@@ -1376,14 +1422,16 @@ class OrderService
         ];
     }
 
-    public function current($page, $size)
+    public
+    function current($page, $size)
     {
         $orders = Orderv::currentOrders($page, $size);
         $orders['data'] = $this->prefixCurrentPush($orders['data']);
         return $orders;
     }
 
-    private function prefixCurrentPush($data)
+    private
+    function prefixCurrentPush($data)
     {
         if (!empty($data)) {
             foreach ($data as $k => $v) {
@@ -1410,8 +1458,9 @@ class OrderService
     }
 
 
-    // 管理员撤回订单推送/一已经接单但未开始出发订单
-    public function withdraw($o_id, $type = "revoke")
+// 管理员撤回订单推送/一已经接单但未开始出发订单
+    public
+    function withdraw($o_id, $type = "revoke")
     {
         $order = OrderT::get($o_id);
 
@@ -1458,7 +1507,8 @@ class OrderService
         return false;
     }
 
-    public function CMSManagerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from)
+    public
+    function CMSManagerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from)
     {
         $orders = OrderV::CMSManagerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from);
         $orders['statistic'] = $this->getManagerOrdersStatistic($driver, $time_begin, $time_end);
@@ -1467,7 +1517,8 @@ class OrderService
 
     }
 
-    public function CMSInsuranceOrders($page, $size, $time_begin, $time_end)
+    public
+    function CMSInsuranceOrders($page, $size, $time_begin, $time_end)
     {
         $orders = OrderV::CMSInsuranceOrders($page, $size, $time_begin, $time_end);
         $orders['statistic'] = OrderV::orderCount('', $time_begin, $time_end);
@@ -1475,7 +1526,8 @@ class OrderService
 
     }
 
-    public function getOrderNumber()
+    public
+    function getOrderNumber()
     {
         $key = date('Ymd');
         if (Redis::instance()->exists($key)) {
