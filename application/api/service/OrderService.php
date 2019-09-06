@@ -461,11 +461,10 @@ class OrderService
         if ($type == OrderEnum::ORDER_PUSH_AGREE) {
             //检测订单状态
             $this->checkOrderState($push->o_id);
+            $this->prefixPushAgree($push->d_id);
+            $this->prefixFarDistance($push->o_id, $push->d_id);
             if ($push_type == "normal") {
-                $this->prefixPushAgree($push->d_id);
                 //处理远程接驾费用
-                $this->prefixFarDistance($push->o_id, $push->d_id);
-
                 $this->sendToMini($push);
 
             } else if ($push_type == "transfer") {
@@ -474,15 +473,22 @@ class OrderService
                 //处理原订单状态
                 //由触发器解决
 
-                $send_data=[
+                $send_data = [
                     'type' => 'orderTransfer',
                     'order_info' => [
                         'id' => $push->o_id,
                         'u_id' => $push->f_d_id,
-                        'msg'=>'转单成功'
+                        'msg' => '转单成功'
                     ]
                 ];
-                MiniPushT::create(['u_id' => $push->f_d_id, 'message' => json_encode($send_data), 'count' => 1,'state' => 1]);
+                MiniPushT::create([
+                    'u_id' => $push->f_d_id,
+                    'message' => json_encode($send_data),
+                    'count' => 1,
+                    'state' => 1,
+                    'send_to' => 2,
+                    'o_id' => $push->o_id
+                ]);
 
             }
 
