@@ -475,7 +475,7 @@ class OrderService
                 //由触发器解决
 
                 $send_data=[
-                    'type' => 'order_Revoke',
+                    'type' => 'orderTransfer',
                     'order_info' => [
                         'id' => $push->o_id,
                         'u_id' => $push->f_d_id,
