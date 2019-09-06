@@ -469,11 +469,10 @@ class OrderService
             //检测订单状态
             $this->checkOrderState($push->o_id);
             $this->prefixPushAgree($push->d_id);
+            //处理远程接驾费用
             $this->prefixFarDistance($push->o_id, $push->d_id);
             if ($push_type == "normal") {
-                //处理远程接驾费用
                 $this->sendToMini($push);
-
             } else if ($push_type == "transfer") {
                 //释放转单司机
                 $this->prefixPushRefuse($push->f_d_id);
@@ -532,6 +531,7 @@ class OrderService
         $redis->connect('127.0.0.1', 6379, 60);
         $redis->sRem('driver_order_ing', $d_id);
         $redis->sAdd('driver_order_receive', $d_id);
+        LogService::save($d_id);
 
     }
 
