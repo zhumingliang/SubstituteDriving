@@ -19,15 +19,13 @@ class SendSMSService
     {
         $code = rand(10000, 99999);
         $params = ['code' => $code];
-       // $res = SendSms::instance()->send($phone, $params, $type);
+        $res = SendSms::instance()->send($phone, $params, $type);
         $token = Request::header('token');
-        LogService::save('begin:'.$token);
-      /*  if (key_exists('Code', $res) && $res['Code'] == 'OK') {
+        if (key_exists('Code', $res) && $res['Code'] == 'OK') {
             $redis = new Redis();
             $redis->set($token, $phone . '-' . $code, 60);
-            LogService::save('end:'.$phone . '-' . $code);
             return true;
-        }*/
+        }
         $this->saveSend($phone, $params, $type, $token);
     }
 
