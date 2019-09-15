@@ -18,14 +18,15 @@ class SendSMSService
     public function sendCode($phone, $type, $num = 1)
     {
         $code = rand(10000, 99999);
-        $res = SendSms::instance()->send($phone, ['code' => $code], $type);
-
+        $params = ['code' => $code];
+        $res = SendSms::instance()->send($phone, $params, $type);
+        $token = Request::header('token');
         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
             $redis = new Redis();
-            $token = Request::header('token');
             $redis->set($token, $phone . '-' . $code, 60);
             return true;
         }
+        $this->saveSend($phone, $params, $type, $token);
     }
 
     public function sendOrderSMS($phone, $params, $num = 1)
@@ -77,12 +78,13 @@ class SendSMSService
 
     }
 
-    private function saveSend($phone, $params, $type)
+    private function saveSend($phone, $params, $type, $token = '')
     {
         $data = [
             'phone' => $phone,
             'params' => $params,
             'type' => $type,
+            'token' => $token,
             'failCount' => 0
         ];
         Redis::instance()->lPush('send_message', json_encode($data));
@@ -111,6 +113,10 @@ class SendSMSService
                 ];
                 if (key_exists('Code', $res) && $res['Code'] == 'OK') {
                     $redis->lPush('send_message_success', json_encode($data));
+                    if (!empty($data_arr['token'])) {
+                        $redis = new Redis();
+                        $redis->set($data_arr['token'], $data_arr['phone'] . '-' . $data_arr['params']['code'], 60);
+                    }
                 } else {
                     if ($data_arr['failCount'] > 2) {
                         $data['failMsg'] = json_encode($res);
