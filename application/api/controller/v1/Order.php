@@ -526,6 +526,8 @@ class Order extends BaseController
      * @apiSuccess (返回参数说明) {String}  name用户名称
      * @apiSuccess (返回参数说明) {String}  phone 用户手机号
      * @apiSuccess (返回参数说明) {String}  create_time 订单创建时间
+     * @apiSuccess (返回参数说明) {String}  begin_time 开始出发时间
+     * @apiSuccess (返回参数说明) {String}  end_time 点击结算时间
      * @apiSuccess (返回参数说明) {int}  state 订单状态：4-已完成,5-撤销
      * @apiSuccess (返回参数说明) {int}  distance  司机行驶路径距离
      * @apiSuccess (返回参数说明) {int}  distance_money  司机行驶路径距离产生金额

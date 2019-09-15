@@ -1064,7 +1064,8 @@ class OrderService
                 'name' => $order->name,
                 'phone' => $order->phone,
                 'create_time' => $order->create_time,
-                'state' => $order->state
+                'state' => $order->state,
+                'begin_time' => $order->begin_time,
             ];
         }
 
