@@ -27,8 +27,13 @@ class Index
 {
     public function index($lat, $lng)
     {
-        $drivers = (new DriverService())->getDriversCountWithLocation2($lat, $lng);
-        echo $drivers;
+        $redis = new \Redis();
+        $redis->connect('127.0.0.1', 6379, 60);
+        $list = $redis->rawCommand('georadius',
+            'drivers_tongling', $lat, $lng, 100000, 'km', 'WITHDIST', 'WITHCOORD');
+        print_r($list);
+        $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, $km, 'km');
+        print_r($list);
 
 
     }
