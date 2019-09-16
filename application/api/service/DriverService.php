@@ -510,7 +510,7 @@ class DriverService
 
         foreach ($list as $k => $v) {
             $d_id = $v[0];
-          echo $d_id;
+          echo $d_id.'/';
             if (in_array($d_id, $driver_ids) &&
                 GatewayService::isDriverUidOnline($d_id) &&
                 $this->checkOnline($d_id)
