@@ -503,7 +503,6 @@ class DriverService
         $km = config('setting.mini_nearby_km');
         $redis->connect('127.0.0.1', 6379, 60);
         $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, $km, 'km');
-        print_r($list);
         $driver_ids = $this->redis->sMembers('driver_order_no');
         if (!$driver_ids || !count($list)) {
             return 0;
@@ -511,6 +510,8 @@ class DriverService
 
         foreach ($list as $k => $v) {
             $d_id = $v[0];
+            echo 'in:'.in_array($d_id, $driver_ids).'socket:'.
+                GatewayService::isDriverUidOnline($d_id).'online:'. $this->checkOnline($d_id);
             if (in_array($d_id, $driver_ids) &&
                 GatewayService::isDriverUidOnline($d_id) &&
                 $this->checkOnline($d_id)
