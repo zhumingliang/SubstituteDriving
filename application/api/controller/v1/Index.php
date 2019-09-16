@@ -25,34 +25,10 @@ use function GuzzleHttp\Psr7\str;
 
 class Index
 {
-    public function index()
+    public function index($lat, $lng)
     {
-        $localtion = [
-            [
-                30.920747, 117.844427
-            ], [
-                30.920607, 117.844502
-            ], [
-                30.921335, 117.843201
-            ], [
-                30.917326, 117.85149
-            ], [
-                30.917168, 117.852343
-            ], [
-                30.917103, 117.852457
-            ]
-        ];
-        $distance = 0;
-        $last = [];
-        foreach ($localtion as $k => $v) {
-            if ($k == 0) {
-                $last = $v;
-            } else {
-                $distance += CalculateUtil::GetDistance($v[0], $v[1], $last[0], $last[1]);
-                $last = $v;
-            }
-        }
-        echo $distance;
+        $drivers = (new DriverService())->getDriversCountWithLocation($lat, $lng);
+        echo $drivers;
 
 
     }
