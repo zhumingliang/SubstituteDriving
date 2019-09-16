@@ -31,9 +31,10 @@ class Index
         $redis->connect('127.0.0.1', 6379, 60);
         $list = $redis->rawCommand('georadius',
             'drivers_tongling', $lat, $lng, 100000, 'km', 'WITHDIST', 'WITHCOORD');
-        print_r($list);
-        $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, 10, 'km');
-        print_r($list);
+        var_dump($list);
+        echo 111;
+        $list2 = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, 100, 'km');
+        var_dump($list2);
 
 
     }
