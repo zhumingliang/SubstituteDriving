@@ -27,7 +27,7 @@ class Index
 {
     public function index($lat, $lng)
     {
-        $drivers = (new DriverService())->getDriversCountWithLocation($lat, $lng);
+        $drivers = (new DriverService())->getDriversCountWithLocation2($lat, $lng);
         echo $drivers;
 
 
