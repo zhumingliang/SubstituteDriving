@@ -32,7 +32,7 @@ class Index
         $list = $redis->rawCommand('georadius',
             'drivers_tongling', $lat, $lng, 100000, 'km', 'WITHDIST', 'WITHCOORD');
         print_r($list);
-        $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, $km, 'km');
+        $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, 10, 'km');
         print_r($list);
 
 
