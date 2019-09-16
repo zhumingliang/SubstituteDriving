@@ -29,12 +29,11 @@ class Index
     {
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
-        $list = $redis->rawCommand('georadius',
-            'drivers_tongling', $lat, $lng, 100000, 'km', 'WITHDIST', 'WITHCOORD');
-        var_dump($list);
-        echo 111;
+        $list = $this->redis->rawCommand('georadius',
+            'drivers_tongling', $lng, $lat, 100000, 'km', 'WITHDIST', 'WITHCOORD');
+        print_r($list);
         $list2 = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, 100, 'km');
-        var_dump($list2);
+        print_r($list2);
 
 
     }
