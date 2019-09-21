@@ -582,7 +582,7 @@ class Order extends BaseController
      * @apiSuccess (返回参数说明) {String}  create_time 创建时间
      * @apiSuccess (返回参数说明) {int} state 订单状态：4|完成；5|撤销
      * @apiSuccess (返回参数说明) {Obj} statistic 统计信息
-     * @apiSuccess (返回参数说明) {int} statistic-members 代驾人数
+     * @apiSuccess (返回参数说明) {int} statistic-members 司机在线人数
      * @apiSuccess (返回参数说明) {int} statistic-orders_count 订单数
      * @apiSuccess (返回参数说明) {Float} statistic-all_money 订单总金额
      * @apiSuccess (返回参数说明) {Float} statistic-ticket_money 使用优惠券总金额

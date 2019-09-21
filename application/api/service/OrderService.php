@@ -1356,7 +1356,8 @@ class OrderService
     {
         $ordersMoney = OrderV::ordersMoney($driver, $time_begin, $time_end);
         return [
-            'members' => OrderV::members($driver, $time_begin, $time_end),
+            // 'members' => OrderV::members($driver, $time_begin, $time_end),
+            'members' => GatewayService::onlineDrivers(),
             'orders_count' => OrderV::orderCount($driver, $time_begin, $time_end),
             'all_money' => $ordersMoney['all_money'],
             'ticket_money' => $ordersMoney['ticket_money'],

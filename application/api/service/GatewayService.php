@@ -25,6 +25,21 @@ class GatewayService
 
     }
 
+    public static function onlineDrivers()
+    {
+        $count = 0;
+        $list = Gateway::getAllUidList();
+        if (empty($list)) {
+            return $count;
+        }
+        foreach ($list as $k => $v) {
+            if (substr($v, 0, 1) == 'd') {
+                $count++;
+            }
+        }
+        return $count;
+    }
+
     public static function isMINIUidOnline($u_id)
     {
         return Gateway::isUidOnline('mini' . '-' . $u_id);
