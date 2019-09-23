@@ -67,6 +67,15 @@ class SendSMSService
         $this->saveSend($phone, $params, 'orderComplete');
     }
 
+    public function sendTicketSMS($phone, $params, $num = 1)
+    {
+        $res = SendSms::instance()->send($phone, $params, 'ticket');
+        if (key_exists('Code', $res) && $res['Code'] == 'OK') {
+            return true;
+        }
+        $this->saveSend($phone, $params, 'orderComplete');
+    }
+
     public function sendMINISMS($phone, $params = '', $num = 1)
     {
 
@@ -78,7 +87,7 @@ class SendSMSService
 
     }
 
-    private function saveSend($phone, $params, $type, $token = '')
+    public function saveSend($phone, $params, $type, $token = '')
     {
         $data = [
             'phone' => $phone,
@@ -87,7 +96,6 @@ class SendSMSService
             'token' => $token,
             'failCount' => 0
         ];
-        LogService::save('fail:'. json_encode($data));
         Redis::instance()->lPush('send_message', json_encode($data));
     }
 

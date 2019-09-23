@@ -25,6 +25,7 @@ return [
         'TemplateMINICode' => 'SMS_173251945', // 发送接单通知给用户
         'TemplateDriverCreateOrderCode' => 'SMS_173251947', // 司机自主建单通知
         'TemplateOrderCompleteCode' => 'SMS_173251946', // 结算通知
+        'TemplateTicketCode' => 'SMS_174655424', // 派送优惠券通知
         'SignName' => 'OK代驾'
     ],
 ];
