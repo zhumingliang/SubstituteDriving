@@ -855,7 +855,7 @@ class OrderService
 
         try {
             Db::startTrans();
-            $distance = round($params['distance'] / 1000, 1);
+            $distance = $params['distance'];
             $id = $params['id'];
             $wait_time = $params['wait_time'];
             $order = $this->getOrder($id);
