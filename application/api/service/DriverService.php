@@ -300,11 +300,10 @@ class DriverService
             ) {
 
                 $driver = $redis->lPop("driver:$d_id:location");
-                if ($d_id == 50) {
-                    var_dump($driver);
-                }
                 if ($driver) {
                     $driver = json_decode($driver, true);
+                }else{
+                    $driver=DriverT::where('id',$d_id)->find()->toArray();
                 }
                 $data = [
                     'id' => $d_id,
