@@ -262,7 +262,7 @@ class DriverService
                 $driver = json_decode($driver, true);
                 $data = [
                     'id' => $d_id,
-                    'distance' =>round( $v[1],2),
+                    'distance' => round($v[1], 2),
                     'name' => empty($driver['username']) ? '' : $driver['username'],
                     'phone' => empty($driver['phone']) ? '' : $driver['phone'],
                     'citycode' => empty($driver['citycode']) ? '' : $driver['citycode'],
@@ -298,7 +298,11 @@ class DriverService
                 && GatewayService::isDriverUidOnline($d_id)
                 && $this->checkOnline($d_id)
             ) {
+
                 $driver = $redis->lPop("driver:$d_id:location");
+                if ($d_id == 50) {
+                    var_dump($driver);
+                }
                 if ($driver) {
                     $driver = json_decode($driver, true);
                 }
@@ -485,7 +489,7 @@ class DriverService
 
         foreach ($list as $k => $v) {
             //$d_id = $v[0];
-            $d_id =$v;
+            $d_id = $v;
             if (in_array($d_id, $driver_ids) &&
                 GatewayService::isDriverUidOnline($d_id) &&
                 $this->checkOnline($d_id)
@@ -511,7 +515,7 @@ class DriverService
 
         foreach ($list as $k => $v) {
             $d_id = $v;
-          echo $d_id.'/';
+            echo $d_id . '/';
             if (in_array($d_id, $driver_ids) &&
                 GatewayService::isDriverUidOnline($d_id) &&
                 $this->checkOnline($d_id)

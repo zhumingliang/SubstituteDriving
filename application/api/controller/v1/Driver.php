@@ -221,7 +221,7 @@ class Driver extends BaseController
      * @apiVersion 1.0.1
      * @apiDescription Android管理端-自主建单选择司机
      * @apiExample {get}  请求样例:
-     * https://tonglingok.com/api/v1/driver/acceptableOrder?lng="123"&lat="1212"
+     * https://tonglingok.com/api/v1/driver/acceptableOrder/manager?lng="123"&lat="1212"
      * @apiParam (请求参数说明) {string} lng 经度
      * @apiParam (请求参数说明) {string} lat 纬度
      * @apiSuccessExample {json} 返回样例:
