@@ -30,7 +30,7 @@ class Index
        $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
         $driver_id = 'driver:' . 101;
-        $driver =$redis->hMGet($driver_id, 'company_id', 'phone', 'username');
+        $driver =$redis->hMGet($driver_id, ['company_id', 'phone', 'username']);
         print_r($driver);
 
     }
