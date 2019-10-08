@@ -27,7 +27,8 @@ class Index
 {
     public function index()
     {
-        $drivers = DriverT::select();
+        $drivers = DriverT::where('state', CommonEnum::STATE_IS_OK)
+            ->select();
         foreach ($drivers as $k => $v) {
             (new DriverService())->saveDriverToCache($v);
         }
