@@ -18,12 +18,6 @@ use think\facade\Request;
 class Driver extends BaseController
 {
 
-    public function send()
-    {
-        $u_id = \app\api\service\Token::getCurrentUid();
-        Gateway::sendToUid($u_id, json_encode(['name' => 'hello zml']));
-    }
-
     /**
      * @api {POST} /api/v1/driver/save CMS管理端-新增司机
      * @apiGroup   CMS
@@ -90,6 +84,7 @@ class Driver extends BaseController
             throw new UpdateException();
 
         }
+        (new DriverService())->updateDriverToCache($params);
         return json(new SuccessMessage());
     }
 

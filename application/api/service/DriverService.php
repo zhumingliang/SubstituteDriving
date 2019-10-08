@@ -37,18 +37,48 @@ class DriverService
     {
         $params['pwd'] = sha1($params['pwd']);
         $params['admin_id'] = Token::getCurrentUid();
-        $params['state'] = CommonEnum::STATE_IS_OK;
+        $params['company_id'] = Token::getCurrentTokenVar('company_id');
         $driver = DriverT::create($params);
         if (!$driver) {
             throw new SaveException();
         }
+        //将司机缓存到redis司机列表
+        $this->saveDriverToCache($driver);
+    }
 
+    public function saveDriverToCache($driver)
+    {
+        $driver_id = 'driver:' . $driver->id;
+        $data = [
+            'id' => $driver->id,
+            'number' => $driver->number,
+            'username' => $driver->username,
+            'phone' => $driver->phone,
+            'company_id' => $driver->company_id
+        ];
+        Redis::instance()->hMset($driver_id, $data);
+    }
+
+    public function updateDriverToCache($driver)
+    {
+        $driver_id = 'driver:' . $driver['id'];
+        $data = [];
+        if (!empty($driver['number'])) {
+            $data['number'] = $driver['number'];
+        }
+        if (!empty($driver['username'])) {
+            $data['username'] = $driver['username'];
+        }
+        if (!empty($driver['phone'])) {
+            $data['phone'] = $driver['phone'];
+        }
+        Redis::instance()->hMset($driver_id, $data);
     }
 
     public function drivers($page, $size, $time_begin, $time_end, $username, $account, $number, $online)
     {
-
-        $drivers = WalletRecordV::drivers($page, $size, $time_begin, $time_end, $username, $account, $number, $online);
+        $company_id = Token::getCurrentTokenVar('company_id');
+        $drivers = WalletRecordV::drivers($company_id, $page, $size, $time_begin, $time_end, $username, $account, $number, $online);
         return $drivers;
 
     }
@@ -59,7 +89,7 @@ class DriverService
 
             Db::startTrans();
             $type = Token::getCurrentTokenVar('type');
-            if ($type !== "driver") {
+            if ($type != "driver") {
                 throw new AuthException();
             }
             $id = Token::getCurrentUid();
@@ -99,7 +129,6 @@ class DriverService
         }
     }
 
-
     public function checkNoCompleteOrder($id)
     {
         $count = OrderT::where('d_id', $id)
@@ -132,7 +161,6 @@ class DriverService
         return OnlineRecordT::create($data);
 
     }
-
 
     private function prefixDriverState($line_type, $d_id)
     {
@@ -302,8 +330,8 @@ class DriverService
                 $driver = $redis->lPop("driver:$d_id:location");
                 if ($driver) {
                     $driver = json_decode($driver, true);
-                }else{
-                    $driver=DriverT::where('id',$d_id)->find()->toArray();
+                } else {
+                    $driver = DriverT::where('id', $d_id)->find()->toArray();
                 }
                 $data = [
                     'id' => $d_id,
