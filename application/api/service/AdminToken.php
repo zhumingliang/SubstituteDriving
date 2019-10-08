@@ -90,6 +90,7 @@ class AdminToken extends Token
         $cachedValue = [
             'u_id' => $admin->id,
             'phone' => $admin->phone,
+            'company_id' => $admin->company_id,
             'username' => $admin->username,
             'account' => $admin->account,
             'grade' => $admin->grade,

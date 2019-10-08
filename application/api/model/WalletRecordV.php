@@ -14,10 +14,14 @@ class WalletRecordV extends Model
         return $state[$value];
     }
 
-    public static function drivers($page, $size, $time_begin, $time_end, $username, $account, $number, $online)
+    public static function drivers($company_id, $page, $size, $time_begin, $time_end, $username, $account, $number, $online)
     {
         $time_end = addDay(1, $time_end);
-        $list = self::where(function ($query) use ($username) {
+        $list = self::where(function ($query) use ($company_id) {
+            if (!empty($company_id)) {
+                $query->where('company_id', $company_id);
+            }
+        })->where(function ($query) use ($username) {
             if (strlen($username)) {
                 $query->where('username', 'like', '%' . $username . '%');
             }

@@ -17,15 +17,21 @@ class UserToken extends Token
 {
 
     protected $code;
+    protected $company_id;
     protected $wxAppID;
     protected $wxAppSecret;
     protected $wxLoginUrl;
     protected $USER_MSG_IS_OK = 1;
     protected $USER_MSG_IS_NULL = 2;
 
-    function __construct($code)
+    function __construct($code, $company_id)
     {
         $this->code = $code;
+        if (empty($company_id)) {
+            $this->company_id = 1;
+        } else {
+            $this->company_id = $company_id;
+        }
         $this->wxAppID = config('wx.app_id');
         $this->wxAppSecret = config('wx.app_secret');
         $this->wxLoginUrl = sprintf(
@@ -152,12 +158,13 @@ class UserToken extends Token
             ->find();
 
         $cachedValue['u_id'] = $u_id;
+        $cachedValue['company_id'] = $user['company_id'];
         $cachedValue['phone'] = $user['phone'];
         $cachedValue['openId'] = $user['openId'];
         $cachedValue['gender'] = $user['gender'];
         $cachedValue['province'] = $user['province'];
         $cachedValue['nickName'] = $user['nickName'];
-        //  $cachedValue['name_sub'] = $user['name_sub'];
+        $cachedValue['company_id'] = $user['company_id'];
         $cachedValue['avatarUrl'] = $user['avatarUrl'];
         $cachedValue['type'] = 'mini';
         $cachedValue['scene'] = 1;
@@ -172,6 +179,7 @@ class UserToken extends Token
     {
         $data = [
             'openId' => $openid,
+            'company_id' => $this->company_id,
             'source' => 1
         ];
         $user = UserT::create($data);

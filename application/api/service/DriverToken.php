@@ -115,6 +115,7 @@ class DriverToken extends Token
             'phone_code' => $this->type == 'driver' ? $admin->phone_code : '',
             'online' => $this->type == 'driver' ? $admin->online : '',
             'type' => $this->type,
+            'company_id' => $admin->company_id,
         ];
         return $cachedValue;
     }

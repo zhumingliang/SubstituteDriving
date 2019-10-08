@@ -27,7 +27,7 @@ class Index
 {
     public function index()
     {
-        $drivers = DriverT::where('state', CommonEnum::STATE_IS_OK)
+        /*$drivers = DriverT::where('state', CommonEnum::STATE_IS_OK)
             ->select();
         foreach ($drivers as $k => $v) {
             $driver_id = 'driver:' . $v->id;
@@ -39,7 +39,7 @@ class Index
                 'company_id' => $v->company_id
             ];
             Redis::instance()->hMset($driver_id, $data);
-        }
+        }*/
 
     }
 

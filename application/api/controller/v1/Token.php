@@ -69,7 +69,7 @@ class Token extends Controller
      * @apiParam (请求参数说明) {String} code   安卓手机唯一识别码
      * @apiParam (请求参数说明) {String} type  当前登录用户类别：driver|司机；manager|管理员
      * @apiSuccessExample {json} 返回样例:
-      *{"msg":"ok","errorCode":0,"data":{{"username":"朱明良","online":1,"token":"d3fd8533d1a7c032e08e77e8c8fb3bb9"}}
+     *{"msg":"ok","errorCode":0,"data":{{"username":"朱明良","online":1,"token":"d3fd8533d1a7c032e08e77e8c8fb3bb9"}}
      * @apiSuccess (返回参数说明) {String} username 用户名
      * @apiSuccess (返回参数说明) {int} online 司机在线状态：1 | 在线；2 | 下线
      * @apiSuccess (返回参数说明) {String} token 口令令牌，每次请求接口需要传入，有效期 24 hours
@@ -109,18 +109,20 @@ class Token extends Controller
      * @apiVersion 1.0.1
      * @apiDescription  微信用户登录获取token
      * @apiExample {get}  请求样例:
-     * https://tonglingok.com/api/v1/token/user?code=mdksk
-     * @apiParam (请求参数说明) {String} code    小程序code
+     * https://tonglingok.com/api/v1/token/user?code=mdksk&company_id=1
+     * @apiParam (请求参数说明) {string} code    小程序code
+     * @apiParam (请求参数说明) {string} company_id  小程序所属企业id
      * @apiSuccessExample {json} 返回样例:
      *{"msg":"ok","errorCode":0,"data":{"token":"f4ad56e55cad93833180186f22586a08","type":1,"phone":"18956225230"}}
-     * @apiSuccess (返回参数说明) {Sting} token 口令令牌，每次请求接口需要传入，有效期 2 hours
-     * @apiSuccess (返回参数说明) {Sting} phone 手机号
+     * @apiSuccess (返回参数说明) {string} token 口令令牌，每次请求接口需要传入，有效期 2 hours
+     * @apiSuccess (返回参数说明) {string} phone 手机号
      * @apiSuccess (返回参数说明) {int} type 数据库是否存储小程序用户信息:1 | 已存储；2 | 未存储,需要请求userInfo接口
      */
     public function getUserToken()
     {
         $code = $this->request->param('code');
-        $ut = new UserToken($code);
+        $company_id = $this->request->param('company_id');
+        $ut = new UserToken($code,$company_id);
         $token = $ut->get();
         return json(new SuccessMessageWithData(['data' => $token]));
     }
