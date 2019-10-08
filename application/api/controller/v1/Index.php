@@ -27,7 +27,7 @@ class Index
 {
     public function index()
     {
-        $driver_id = 'driver:' . 100;
+        $driver_id = 'driver:' . 101;
         $data = [
             'id' => 100,
             'username' => '123',
@@ -35,7 +35,7 @@ class Index
         ];
         Redis::instance()->hMset($driver_id, $data);
 
-        Redis::instance()->hGet($driver_id, 'phone');
+      echo  Redis::instance()->hGet($driver_id, 'phone');
 
 
 
