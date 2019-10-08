@@ -30,7 +30,15 @@ class Index
         $drivers = DriverT::where('state', CommonEnum::STATE_IS_OK)
             ->select();
         foreach ($drivers as $k => $v) {
-            (new DriverService())->saveDriverToCache($v);
+            $driver_id = 'driver:' . $v->id;
+            $data = [
+                'id' => $v->id,
+                'number' => $v->number,
+                'username' => $v->username,
+                'phone' => $v->phone,
+                'company_id' => $v->company_id
+            ];
+            Redis::instance()->hMset($driver_id, $data);
         }
 
     }
