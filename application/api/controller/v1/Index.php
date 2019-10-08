@@ -25,15 +25,19 @@ use function GuzzleHttp\Psr7\str;
 
 class Index
 {
-    public function index($lat, $lng)
+    public function index()
     {
-        $redis = new \Redis();
-        $redis->connect('127.0.0.1', 6379, 60);
-        $list = $redis->rawCommand('georadius',
-            'drivers_tongling', $lng, $lat, 100000, 'km', 'WITHDIST', 'WITHCOORD');
-        print_r($list);
-        $list2 = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, 100, 'km');
-        print_r($list2);
+        $driver_id = 'driver:' . 100;
+        $data = [
+            'id' => 100,
+            'username' => '123',
+            'phone' => '18956225230'
+        ];
+        Redis::instance()->hMset($driver_id, $data);
+
+        Redis::instance()->hGet($driver_id, 'phone');
+
+
 
 
     }
