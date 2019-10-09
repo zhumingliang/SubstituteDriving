@@ -15,9 +15,10 @@ class NoticeT extends Model
         return $this->belongsTo('AdminT', 'admin_id', 'id');
     }
 
-    public static function noticesForManager($page, $size)
+    public static function noticesForManager($company_id, $page, $size)
     {
-        $list = self::where('state', '<', 3)
+        $list = self::where('company_id', $company_id)
+            ->where('state', '<', 3)
             ->field('id,title,content,state,create_time')
             ->order('create_time desc')
             ->paginate($size, false, ['page' => $page]);
@@ -25,9 +26,10 @@ class NoticeT extends Model
 
     }
 
-    public static function noticesForDriver($page, $size)
+    public static function noticesForDriver($company_id, $page, $size)
     {
-        $list = self::where('state', CommonEnum::NOTICE_RELEASED)
+        $list = self::where('company_id', $company_id)
+            ->where('state', CommonEnum::NOTICE_RELEASED)
             ->field('id,title,content,create_time')
             ->order('create_time desc')
             ->paginate($size, false, ['page' => $page]);
@@ -36,11 +38,9 @@ class NoticeT extends Model
     }
 
 
-    public static function CMSNotices($page, $size, $time_begin, $time_end, $type, $area, $key)
+    public static function CMSNotices($company_id, $page, $size, $time_begin, $time_end, $type, $area, $key)
     {
-        $list = self::with(['admin' => function ($query) use ($key) {
-            $query->field('id,username');
-        }])
+        $list = self::where('company_id', $company_id)
             ->where('state', '<', '3')
             ->where(function ($query) use ($key) {
                 if (strlen($key)) {
@@ -52,7 +52,9 @@ class NoticeT extends Model
                     $query->whereBetweenTime('create_time', $time_begin, $time_end);
 
                 }
-            })
+            })->with(['admin' => function ($query) use ($key) {
+                $query->field('id,username');
+            }])
             ->hidden(['u_id', 'scene', 'source'])
             ->order('create_time desc')
             ->paginate($size, false, ['page' => $page])

@@ -60,7 +60,8 @@ class TicketService
 
     public function ticketsForCMS($page, $size, $time_begin, $time_end, $key)
     {
-        $ticks = TicketV::ticketsForCMS($page, $size, $time_begin, $time_end, $key);
+        $company_id = Token::getCurrentTokenVar('company_id');
+        $ticks = TicketV::ticketsForCMS($company_id,$page, $size, $time_begin, $time_end, $key);
         return $ticks;
     }
 

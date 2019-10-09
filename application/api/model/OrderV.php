@@ -70,9 +70,14 @@ class OrderV extends Model
         return $list;
     }
 
-    public static function orderCount($driver, $time_begin, $time_end)
+    public static function orderCount($company_id, $driver, $time_begin, $time_end)
     {
-        $counts = $list = self::where('state', OrderEnum::ORDER_COMPLETE)
+        $counts = $list = self::where(function ($query) use ($company_id) {
+            if (!empty($company_id)) {
+                $query->where('company_id', $company_id);
+            }
+        })
+            ->where('state', OrderEnum::ORDER_COMPLETE)
             ->where(function ($query) use ($driver) {
                 if (strlen($driver)) {
                     $query->where('driver', 'like', '%' . $driver . '%');
@@ -91,9 +96,13 @@ class OrderV extends Model
 
     }
 
-    public static function ordersMoney($driver, $time_begin, $time_end)
+    public static function ordersMoney($company_id, $driver, $time_begin, $time_end)
     {
-        $money = $list = self::where('state', OrderEnum::ORDER_COMPLETE)
+        $money = $list = self::where(function ($query) use ($company_id) {
+            if (!empty($company_id)) {
+                $query->where('company_id', $company_id);
+            }
+        })->where('state', OrderEnum::ORDER_COMPLETE)
             ->where(function ($query) use ($driver) {
                 if (strlen($driver)) {
                     $query->where('driver', 'like', '%' . $driver . '%');

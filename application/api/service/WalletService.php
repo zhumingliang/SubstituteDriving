@@ -42,9 +42,9 @@ class WalletService
         (new SendSMSService())->sendRechargeSMS($phone, $data);
     }
 
-    public function recharges($d_id,$page, $size)
+    public function recharges($d_id, $page, $size)
     {
-        $list = RechargeT::rechargesForManager($d_id,$page, $size);
+        $list = RechargeT::rechargesForManager($d_id, $page, $size);
         return $list;
 
     }
@@ -78,7 +78,7 @@ class WalletService
             return [
                 'records' => $records,
                 'balance' => $this->driverBalance($d_id),
-                'income' =>DriverIncomeV::TimeIncome($d_id, $time_begin, $time_end),
+                'income' => DriverIncomeV::TimeIncome($d_id, $time_begin, $time_end),
             ];
         } else {
             throw  new AuthException();
@@ -94,19 +94,21 @@ class WalletService
     public function managerRecords($page, $size, $driver_name, $time_begin, $time_end)
     {
         $grade = Token::getCurrentTokenVar('type');
+        $company_id = Token::getCurrentTokenVar('company_id');
         if ($grade != "manager") {
             throw  new AuthException();
 
         }
-        $balance=0;
-        $income=0;
-        $driver_id=0;
-        if (!empty($driver_name)){
-            $driver=DriverT::where('username',$driver_name)->find();
-            if ($driver){
-                $driver_id=$driver->id;
-                $balance=$this->driverBalance($driver_id);
-                $income=DriverIncomeV::TimeIncome($driver_id, $time_begin, $time_end);
+        $balance = 0;
+        $income = 0;
+        $driver_id = 0;
+        if (!empty($driver_name)) {
+            $driver = DriverT::where('company_id', $company_id)
+                ->where('username', $driver_name)->find();
+            if ($driver) {
+                $driver_id = $driver->id;
+                $balance = $this->driverBalance($driver_id);
+                $income = DriverIncomeV::TimeIncome($driver_id, $time_begin, $time_end);
             }
 
         }
@@ -114,8 +116,8 @@ class WalletService
         $records = WalletRecordV::managerRecords($page, $size, $driver_id, $time_begin, $time_end);
         return [
             'records' => $records,
-            'balance' =>$balance ,
-            'income' =>$income,
+            'balance' => $balance,
+            'income' => $income,
         ];
     }
 

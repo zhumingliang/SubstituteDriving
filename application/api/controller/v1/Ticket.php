@@ -50,10 +50,10 @@ class Ticket extends BaseController
         $params = $this->request->param();
         $params['state'] = CommonEnum::STATE_IS_OK;
         $params['u_id'] = \app\api\service\Token::getCurrentUid();
-        if (key_exists('id', $params) && strlen($params['id'])) {
+        if (!empty($params['id'])) {
             $ticket = TicketT::update($params);
         } else {
-            unset($params['id']);
+            $params['company_id'] = \app\api\service\Token::getCurrentTokenVar('company_id');
             $ticket = TicketT::create($params);
         }
         if (!$ticket) {

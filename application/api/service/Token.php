@@ -137,4 +137,5 @@ class Token
         }
         return false;
     }
+
 }

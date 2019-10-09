@@ -25,10 +25,11 @@ class GatewayService
 
     }
 
-    public static function onlineDrivers()
+    public static function onlineDrivers($company_id)
     {
         $count = 0;
-        $list = Gateway::getAllUidList();
+        $list = Gateway::getUidListByGroup('company-' . $company_id);
+       // $list = Gateway::getAllUidList();
         if (empty($list)) {
             return $count;
         }

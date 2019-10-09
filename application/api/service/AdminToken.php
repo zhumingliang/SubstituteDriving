@@ -94,10 +94,19 @@ class AdminToken extends Token
             'username' => $admin->username,
             'account' => $admin->account,
             'grade' => $admin->grade,
-            'type' => $admin->grade == 1 ? 'manager' : 'insurance'
+            'type' => $this->getAdminType($admin->grade)
         ];
         return $cachedValue;
     }
 
+    public function getAdminType($type)
+    {
+        $data = [
+            1 => 'manager',
+            2 => 'insurance',
+            3 => 'system'
+        ];
+        return $data[$type];
+    }
 
 }

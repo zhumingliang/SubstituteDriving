@@ -42,6 +42,7 @@ class Notice extends BaseController
         $params['state'] = CommonEnum::STATE_IS_OK;
         $params['area'] = '铜陵';
         $params['type'] = 1;
+        $params['company_id'] = \app\api\service\Token::getCurrentTokenVar('company_id');
         $params['admin_id'] = \app\api\service\Token::getCurrentUid();
         $start = NoticeT::create($params);
         if (!$start) {

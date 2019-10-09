@@ -22,7 +22,7 @@ use think\Db;
 use think\Exception;
 use zml\tp_tools\Redis;
 
-class DriverService
+class DriverService extends BaseService
 {
     private $redis = null;
 
@@ -167,37 +167,41 @@ class DriverService
         //处理司机状态
         //1.上线-添加进入未接单
         //2.下线-需要检测当前时候否有进行中的订单；清除接单三大状态
+        $company_id = $this->getDriverCompanyId($d_id);
         if ($line_type == DriverEnum::ONLINE) {
-            if ($this->redis->sIsMember('driver_order_ing', $d_id)) {
-                $this->redis->sRem('driver_order_ing', $d_id);
+            if ($this->redis->sIsMember('driver_order_ing:' . $company_id, $d_id)) {
+                $this->redis->sRem('driver_order_ing:' . $company_id, $d_id);
             }
-            if ($this->redis->sIsMember('driver_order_receive', $d_id)) {
-                $this->redis->sRem('driver_order_receive', $d_id);
+
+            if ($this->redis->sIsMember('driver_order_receive:' . $company_id, $d_id)) {
+                $this->redis->sRem('driver_order_receive:' . $company_id, $d_id);
             }
-            $this->redis->sAdd('driver_order_no', $d_id);
+            $this->redis->sAdd('driver_order_no:' . $company_id, $d_id);
 
         } else {
             if ($this->checkNoCompleteOrder($d_id)) {
                 throw new UpdateException(['msg' => '您还有订单进行中，不能下线']);
             }
 
-            if ($this->redis->sIsMember('driver_order_no', $d_id)) {
-                $this->redis->sRem('driver_order_no', $d_id);
+            if ($this->redis->sIsMember('driver_order_no:' . $company_id, $d_id)) {
+                $this->redis->sRem('driver_order_no:' . $company_id, $d_id);
             }
-            if ($this->redis->sIsMember('driver_order_ing', $d_id)) {
-                $this->redis->sRem('driver_order_ing', $d_id);
+            if ($this->redis->sIsMember('driver_order_ing:' . $company_id, $d_id)) {
+                $this->redis->sRem('driver_order_ing:' . $company_id, $d_id);
             }
-            if ($this->redis->sIsMember('driver_order_receive', $d_id)) {
-                $this->redis->sRem('driver_order_receive', $d_id);
+            if ($this->redis->sIsMember('driver_order_receive:' . $company_id, $d_id)) {
+                $this->redis->sRem('driver_order_receive:' . $company_id, $d_id);
             }
         }
 
 
     }
 
-    public function checkDriverOrderNo($d_id)
+    public
+    function checkDriverOrderNo($d_id)
     {
-        $ret = $this->redis->sIsMember('driver_order_no', $d_id);
+        $company_id = $this->getDriverCompanyId($d_id);
+        $ret = $this->redis->sIsMember('driver_order_no:' . $company_id, $d_id);
         return $ret;
 
     }
@@ -206,15 +210,17 @@ class DriverService
      * 订单完成修改司机接单状态
      * 接单中->未接单
      */
-    public function handelDriveStateByComplete($d_id)
+    public
+    function handelDriveStateByComplete($d_id)
     {
-        if ($this->redis->sIsMember('driver_order_receive', $d_id)) {
-            $this->redis->sRem('driver_order_receive', $d_id);
+        $company_id = $this->getDriverCompanyId($d_id);
+        if ($this->redis->sIsMember('driver_order_receive:' . $company_id, $d_id)) {
+            $this->redis->sRem('driver_order_receive:' . $company_id, $d_id);
         }
-        if ($this->redis->sIsMember('driver_order_ing', $d_id)) {
-            $this->redis->sRem('driver_order_ing', $d_id);
+        if ($this->redis->sIsMember('driver_order_ing:' . $company_id, $d_id)) {
+            $this->redis->sRem('driver_order_ing:' . $company_id, $d_id);
         }
-        $this->redis->sAdd('driver_order_no', $d_id);
+        $this->redis->sAdd('driver_order_no:' . $company_id, $d_id);
 
     }
 
@@ -222,48 +228,56 @@ class DriverService
      * 司机接单修改司机接单状态
      * 未接单->已接单
      */
-    public function handelDriveStateByReceive($d_id)
+    public
+    function handelDriveStateByReceive($d_id)
     {
-        if ($this->redis->sIsMember('driver_order_no', $d_id)) {
-            $this->redis->sRem('driver_order_no', $d_id);
+        $company_id = $this->getDriverCompanyId($d_id);
+        if ($this->redis->sIsMember('driver_order_no:' . $company_id, $d_id)) {
+            $this->redis->sRem('driver_order_no:' . $company_id, $d_id);
         }
-        if ($this->redis->sIsMember('driver_order_ing', $d_id)) {
-            $this->redis->sRem('driver_order_ing', $d_id);
+        if ($this->redis->sIsMember('driver_order_ing:' . $company_id, $d_id)) {
+            $this->redis->sRem('driver_order_ing:' . $company_id, $d_id);
         }
-        $this->redis->sAdd('driver_order_receive', $d_id);
+        $this->redis->sAdd('driver_order_receive:' . $company_id, $d_id);
     }
 
     /**
      * 司机接单修改司机接单状态
      * 未接单->正在派送
      */
-    public function handelDriveStateByING($d_id)
+    public
+    function handelDriveStateByING($d_id)
     {
-        if ($this->redis->sIsMember('driver_order_no', $d_id)) {
-            $this->redis->sRem('driver_order_no', $d_id);
+        $company_id = $this->getDriverCompanyId($d_id);
+
+        if ($this->redis->sIsMember('driver_order_no:' . $company_id, $d_id)) {
+            $this->redis->sRem('driver_order_no:' . $company_id, $d_id);
         }
-        if ($this->redis->sIsMember('driver_order_receive', $d_id)) {
-            $this->redis->sRem('driver_order_receive', $d_id);
+        if ($this->redis->sIsMember('driver_order_receive:' . $company_id, $d_id)) {
+            $this->redis->sRem('driver_order_receive:' . $company_id, $d_id);
         }
-        $this->redis->sAdd('driver_order_ing', $d_id);
+        $this->redis->sAdd('driver_order_ing:' . $company_id, $d_id);
     }
 
     /**
      * 订单撤销修改司机接单状态
      * 接单/派单中->未接单
      */
-    public function handelDriveStateByCancel($d_id)
+    public
+    function handelDriveStateByCancel($d_id)
     {
-        if ($this->redis->sIsMember('driver_order_ing', $d_id)) {
-            $this->redis->sRem('driver_order_ing', $d_id);
+        $company_id = $this->getDriverCompanyId($d_id);
+        if ($this->redis->sIsMember('driver_order_ing:' . $company_id, $d_id)) {
+            $this->redis->sRem('driver_order_ing:' . $company_id, $d_id);
         }
-        if ($this->redis->sIsMember('driver_order_receive', $d_id)) {
-            $this->redis->sRem('driver_order_receive', $d_id);
+        if ($this->redis->sIsMember('driver_order_receive:' . $company_id, $d_id)) {
+            $this->redis->sRem('driver_order_receive:' . $company_id, $d_id);
         }
-        $this->redis->sAdd('driver_order_no', $d_id);
+        $this->redis->sAdd('driver_order_no:' . $company_id, $d_id);
     }
 
-    public function acceptableOrder($o_id)
+    public
+    function acceptableOrder($o_id)
     {
         $order = OrderT::get($o_id);
         if (!$order) {
@@ -272,9 +286,12 @@ class DriverService
         $start_lng = $order->start_lng;
         $start_lat = $order->start_lat;
 
+        $company_id = $order->company_id;
+        $driver_location_key = self::getLocationCacheKey($company_id);
         $list = $this->redis->rawCommand('georadius',
-            'drivers_tongling', $start_lng, $start_lat, 100000, 'km', 'WITHDIST', 'WITHCOORD');
-        $driver_ids = $this->redis->sMembers('driver_order_no');
+            $driver_location_key, $start_lng, $start_lat, 100000, 'km', 'WITHDIST', 'WITHCOORD');
+
+        $driver_ids = $this->redis->sMembers("driver_order_no:$company_id");
         if (!$driver_ids || !count($list)) {
             return array();
         }
@@ -308,13 +325,16 @@ class DriverService
         return $return_data;
     }
 
-    public function acceptableManagerCreateOrder($start_lng, $start_lat)
+    public
+    function acceptableManagerCreateOrder($start_lng, $start_lat)
     {
-        $list = $this->redis->rawCommand('georadius',
-            'drivers_tongling', $start_lng, $start_lat, 100000, 'km', 'WITHDIST', 'WITHCOORD');
+        $company_id = Token::getCurrentTokenVar('company_id');
+        $driver_location_key = self::getLocationCacheKey($company_id);
+
+        $list = $this->redis->rawCommand('georadius', $driver_location_key, $start_lng, $start_lat, 100000, 'km', 'WITHDIST', 'WITHCOORD');
 
         $redis = new Redis();
-        $driver_ids = $redis->sMembers('driver_order_no');
+        $driver_ids = $redis->sMembers("driver_order_no:$company_id");
         if (!$driver_ids || !count($list)) {
             return array();
         }
@@ -355,35 +375,41 @@ class DriverService
     /**
      * 获取司机附近所有司机
      */
-    public function nearbyDrivers($params)
+    public
+    function nearbyDrivers($params)
     {
         $grade = Token::getCurrentTokenVar('type');
         $d_id = Token::getCurrentUid();
+        $company_id = Token::getCurrentTokenVar('company_id');
         if ($grade == "driver") {
             $km = config('setting.driver_nearby_km');
             //1.获取本司机当前位置
-            $driver_location = (new OrderService())->getDriverLocation($d_id);
-            $drivers = $this->getDriversWithLocation($driver_location['lng'], $driver_location['lat'], $km);
+            $driver_location = (new OrderService())->getDriverLocation($d_id, $company_id);
+            $drivers = $this->getDriversWithLocation($driver_location['lng'],
+                $driver_location['lat'], $km);
         } else {
             $lng = $params['lng'];
             $lat = $params['lat'];
-            $drivers = $this->getDriversWithLocation($lng, $lat);
+            $drivers = $this->getDriversWithLocation($company_id, $lng, $lat, '30000');
         }
-        $order_no = $this->getDriverOrderNo();
+        $order_no = $this->getDriverOrderNo($company_id);
         $drivers = $this->prefixDrivers($drivers, $order_no);
         return $drivers;
     }
 
-    private function getDriversWithLocation($lng = "114", $lat = "30", $km = "30000")
+    private
+    function getDriversWithLocation($company_id, $lng = "114", $lat = "30", $km = "30000")
     {
 
         //查询所有司机并按距离排序（包括在线和不在线）
+        $driver_location_key = self::getLocationCacheKey($company_id);
         $list = $this->redis->rawCommand('georadius',
-            'drivers_tongling', $lng, $lat, $km, 'km', 'WITHCOORD');
+            $driver_location_key, $lng, $lat, $km, 'km', 'WITHCOORD');
         return $list;
     }
 
-    private function prefixDrivers($drivers, $order_no)
+    private
+    function prefixDrivers($drivers, $order_no)
     {
         $online = array();
         $ids_arr = array();
@@ -402,6 +428,7 @@ class DriverService
                 array_push($online, [
                     'id' => $v[0],
                     'state' => $state,
+                    'name' => Redis::instance()->hGet('driver:' . $v[0], 'username'),
                     'location' => ['lng' => $v[1][0], 'lat' => $v[1][1]]
                 ]);
                 array_push($ids_arr, $v[0]);
@@ -410,21 +437,22 @@ class DriverService
         if (!count($online)) {
             return array();
         }
-        $ids = implode(',', $ids_arr);
-        $drivers_info = DriverT::field('id,username')->whereIn('id', $ids)->select();
-        foreach ($online as $k => $v) {
-            foreach ($drivers_info as $k2 => $v2) {
-                if ($v['id'] == $v2->id) {
-                    $online[$k]['username'] = $v2->username;
-                    break;
-                }
-            }
-        }
+        /* $ids = implode(',', $ids_arr);
+         $drivers_info = DriverT::field('id,username')->whereIn('id', $ids)->select();
+         foreach ($online as $k => $v) {
+             foreach ($drivers_info as $k2 => $v2) {
+                 if ($v['id'] == $v2->id) {
+                     $online[$k]['username'] = $v2->username;
+                     break;
+                 }
+             }
+         }*/
         return $online;
 
     }
 
-    private function handelSort($data)
+    private
+    function handelSort($data)
     {
         $value = array();
         for ($i = count($data) - 1; $i >= 0; $i--) {
@@ -433,18 +461,22 @@ class DriverService
         return $value;
     }
 
-    private function getDriverOrderNo()
+    private
+    function getDriverOrderNo($company_id)
     {
-        return $this->redis->sMembers('driver_order_no');
+        return $this->redis->sMembers('driver_order_no:' . $company_id);
     }
 
-    public function onlineRecord($page, $size, $time_begin, $time_end, $online, $driver, $account)
+    public
+    function onlineRecord($page, $size, $time_begin, $time_end, $online, $driver, $account)
     {
+        $company_id = Token::getCurrentTokenVar('company_id');
         $list = OnlineRecordV::records($page, $size, $time_begin, $time_end, $online, $driver, $account);
         return $list;
     }
 
-    public function checkDriverHasUnCompleteOrder()
+    public
+    function checkDriverHasUnCompleteOrder()
     {
         $d_id = Token::getCurrentUid();
         $info = [];
@@ -473,7 +505,8 @@ class DriverService
         return $info;
     }
 
-    public function income()
+    public
+    function income()
     {
 
         $today = date('Y-m-d', time());
@@ -488,28 +521,32 @@ class DriverService
         ];
     }
 
-    public function init($d_id)
+    public
+    function init($d_id)
     {
+        $company_id = $this->getDriverCompanyId($d_id);
         DriverT::update(['online' => CommonEnum::STATE_IS_FAIL], ['id' => $d_id]);
-        if ($this->redis->sIsMember('driver_order_ing', $d_id)) {
-            $this->redis->sRem('driver_order_ing', $d_id);
+        if ($this->redis->sIsMember('driver_order_ing:' . $company_id, $d_id)) {
+            $this->redis->sRem('driver_order_ing:' . $company_id, $d_id);
         }
-        if ($this->redis->sIsMember('driver_order_receive', $d_id)) {
-            $this->redis->sRem('driver_order_receive', $d_id);
+        if ($this->redis->sIsMember('driver_order_receive:' . $company_id, $d_id)) {
+            $this->redis->sRem('driver_order_receive:' . $company_id, $d_id);
         }
-        if ($this->redis->sIsMember('driver_order_no', $d_id)) {
-            $this->redis->sRem('driver_order_no', $d_id);
+        if ($this->redis->sIsMember('driver_order_no:' . $company_id, $d_id)) {
+            $this->redis->sRem('driver_order_no:' . $company_id, $d_id);
         }
     }
 
-    public function getDriversCountWithLocation($lat, $lng)
+    public
+    function getDriversCountWithLocation($company_id, $lat, $lng)
     {
         $count = 0;
         $redis = new \Redis();
         $km = config('setting.mini_nearby_km');
         $redis->connect('127.0.0.1', 6379, 60);
-        $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, $km, 'km');
-        $driver_ids = $this->redis->sMembers('driver_order_no');
+        $driver_location_key = self::getLocationCacheKey($company_id);
+        $list = $redis->rawCommand('georadius', $driver_location_key, $lng, $lat, $km, 'km');
+        $driver_ids = $this->redis->sMembers('driver_order_no:' . $company_id);
         if (!$driver_ids || !count($list)) {
             return 0;
         }
@@ -528,34 +565,8 @@ class DriverService
         return $count;
     }
 
-    public function getDriversCountWithLocation2($lat, $lng)
-    {
-        $count = 0;
-        $redis = new \Redis();
-        $km = config('setting.mini_nearby_km');
-        $redis->connect('127.0.0.1', 6379, 60);
-        $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, $km, 'km');
-        $driver_ids = $this->redis->sMembers('driver_order_no');
-        if (!$driver_ids || !count($list)) {
-            return 0;
-        }
-
-        foreach ($list as $k => $v) {
-            $d_id = $v;
-            echo $d_id . '/';
-            if (in_array($d_id, $driver_ids) &&
-                GatewayService::isDriverUidOnline($d_id) &&
-                $this->checkOnline($d_id)
-            ) {
-                $count++;
-            }
-        }
-
-        return $count;
-    }
-
-
-    public function checkOnline($d_id)
+    public
+    function checkOnline($d_id)
     {
         $driver = DriverT::where('id', $d_id)
             ->where('state', CommonEnum::STATE_IS_OK)
@@ -565,13 +576,14 @@ class DriverService
 
     }
 
-    public function checkDriverCanReceiveOrder($d_id)
+    public
+    function checkDriverCanReceiveOrder($d_id)
     {
         if (!(GatewayService::isDriverUidOnline($d_id))) {
             return false;
         }
-
-        if (!($this->redis->sIsMember('driver_order_no', $d_id))) {
+        $company_id = $this->getDriverCompanyId($d_id);
+        if (!($this->redis->sIsMember('driver_order_no:' . $company_id, $d_id))) {
             return false;
         }
         if (!($this->checkOnline($d_id))) {
@@ -580,5 +592,13 @@ class DriverService
         return true;
     }
 
+
+    public
+    function getDriverCompanyId($d_id)
+    {
+        $company_id = Redis::instance()->hGet('driver:' . $d_id, 'company_id');
+        $company_id = empty($company_id) ? 1 : $company_id;
+        return $company_id;
+    }
 
 }

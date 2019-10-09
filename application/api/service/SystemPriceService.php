@@ -50,9 +50,10 @@ class SystemPriceService
 
     public function initMINIPrice($params)
     {
-        $start = $this->startPrice();
-        $wait = $this->wait();
-        $interval = $this->intervalTime();
+        $company_id = Token::getCurrentTokenVar('company_id');
+        $start = $this->startPrice($company_id);
+        $wait = $this->wait($company_id);
+        $interval = $this->intervalTime($company_id);
 
 
         return [
@@ -64,9 +65,10 @@ class SystemPriceService
 
     }
 
-    private function startPrice()
+    private function startPrice($company_id)
     {
-        $info = StartPriceT::where('type', 1)
+        $info = StartPriceT::where('company_id', $company_id)
+            ->where('type', 1)
             ->where('state', CommonEnum::STATE_IS_OK)
             ->hidden(['type', 'state', 'area', 'create_time', 'update_time'])
             ->order('order')
@@ -74,9 +76,10 @@ class SystemPriceService
         return $info;
     }
 
-    private function intervalTime()
+    private function intervalTime($company_id)
     {
-        $info = TimeIntervalT::where('state', CommonEnum::STATE_IS_OK)
+        $info = TimeIntervalT::where('company_id', $company_id)
+            ->where('state', CommonEnum::STATE_IS_OK)
             ->hidden(['state', 'create_time', 'update_time', 'area'])
             ->order('create_time')
             ->select();
@@ -84,26 +87,26 @@ class SystemPriceService
 
     }
 
-    private function wait()
+    private function wait($company_id)
     {
-        $info = WaitPriceT::field('id,free,price')
+        $info = WaitPriceT::where('company_id', $company_id)->field('id,free,price')
             ->find();
         return $info;
     }
 
     public function priceInfoForDriver()
     {
-
-        $start = $this->startPrice();
+        $company_id = Token::getCurrentTokenVar('company_id');
+        $start = $this->startPrice($company_id);
         if (count($start)) {
             foreach ($start as $k => $v) {
                 if ($k == 0) {
-                    $start[$k]['price'] = (new OrderService())->getStartPrice($v['price']);
+                    $start[$k]['price'] = (new OrderService())->getStartPrice($company_id,$v['price']);
                 }
             }
         }
 
-        $wait = $this->wait();
+        $wait = $this->wait($company_id);
 
         return [
             'start' => $start,
@@ -115,13 +118,15 @@ class SystemPriceService
     {
         $lat = $params['lat'];
         $lng = $params['lng'];
-        $tickets = (new TicketService())->userTickets();;
+        $company_id = Token::getCurrentTokenVar('company_id');
+        $tickets = (new TicketService())->userTickets();
         //附近2km
-        $drivers = (new DriverService())->getDriversCountWithLocation($lat, $lng);
+        $drivers = (new DriverService())->getDriversCountWithLocation($lat, $lng, $company_id);
         return [
             'tickets' => $tickets,
             'drivers' => $drivers,
-            'interval' => TimeIntervalT::where('state', CommonEnum::STATE_IS_OK)
+            'interval' => TimeIntervalT::where('company_id', $company_id)
+                ->where('state', CommonEnum::STATE_IS_OK)
                 ->field('time_begin,time_end,price')
                 ->select()->toArray()
         ];

@@ -34,7 +34,12 @@ class Gateway extends BaseController
         $client_id = $params['client_id'];
         $u_id = \app\api\service\Token::getCurrentUid();
         $grade = \app\api\service\Token::getCurrentTokenVar('type');
+        $company_id = \app\api\service\Token::getCurrentTokenVar('company_id');
+
+        $group = 'company-' . $company_id;
+        \GatewayClient\Gateway::joinGroup($client_id, $group);
         \GatewayClient\Gateway::bindUid($client_id, $grade . '-' . $u_id);
+
         SocketBindT::create([
             'u_id' => $u_id,
             'client_id' => $client_id

@@ -52,6 +52,7 @@ class OrderService
             $params['type'] = OrderEnum::NOT_FIXED_MONEY;
             $params['state'] = OrderEnum::ORDER_NO;
             $params['order_num'] = $this->getOrderNumber();
+            $params['company_id'] = Token::getCurrentTokenVar('company_id');
             return $this->createOrderWithoutDriver($params);
         } catch (Exception $e) {
             LogT::create(['msg' => 'save_order_mini:' . $e->getMessage()]);
@@ -75,6 +76,8 @@ class OrderService
             if (empty($params['name'])) {
                 $params['name'] = '先生/女士';
             }
+            $company_id = (new DriverService())->getDriverCompanyId($d_id);
+            $params['company_id'] = $company_id;
             $params['d_id'] = $d_id;
             $params['from'] = OrderEnum::FROM_DRIVER;
             $params['type'] = OrderEnum::NOT_FIXED_MONEY;
@@ -116,6 +119,7 @@ class OrderService
             if (key_exists('name', $params) && !strlen($params['name'])) {
                 $params['name'] = '先生/女士';
             }
+            $params['company_id'] = Token::getCurrentTokenVar('company_id');
             $params['from'] = OrderEnum::FROM_MANAGER;
             $params['state'] = OrderEnum::ORDER_NO;
             $params['order_num'] = $this->getOrderNumber();
@@ -269,9 +273,10 @@ class OrderService
 
     }
 
-    public function getStartPrice($price)
+    public function getStartPrice($company_id, $price)
     {
-        $interval = TimeIntervalT::where('state', CommonEnum::STATE_IS_OK)
+        $interval = TimeIntervalT::where('company_id', $company_id)
+            ->where('state', CommonEnum::STATE_IS_OK)
             ->select();
         if (!$interval) {
             return $price;
@@ -520,13 +525,13 @@ class OrderService
     function prefixPushAgree($d_id)
     {
         //更新order表状态 - 用触发器：update_order_state 解决
-
         //更新司机状态:从正在派单移除；添加到已接单
+        $company_id = (new DriverService())->getDriverCompanyId($d_id);
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
-        $redis->sRem('driver_order_no', $d_id);
-        $redis->sRem('driver_order_ing', $d_id);
-        $redis->sAdd('driver_order_receive', $d_id);
+        $redis->sRem('driver_order_no:' . $company_id, $d_id);
+        $redis->sRem('driver_order_ing:' . $company_id, $d_id);
+        $redis->sAdd('driver_order_receive:' . $company_id, $d_id);
 
     }
 
@@ -562,12 +567,13 @@ class OrderService
     private
     function prefixPushRefuse($d_id)
     {
+        $company_id = (new DriverService())->getDriverCompanyId($d_id);
         //更新司机状态:从正在派单移除；添加到未接单
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
-        $redis->sRem('driver_order_receive', $d_id);
-        $redis->sRem('driver_order_ing', $d_id);
-        $redis->sAdd('driver_order_no', $d_id);
+        $redis->sRem('driver_order_receive:' . $company_id, $d_id);
+        $redis->sRem('driver_order_ing:' . $company_id, $d_id);
+        $redis->sAdd('driver_order_no:' . $company_id, $d_id);
     }
 
     private
@@ -596,10 +602,15 @@ class OrderService
     {
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
+        $company_id = $order['company_id'];
         //查询所有司机并按距离排序
         $lat = $order['start_lat'];
         $lng = $order['start_lng'];
-        $list = $redis->rawCommand('georadius', 'drivers_tongling', $lng, $lat, config('setting.driver_nearby_km'), 'km', 'ASC');
+        $driver_location_key = BaseService::getLocationCacheKey($company_id);
+        $list = $redis->rawCommand('georadius',
+            $driver_location_key, $lng, $lat,
+            config('setting.driver_nearby_km'),
+            'km', 'ASC');
         if (!count($list)) {
             return CommonEnum::STATE_IS_FAIL;
         }
@@ -615,9 +626,9 @@ class OrderService
                 }
 
                 //将司机从'未接单'移除，添加到：正在派单
-                $redis->sRem('driver_order_no', $d_id);
-                $redis->sRem('driver_order_receive', $d_id);
-                $redis->sAdd('driver_order_ing', $d_id);
+                $redis->sRem('driver_order_no:' . $company_id, $d_id);
+                $redis->sRem('driver_order_receive:' . $company_id, $d_id);
+                $redis->sAdd('driver_order_ing:' . $company_id, $d_id);
 
                 //通过短信推送给司机
                 $driver = DriverT::where('id', $d_id)->find();
@@ -634,7 +645,7 @@ class OrderService
                         'limit_time' => time()
                     ]
                 );
-                $driver_location = $this->getDriverLocation($d_id);
+                $driver_location = $this->getDriverLocation($d_id, $company_id);
                 //通过websocket推送给司机
                 $push_data = [
                     'type' => 'order',
@@ -830,7 +841,7 @@ class OrderService
         } else if ($order->state == OrderEnum::ORDER_COMPLETE) {
             $info = $this->prepareOrderInfo($order);
         } else {
-            $driver_location = $this->getDriverLocation($order->d_id);
+            $driver_location = $this->getDriverLocation($order->d_id, $order->company_id);
             $info = [
                 'state' => $order->state,
                 'driver' => $order->driver->username,
@@ -943,7 +954,6 @@ class OrderService
     public
     function prefixOrderCharge($o_id, $d_id, $money, $ticket_money)
     {
-
         $orderCharge = SystemOrderChargeT::find();
         $insurance = $orderCharge->insurance;
         $order = $orderCharge->order;
@@ -1012,7 +1022,6 @@ class OrderService
         if ((!$weather) || $weather->state == CommonEnum::STATE_IS_FAIL) {
             return 0;
         }
-
         return ceil($distance_money * ($weather->ratio - 1));
 
     }
@@ -1075,11 +1084,15 @@ class OrderService
 
 
     public
-    function getDriverLocation($u_id)
+    function getDriverLocation($u_id, $company_id = '')
     {
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
-        $location = $redis->rawCommand('geopos', 'drivers_tongling', $u_id);
+        if (empty($company_id)) {
+            $company_id = (new DriverService())->getDriverCompanyId($u_id);
+        }
+        $driver_location_key = BaseService::getLocationCacheKey($company_id);
+        $location = $redis->rawCommand('geopos', $driver_location_key, $u_id);
         if ($location) {
             $lng = empty($location[0][0]) ? null : $location[0][0];
             $lat = empty($location[0][1]) ? null : $location[0][1];
@@ -1128,13 +1141,10 @@ class OrderService
             throw  new SaveException(['msg' => '订单已开始，不能转单']);
         }
         $d_id = $params['d_id'];
-
         //检查新司机状态是否有订单，修改司机状态
         if (!$this->updateDriverCanReceive($d_id)) {
             throw  new SaveException(['msg' => '该司机有订单派送中，暂时不能接单']);
         }
-
-
         //计算距离和价格
         $distance_info = $this->getDistanceInfoToPush($order, $d_id);
         //新增推送状态
@@ -1148,15 +1158,15 @@ class OrderService
         //检查新司机状态是否有订单，修改司机状态
         $redis = new \Redis();
         $redis->connect('127.0.0.1', 6379, 60);
-
-        $exits = $redis->sIsMember('driver_order_no', "$d_id");
+        $company_id = (new DriverService())->getDriverCompanyId($d_id);
+        $exits = $redis->sIsMember('driver_order_no:' . $company_id, "$d_id");
         if (!$exits) {
             return false;
         }
         //将被转单司机从'未接单'移除，添加到：正在派单
-        $redis->sRem('driver_order_receive', $d_id);
-        $redis->sRem('driver_order_no', $d_id);
-        $redis->sAdd('driver_order_ing', $d_id);
+        $redis->sRem('driver_order_receive:' . $company_id, $d_id);
+        $redis->sRem('driver_order_no:' . $company_id, $d_id);
+        $redis->sAdd('driver_order_ing:' . $company_id, $d_id);
         return true;
     }
 
@@ -1354,11 +1364,12 @@ class OrderService
     private
     function getManagerOrdersStatistic($driver, $time_begin, $time_end)
     {
-        $ordersMoney = OrderV::ordersMoney($driver, $time_begin, $time_end);
+        $company_id = Token::getCurrentTokenVar('company_id');
+        $ordersMoney = OrderV::ordersMoney($company_id, $driver, $time_begin, $time_end);
         return [
             // 'members' => OrderV::members($driver, $time_begin, $time_end),
-            'members' => GatewayService::onlineDrivers(),
-            'orders_count' => OrderV::orderCount($driver, $time_begin, $time_end),
+            'members' => GatewayService::onlineDrivers($company_id),
+            'orders_count' => OrderV::orderCount($company_id, $driver, $time_begin, $time_end),
             'all_money' => $ordersMoney['all_money'],
             'ticket_money' => $ordersMoney['ticket_money'],
         ];

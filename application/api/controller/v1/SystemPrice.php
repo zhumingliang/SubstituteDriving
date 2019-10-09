@@ -47,7 +47,8 @@ class SystemPrice extends BaseController
     {
         $params = $this->request->param();
         $params['state'] = CommonEnum::STATE_IS_OK;
-        $params['area'] = '铜陵';
+        $params['company_id'] = \app\api\service\Token::getCurrentTokenVar('company_id');
+        //$params['area'] = '铜陵';
         $start = StartPriceT::create($params);
         if (!$start) {
             throw new UpdateException();
@@ -101,7 +102,8 @@ class SystemPrice extends BaseController
     public function startOpenHandel()
     {
         $state = $this->request->param('state');
-        $id = FarStateT::update(['state' => $state], ['id' => 1]);
+        $company_id = \app\api\service\Token::getCurrentTokenVar('company_id');
+        $id = FarStateT::update(['state' => $state], ['company_id' => $company_id]);
         if (!$id) {
             throw new UpdateException();
         }
@@ -140,15 +142,17 @@ class SystemPrice extends BaseController
     {
         $params = $this->request->param();
         $type = $params['type'];
+        $company_id = \app\api\service\Token::getCurrentTokenVar('company_id');
 
-        $info = StartPriceT::where('type', $type)
+        $info = StartPriceT::where('company_id', $company_id)
+            ->where('type', $type)
             ->where('state', CommonEnum::STATE_IS_OK)
             ->hidden(['type', 'state', 'area'])
             ->order('order')
             ->select();
 
         if ($type == 2) {
-            $far = FarStateT::find();
+            $far = FarStateT::where('company_id', $company_id)->find();
             $open = $far['open'];
             $info = [
                 'open' => $open,
@@ -212,9 +216,10 @@ class SystemPrice extends BaseController
      */
     public function intervalSave()
     {
+        $company_id = \app\api\service\Token::getCurrentTokenVar('company_id');
         $params = $this->request->param();
         $params['state'] = CommonEnum::STATE_IS_OK;
-        $params['area'] = '铜陵';
+        $params['company_id'] = $company_id;
         $start = TimeIntervalT::create($params);
         if (!$start) {
             throw new UpdateException();
@@ -266,7 +271,9 @@ class SystemPrice extends BaseController
      */
     public function intervalPrice()
     {
-        $info = TimeIntervalT::where('state', CommonEnum::STATE_IS_OK)
+        $company_id = \app\api\service\Token::getCurrentTokenVar('company_id');
+        $info = TimeIntervalT::where('company_id', $company_id)
+            ->where('state', CommonEnum::STATE_IS_OK)
             ->hidden(['state', 'create_time', 'update_time', 'area'])
             ->order('create_time')
             ->select();
@@ -318,7 +325,9 @@ class SystemPrice extends BaseController
      */
     public function waitPrice()
     {
-        $info = WaitPriceT::field('id,free,price')
+        $company_id = \app\api\service\Token::getCurrentTokenVar('company_id');
+        $info = WaitPriceT::where('company_id', $company_id)
+            ->field('id,free,price')
             ->find();
         return json(new SuccessMessageWithData(['data' => $info]));
     }
@@ -370,7 +379,9 @@ class SystemPrice extends BaseController
      */
     public function weatherPrice()
     {
-        $info = WeatherT::field('id,ratio,state,create_time,update_time')
+        $company_id = \app\api\service\Token::getCurrentTokenVar('company_id');
+        $info = WeatherT::where('company_id', $company_id)
+            ->field('id,ratio,state,create_time,update_time')
             ->find();
         return json(new SuccessMessageWithData(['data' => $info]));
     }
@@ -508,7 +519,9 @@ class SystemPrice extends BaseController
      */
     public function orderCharge()
     {
-        $info = SystemOrderChargeT::field('id,insurance,order')
+        $company_id = \app\api\service\Token::getCurrentTokenVar('company_id');
+        $info = SystemOrderChargeT::where('company_id', $company_id)
+            ->field('id,insurance,order')
             ->find();
         return json(new SuccessMessageWithData(['data' => $info]));
     }
