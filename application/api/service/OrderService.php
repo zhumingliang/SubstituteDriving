@@ -1341,9 +1341,9 @@ class OrderService
         if ($grade != 'manager') {
             throw new AuthException();
         }
-        $orders = OrderV::managerOrders($company_id,$page, $size, $driver, $time_begin, $time_end, $order_state, $order_from);
+        $orders = OrderV::managerOrders($company_id, $page, $size, $driver, $time_begin, $time_end, $order_state, $order_from);
         $orders['data'] = $this->prefixTransferInfo($orders['data']);
-        $orders['statistic'] = $this->getManagerOrdersStatistic($company_id,$driver, $time_begin, $time_end);
+        $orders['statistic'] = $this->getManagerOrdersStatistic($company_id, $driver, $time_begin, $time_end);
         return $orders;
 
 
@@ -1435,7 +1435,8 @@ class OrderService
     public
     function current($page, $size)
     {
-        $orders = Orderv::currentOrders($page, $size);
+        $company_id = Token::getCurrentTokenVar('company_id');
+        $orders = Orderv::currentOrders($company_id,$page, $size);
         $orders['data'] = $this->prefixCurrentPush($orders['data']);
         return $orders;
     }

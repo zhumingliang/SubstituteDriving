@@ -143,9 +143,14 @@ class OrderV extends Model
     }
 
 
-    public static function currentOrders($page, $size)
+    public static function currentOrders($company_id, $page, $size)
     {
-        $list = self::whereIn('state', OrderEnum::ORDER_NO . "," . OrderEnum::ORDER_ING)
+        $list = self::where(function ($query) use ($company_id) {
+            if (!empty($company_id)) {
+                $query->where('company_id', $company_id);
+            }
+        })
+            ->whereIn('state', OrderEnum::ORDER_NO . "," . OrderEnum::ORDER_ING)
             ->order('create_time desc')
             ->paginate($size, false, ['page' => $page])->toArray();
         return $list;
