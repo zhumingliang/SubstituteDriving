@@ -393,7 +393,6 @@ class DriverService extends BaseService
             $drivers = $this->getDriversWithLocation($company_id, $lng, $lat, '30000');
         }
         $order_no = $this->getDriverOrderNo($company_id);
-        print_r($order_no);
         $drivers = $this->prefixDrivers($drivers, $order_no);
         return $drivers;
     }
