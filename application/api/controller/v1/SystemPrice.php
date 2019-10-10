@@ -413,7 +413,13 @@ class SystemPrice extends BaseController
     public function weatherUpdate()
     {
         $info = $this->request->param();
-        $res = (new WeatherT())->isUpdate()->save($info);
+        if (empty($info['id'])) {
+            $info['company_id'] = \app\api\service\Token::getCurrentTokenVar('company_id');
+            $res = WeatherT::create($info);
+
+        } else {
+            $res = (new WeatherT())->isUpdate()->save($info);
+        }
         if (!$res) {
             throw  new UpdateException();
         }
