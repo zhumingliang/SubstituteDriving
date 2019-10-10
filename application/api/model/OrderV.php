@@ -153,9 +153,13 @@ class OrderV extends Model
     }
 
 
-    public static function managerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from)
+    public static function managerOrders($company_id, $page, $size, $driver, $time_begin, $time_end, $order_state, $order_from)
     {
-        $list = self::where(function ($query) use ($order_state) {
+        $list = self::where(function ($query) use ($company_id) {
+            if (!empty($company_id)) {
+                $query->where('company_id', $company_id);
+            }
+        })->where(function ($query) use ($order_state) {
             if ($order_state < 6) {
                 $query->where('state', '=', $order_state);
             }
