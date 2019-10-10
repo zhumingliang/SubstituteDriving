@@ -28,13 +28,7 @@ class Index
 {
     public function index()
     {
-        $list = (new DriverService())->getDriversWithLocation(2);
-        print_r($list);
-        $redis = new \Redis();
-        $redis->connect('127.0.0.1', 6379, 60);
-        $driver_id = 'driver:' . 37;
-        $driver = $redis->hMGet($driver_id, ['company_id', 'phone', 'username']);
-        print_r($driver);
+        \GatewayClient\Gateway::getUidCountByGroup('company_id-2');
         /*$order = OrderT::getOrder(500);
         echo $order->start_lat;*/
         /*$drivers = DriverT::where('state', CommonEnum::STATE_IS_OK)
