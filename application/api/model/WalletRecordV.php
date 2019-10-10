@@ -85,9 +85,13 @@ class WalletRecordV extends Model
 
     }
 
-    public static function managerRecords($page, $size, $driver_id, $time_begin, $time_end)
+    public static function managerRecords($company_id, $page, $size, $driver_id, $time_begin, $time_end)
     {
-        $list = self::where(function ($query) use ($driver_id) {
+        $list = self::where(function ($query) use ($company_id) {
+            if (!empty($company_id)) {
+                $query->where('company_id', $company_id);
+            }
+        })->where(function ($query) use ($driver_id) {
             if ($driver_id) {
                 $query->where('id', $driver_id);
             }

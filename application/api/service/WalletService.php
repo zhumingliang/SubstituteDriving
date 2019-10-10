@@ -113,7 +113,7 @@ class WalletService
 
         }
 
-        $records = WalletRecordV::managerRecords($page, $size, $driver_id, $time_begin, $time_end);
+        $records = WalletRecordV::managerRecords($company_id,$page, $size, $driver_id, $time_begin, $time_end);
         return [
             'records' => $records,
             'balance' => $balance,
