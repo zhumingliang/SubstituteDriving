@@ -243,7 +243,6 @@ class OrderService
 
     }
 
-
     private function prefixStartPriceWithDistance($distance, $Rule, $type = 'far')
     {
         $money_new = 0;

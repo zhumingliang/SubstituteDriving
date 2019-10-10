@@ -397,7 +397,7 @@ class DriverService extends BaseService
         return $drivers;
     }
 
-    private
+    public
     function getDriversWithLocation($company_id, $lng = "114", $lat = "30", $km = "30000")
     {
 

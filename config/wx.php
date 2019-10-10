@@ -1,10 +1,17 @@
 <?php
 
 return [
-    'app_id' => 'wxff0de9d71076ff70',
+    "default_options_company" => 1,
+    1 => [
+        'app_id' => 'wxff0de9d71076ff70',
 
-    'app_secret' => '1135eb5f46fa71637565fa46ad1c354b',
+        'app_secret' => '1135eb5f46fa71637565fa46ad1c354b',
+    ],
+    2 => [
+        'app_id' => '12121',
 
+        'app_secret' => '1135eb5f46fa71637565fa46ad1c354b',
+    ],
     'login_url' => "https://api.weixin.qq.com/sns/jscode2session?" .
         "appid=%s&secret=%s&js_code=%s&grant_type=authorization_code",
 

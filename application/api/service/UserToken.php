@@ -32,8 +32,8 @@ class UserToken extends Token
         } else {
             $this->company_id = $company_id;
         }
-        $this->wxAppID = config('wx.app_id');
-        $this->wxAppSecret = config('wx.app_secret');
+        $this->wxAppID = config("wx.$this->company_id.app_id");
+        $this->wxAppSecret = config("wx.$this->company_id.app_secret");
         $this->wxLoginUrl = sprintf(
             config('wx.login_url'),
             $this->wxAppID, $this->wxAppSecret, $this->code);

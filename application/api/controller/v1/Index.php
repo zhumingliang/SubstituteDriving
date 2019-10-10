@@ -16,6 +16,7 @@ use app\api\service\GatewayService;
 use app\api\service\LogService;
 use app\api\service\OrderService;
 use app\api\service\SendSMSService;
+use app\api\service\UserToken;
 use app\lib\enum\CommonEnum;
 use app\lib\enum\OrderEnum;
 use zml\tp_aliyun\SendSms;
@@ -27,8 +28,10 @@ class Index
 {
     public function index()
     {
-        $order = OrderT::getOrder(500);
-        echo $order->start_lat;
+        $list = (new DriverService())->getDriversWithLocation(2);
+        print_r($list);
+        /*$order = OrderT::getOrder(500);
+        echo $order->start_lat;*/
         /*$drivers = DriverT::where('state', CommonEnum::STATE_IS_OK)
             ->select();
         foreach ($drivers as $k => $v) {
