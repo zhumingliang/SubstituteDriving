@@ -35,12 +35,12 @@ class SystemPriceService
 
     public function intervalUpdate($info)
     {
-        /* $info_arr = json_decode($info, true);
-         if (!count($info_arr)) {
-             throw new UpdateException(['msg' => '更新数据不能为空']);
-         }*/
-        // $res = (new TimeIntervalT())->saveAll($info_arr);
-        $res = TimeIntervalT::update($info);
+        if (empty($info['id'])) {
+            $res = TimeIntervalT::update($info);
+        } else {
+            $info['company_id'] = Token::getCurrentTokenVar('company_id');
+            $res = TimeIntervalT::create($info);
+        }
         if (!$res) {
             throw new UpdateException();
 
@@ -101,7 +101,7 @@ class SystemPriceService
         if (count($start)) {
             foreach ($start as $k => $v) {
                 if ($k == 0) {
-                    $start[$k]['price'] = (new OrderService())->getStartPrice($company_id,$v['price']);
+                    $start[$k]['price'] = (new OrderService())->getStartPrice($company_id, $v['price']);
                 }
             }
         }
