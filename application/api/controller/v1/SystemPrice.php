@@ -355,6 +355,7 @@ class SystemPrice extends BaseController
     {
         $info = $this->request->param();
         if (empty($info['id'])) {
+            $info['company_id'] = \app\api\service\Token::getCurrentTokenVar('company_id');
             $res = WaitPriceT::create($info);
         } else {
             $res = (new WaitPriceT())->isUpdate()->save($info);
