@@ -22,7 +22,6 @@ class SystemPrice extends BaseValidate
         'startPrice' => ['type'],
         'startUpdate' => ['id'],
         'weatherUpdate' => ['id'],
-        'waitUpdate' => ['id'],
         'startOpenHandel' => ['state'],
         'intervalUpdate' => ['id'],
     ];
