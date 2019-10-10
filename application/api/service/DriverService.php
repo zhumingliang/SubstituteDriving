@@ -428,7 +428,7 @@ class DriverService extends BaseService
                 array_push($online, [
                     'id' => $v[0],
                     'state' => $state,
-                    'name' => Redis::instance()->hGet('driver:' . $v[0], 'username'),
+                    'username' => Redis::instance()->hGet('driver:' . $v[0], 'username'),
                     'location' => ['lng' => $v[1][0], 'lat' => $v[1][1]]
                 ]);
                 array_push($ids_arr, $v[0]);
