@@ -28,7 +28,8 @@ class Index
 {
     public function index()
     {
-        \GatewayClient\Gateway::getUidCountByGroup('company_id-2');
+       $list= \GatewayClient\Gateway::getUidCountByGroup('company_id-2');
+      print_r($list);
         /*$order = OrderT::getOrder(500);
         echo $order->start_lat;*/
         /*$drivers = DriverT::where('state', CommonEnum::STATE_IS_OK)
