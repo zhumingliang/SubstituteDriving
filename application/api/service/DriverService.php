@@ -385,9 +385,8 @@ class DriverService extends BaseService
             $km = config('setting.driver_nearby_km');
             //1.获取本司机当前位置
             $driver_location = (new OrderService())->getDriverLocation($d_id, $company_id);
-            $drivers = $this->getDriversWithLocation($company_id,$driver_location['lng'],
+            $drivers = $this->getDriversWithLocation($company_id, $driver_location['lng'],
                 $driver_location['lat'], $km);
-            print_r($drivers);
         } else {
             $lng = $params['lng'];
             $lat = $params['lat'];
@@ -422,8 +421,6 @@ class DriverService extends BaseService
             }
         }
         foreach ($drivers as $k => $v) {
-            echo GatewayService::isDriverUidOnline($v[0]);
-            echo $this->checkOnline($v[0]);
             if (GatewayService::isDriverUidOnline($v[0]) && $this->checkOnline($v[0])) {
                 $state = 2;//不可接单
                 if (in_array($v[0], $order_no_arr)) {
@@ -475,7 +472,7 @@ class DriverService extends BaseService
     function onlineRecord($page, $size, $time_begin, $time_end, $online, $driver, $account)
     {
         $company_id = Token::getCurrentTokenVar('company_id');
-        $list = OnlineRecordV::records($page, $size, $time_begin, $time_end, $online, $driver, $account);
+        $list = OnlineRecordV::records($company_id, $page, $size, $time_begin, $time_end, $online, $driver, $account);
         return $list;
     }
 
