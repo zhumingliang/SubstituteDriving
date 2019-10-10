@@ -385,14 +385,17 @@ class DriverService extends BaseService
             $km = config('setting.driver_nearby_km');
             //1.获取本司机当前位置
             $driver_location = (new OrderService())->getDriverLocation($d_id, $company_id);
+            print_r($driver_location);
             $drivers = $this->getDriversWithLocation($driver_location['lng'],
                 $driver_location['lat'], $km);
+            print_r($drivers);
         } else {
             $lng = $params['lng'];
             $lat = $params['lat'];
             $drivers = $this->getDriversWithLocation($company_id, $lng, $lat, '30000');
         }
         $order_no = $this->getDriverOrderNo($company_id);
+        print_r($order_no);
         $drivers = $this->prefixDrivers($drivers, $order_no);
         return $drivers;
     }
@@ -420,6 +423,8 @@ class DriverService extends BaseService
             }
         }
         foreach ($drivers as $k => $v) {
+            echo GatewayService::isDriverUidOnline($v[0]);
+            echo $this->checkOnline($v[0]);
             if (GatewayService::isDriverUidOnline($v[0]) && $this->checkOnline($v[0])) {
                 $state = 2;//不可接单
                 if (in_array($v[0], $order_no_arr)) {
