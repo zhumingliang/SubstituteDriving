@@ -354,7 +354,11 @@ class SystemPrice extends BaseController
     public function waitUpdate()
     {
         $info = $this->request->param();
-        $res = (new WaitPriceT())->isUpdate()->save($info);
+        if (empty($info['id'])) {
+            $res = WaitPriceT::create($info);
+        } else {
+            $res = (new WaitPriceT())->isUpdate()->save($info);
+        }
         if (!$res) {
             throw  new UpdateException();
         }
