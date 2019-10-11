@@ -552,7 +552,6 @@ class DriverService extends BaseService
         }
 
         foreach ($list as $k => $v) {
-            //$d_id = $v[0];
             $d_id = $v;
             if (in_array($d_id, $driver_ids) &&
                 GatewayService::isDriverUidOnline($d_id) &&

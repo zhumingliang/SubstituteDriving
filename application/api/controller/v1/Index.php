@@ -28,8 +28,12 @@ class Index
 {
     public function index()
     {
-       $list= \GatewayClient\Gateway::getUidCountByGroup('company-2');
-      print_r($list);
+        $redis = new \Redis();
+        $km = config('setting.mini_nearby_km');
+        $driver_location_key = self::getLocationCacheKey(1);
+        $redis->connect('127.0.0.1', 6379, 60);
+        $list = $redis->rawCommand('georadius', $driver_location_key, '117.85543531179428101', '30.94381381254151364', $km, 'km');
+        print_r($list);
         /*$order = OrderT::getOrder(500);
         echo $order->start_lat;*/
         /*$drivers = DriverT::where('state', CommonEnum::STATE_IS_OK)
