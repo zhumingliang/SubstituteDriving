@@ -561,6 +561,8 @@ class DriverService extends BaseService
         $km = config('setting.mini_nearby_km');
         $redis->connect('127.0.0.1', 6379, 60);
         $driver_location_key = self::getLocationCacheKey($company_id);
+        LogService::save('driver_location_key:' . $driver_location_key);
+
         $list = $redis->rawCommand('georadius', $driver_location_key, $lng, $lat, $km, 'km');
         LogService::save('list:' . json_encode($list));
         $driver_ids = $this->redis->sMembers('driver_order_no:' . $company_id);
