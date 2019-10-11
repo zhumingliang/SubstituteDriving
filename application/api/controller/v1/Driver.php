@@ -383,9 +383,9 @@ class Driver extends BaseController
         return json(new SuccessMessageWithData(['data' => $ret]));
     }
 
-    public function init($d_id)
+    public function init($company_id,$d_id='')
     {
-        (new DriverService())->init($d_id);
+        (new DriverService())->init($company_id,$d_id);
 
     }
 

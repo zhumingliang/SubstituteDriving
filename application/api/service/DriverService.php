@@ -522,19 +522,34 @@ class DriverService extends BaseService
     }
 
     public
-    function init($d_id)
+    function init($company_id, $d_id)
     {
-        $company_id = $this->getDriverCompanyId($d_id);
-        DriverT::update(['online' => CommonEnum::STATE_IS_FAIL], ['id' => $d_id]);
-        if ($this->redis->sIsMember('driver_order_ing:' . $company_id, $d_id)) {
-            $this->redis->sRem('driver_order_ing:' . $company_id, $d_id);
+        if (empty($d_id)) {
+            $drivers = DriverT::where('company_id', $company_id)
+                ->where('state', CommonEnum::STATE_IS_OK)
+                ->select()->toArray();
+        } else {
+            $drivers = DriverT::where('id', $d_id)
+                ->where('company_id', $company_id)
+                ->where('state', CommonEnum::STATE_IS_OK)
+                ->select()->toArray();
         }
-        if ($this->redis->sIsMember('driver_order_receive:' . $company_id, $d_id)) {
-            $this->redis->sRem('driver_order_receive:' . $company_id, $d_id);
+
+        foreach ($drivers as $k => $v) {
+            $d_id = $v['id'];
+            DriverT::update(['online' => CommonEnum::STATE_IS_FAIL], ['id' => $d_id]);
+            if ($this->redis->sIsMember('driver_order_ing:' . $company_id, $d_id)) {
+                $this->redis->sRem('driver_order_ing:' . $company_id, $d_id);
+            }
+            if ($this->redis->sIsMember('driver_order_receive:' . $company_id, $d_id)) {
+                $this->redis->sRem('driver_order_receive:' . $company_id, $d_id);
+            }
+            if (!$this->redis->sIsMember('driver_order_no:' . $company_id, $d_id)) {
+                $this->redis->sAdd('driver_order_no:' . $company_id, $d_id);
+            }
         }
-        if (!$this->redis->sIsMember('driver_order_no:' . $company_id, $d_id)) {
-            $this->redis->sAdd('driver_order_no:' . $company_id, $d_id);
-        }
+        // $company_id = $this->getDriverCompanyId($d_id);
+
     }
 
     public
