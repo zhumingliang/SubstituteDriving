@@ -1362,9 +1362,8 @@ class OrderService
     }
 
     private
-    function getManagerOrdersStatistic($driver, $time_begin, $time_end)
+    function getManagerOrdersStatistic($company_id,$driver, $time_begin, $time_end)
     {
-        $company_id = Token::getCurrentTokenVar('company_id');
         $ordersMoney = OrderV::ordersMoney($company_id, $driver, $time_begin, $time_end);
         return [
             // 'members' => OrderV::members($driver, $time_begin, $time_end),
