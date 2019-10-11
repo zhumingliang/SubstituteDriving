@@ -121,7 +121,7 @@ class SystemPriceService
         $company_id = Token::getCurrentTokenVar('company_id');
         $tickets = (new TicketService())->userTickets();
         //附近2km
-        $drivers = (new DriverService())->getDriversCountWithLocation($lat, $lng, $company_id);
+        $drivers = (new DriverService())->getDriversCountWithLocation($company_id, $lat, $lng);
         return [
             'tickets' => $tickets,
             'drivers' => $drivers,
