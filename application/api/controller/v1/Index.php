@@ -30,7 +30,7 @@ class Index
     {
         $redis = new \Redis();
         $km = config('setting.mini_nearby_km');
-        $driver_location_key = self::getLocationCacheKey(1);
+        $driver_location_key = DriverService::getLocationCacheKey(1);
         $redis->connect('127.0.0.1', 6379, 60);
         $list = $redis->rawCommand('georadius', $driver_location_key, '117.85543531179428101', '30.94381381254151364', $km, 'km');
         print_r($list);
