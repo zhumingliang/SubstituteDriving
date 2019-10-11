@@ -532,8 +532,8 @@ class DriverService extends BaseService
         if ($this->redis->sIsMember('driver_order_receive:' . $company_id, $d_id)) {
             $this->redis->sRem('driver_order_receive:' . $company_id, $d_id);
         }
-        if ($this->redis->sIsMember('driver_order_no:' . $company_id, $d_id)) {
-            $this->redis->sRem('driver_order_no:' . $company_id, $d_id);
+        if (!$this->redis->sIsMember('driver_order_no:' . $company_id, $d_id)) {
+            $this->redis->sAdd('driver_order_no:' . $company_id, $d_id);
         }
     }
 
