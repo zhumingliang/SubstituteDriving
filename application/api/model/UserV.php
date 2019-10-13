@@ -14,13 +14,18 @@ class UserV extends Model
         return $data[$value];
     }
 
-    public static function users($page, $size, $name, $time_begin, $time_end, $phone, $money_min, $money_max, $count_min, $count_max)
+    public static function users($page, $size, $name, $time_begin, $time_end, $phone, $money_min, $money_max, $count_min, $count_max, $company_id)
     {
-        $list = self::where(function ($query) use ($name) {
-            if (strlen($name)) {
-                $query->where('nickName', 'like', '%' . $name . '%');
+        $list = self::where(function ($query) use ($company_id) {
+            if (!empty($company_id)) {
+                $query->where('company_id', '=', $company_id);
             }
         })
+            ->where(function ($query) use ($name) {
+                if (strlen($name)) {
+                    $query->where('nickName', 'like', '%' . $name . '%');
+                }
+            })
             ->where(function ($query) use ($phone) {
                 if (strlen($phone)) {
                     $query->where('phone', '=', $phone);

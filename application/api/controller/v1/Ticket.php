@@ -31,12 +31,14 @@ class Ticket extends BaseController
      *       "count":500,
      *       "scene": 1,
      *       "source": 1,
+     *       "user_limit": 30,
      *     }
      * @apiParam (请求参数说明) {String} name    优惠券名称
      * @apiParam (请求参数说明) {int} price   优惠券金额：单位元
      * @apiParam (请求参数说明) {String} time_begin  有效开始时间
      * @apiParam (请求参数说明) {String} time_end   有效结束时间
-     * @apiParam (请求参数说明) {String} count   优惠券数量
+     * @apiParam (请求参数说明) {int} count   优惠券数量
+     * @apiParam (请求参数说明) {int} user_limit  用户优惠券有效期：天数
      * @apiParam (请求参数说明) {int} scene   应用场景（暂定）：1 | 新用户优惠券；2|首次关注公众号优惠券；3|日常补助优惠券
      * @apiParam (请求参数说明) {int} source   操作来源：1 | CMS；2 | Android
      *
@@ -78,6 +80,7 @@ class Ticket extends BaseController
      * @apiSuccess (返回参数说明) {String} name 卡券名称
      * @apiSuccess (返回参数说明) {int} price 卡券面值
      * @apiSuccess (返回参数说明) {int} count 数量
+     * @apiSuccess (返回参数说明) {int} user_limit  用户优惠券有效期：天数
      * @apiSuccess (返回参数说明) {String} time_begin 有效期开始时间
      * @apiSuccess (返回参数说明) {String} time_end 有效期结束时间
      * @apiSuccess (返回参数说明) {int} state 状态：1 | 正常；2 | 停用
@@ -106,6 +109,7 @@ class Ticket extends BaseController
      *       "time_begin": "2019-10-01",
      *       "time_end":"2019-10-08",
      *       "count":500,
+     *       "user_limit": 30,
      *       "scene": 1
      *     }
      * @apiParam (请求参数说明) {int} id    优惠券ID
@@ -114,8 +118,8 @@ class Ticket extends BaseController
      * @apiParam (请求参数说明) {String} time_begin  有效开始时间
      * @apiParam (请求参数说明) {String} time_end   有效结束时间
      * @apiParam (请求参数说明) {String} count   优惠券数量
+     * @apiParam (请求参数说明) {int} user_limit  用户优惠券有效期：天数
      * @apiParam (请求参数说明) {int} scene   应用场景（暂定）：1 | 新用户优惠券
-     *
      * @apiSuccessExample {json} 返回样例:
      *{"msg":"ok","errorCode":0}
      * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误

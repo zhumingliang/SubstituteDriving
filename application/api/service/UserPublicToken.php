@@ -26,7 +26,7 @@ class UserPublicToken extends Token
         $user = UserPublicT::where('openid', $this->openid)->find();
 
         if (!$user) {
-            $userPublic = UserPublicT::create(['openid' => $this->openid]);
+            $userPublic = UserPublicT::create(['openid' => $this->openid, 'company_id' => 1]);
             $u_id = $userPublic->id;
         } else {
             $u_id = $user->id;
@@ -85,6 +85,7 @@ class UserPublicToken extends Token
         $cachedValue['openId'] = $user['openid'];
         $cachedValue['province'] = $user['province'];
         $cachedValue['nickName'] = $user['nickname'];
+        $cachedValue['company_id'] = $user['company_id'];
         $cachedValue['type'] = 'public';
         $cachedValue['scene'] = 2;
         $cachedValue['u_id'] = $u_id;

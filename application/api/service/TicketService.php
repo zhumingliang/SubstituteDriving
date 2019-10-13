@@ -36,7 +36,7 @@ class TicketService
                 'name' => $ticket->name,
                 'money' => $ticket->price,
                 'time_begin' => date('Y-m-d', time()),
-                'time_end' => addDay(config('setting.ticket_time'), date('Y-m-d', time())),
+                'time_end' => addDay($ticket->user_limit, date('Y-m-d', time())),
                 'scene' => $ticket->scene,
                 'state' => CommonEnum::STATE_IS_OK
             ];
@@ -106,7 +106,7 @@ class TicketService
             'state' => CommonEnum::STATE_IS_OK,
             'money' => $ticket->price,
             'time_begin' => date('Y-m-d', time()),
-            'time_end' => addDay(config('setting.ticket_time'), date('Y-m-d', time())),
+            'time_end' => addDay($ticket->user_limit, date('Y-m-d', time())),
             'scene' => $scene,
             'name' => $ticket->name,
             'phone' => $phone
