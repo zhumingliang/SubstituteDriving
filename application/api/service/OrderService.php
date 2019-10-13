@@ -1521,7 +1521,7 @@ class OrderService
     function CMSManagerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from)
     {
         $company_id = Token::getCurrentTokenVar('company_id');
-        $orders = OrderV::CMSManagerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from);
+        $orders = OrderV::CMSManagerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from,$company_id);
         $orders['statistic'] = $this->getManagerOrdersStatistic($company_id, $driver, $time_begin, $time_end);
         return $orders;
 
