@@ -158,6 +158,7 @@ class UserInfo
         $token = Request::header('token');
         $current_code = $redis->get($token);
         $u_id = Token::getCurrentUid();
+        $company_id = Token::getCurrentTokenVar('company_id');
         if (!$current_code) {
             throw new UpdateException(['errorCode' => '10007', 'msg' => '验证码过期，请重新获取']);
         }
@@ -176,7 +177,7 @@ class UserInfo
         $scene = $params['scene'];
         $this->updateCache(['phone' => $params['phone']]);
         //检测小程序用户是否首次绑定手机号->派送优惠券
-        return TicketService::userTicketSave($scene, $u_id, $params['phone']);
+        return TicketService::userTicketSave($scene, $u_id, $params['phone'], $company_id);
 
     }
 

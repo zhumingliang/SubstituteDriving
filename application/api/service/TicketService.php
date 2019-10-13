@@ -61,7 +61,7 @@ class TicketService
     public function ticketsForCMS($page, $size, $time_begin, $time_end, $key)
     {
         $company_id = Token::getCurrentTokenVar('company_id');
-        $ticks = TicketV::ticketsForCMS($company_id,$page, $size, $time_begin, $time_end, $key);
+        $ticks = TicketV::ticketsForCMS($company_id, $page, $size, $time_begin, $time_end, $key);
         return $ticks;
     }
 
@@ -81,15 +81,19 @@ class TicketService
         return $ticks;
     }
 
-    public static function userTicketSave($scene, $u_id, $phone)
+    public static function userTicketSave($scene, $u_id, $phone, $company_id = 1)
     {
-        $ticketOpen = TicketOpenT::where('scene', $scene)->find();
+        $ticketOpen = TicketOpenT::where('company_id', $company_id)
+            ->where('scene', $scene)
+            ->find();
         if (!$ticketOpen || ($ticketOpen->open == CommonEnum::STATE_IS_FAIL) || self::checkTicketSend($phone, $scene)) {
             return [
                 'ticket' => 2
             ];
         }
-        $ticket = TicketT::where('scene', $scene)->find();
+        $ticket = TicketT::where('company_id', $company_id)
+            ->where('scene', $scene)
+            ->find();
         if (!$ticket) {
             return [
                 'ticket' => 2
