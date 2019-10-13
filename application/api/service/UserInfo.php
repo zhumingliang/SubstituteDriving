@@ -25,13 +25,16 @@ class UserInfo
     protected $encryptedData;
     protected $wxAppID;
     protected $user_id;
+    protected $company_id;
 
     function __construct($iv, $encryptedData)
     {
         $this->iv = $iv;
         $this->encryptedData = $encryptedData;
-        $this->wxAppID = config('wx.app_id');
         $this->user_id = Token::getCurrentUid();
+        $this->company_id = Token::getCurrentTokenVar('company_id');
+        $this->wxAppID = config("wx.$this->company_id.app_id");
+
     }
 
 
