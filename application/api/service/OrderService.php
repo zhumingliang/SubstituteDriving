@@ -1362,7 +1362,7 @@ class OrderService
     }
 
     private
-    function getManagerOrdersStatistic($company_id,$driver, $time_begin, $time_end)
+    function getManagerOrdersStatistic($company_id, $driver, $time_begin, $time_end)
     {
         $ordersMoney = OrderV::ordersMoney($company_id, $driver, $time_begin, $time_end);
         return [
@@ -1435,7 +1435,7 @@ class OrderService
     function current($page, $size)
     {
         $company_id = Token::getCurrentTokenVar('company_id');
-        $orders = Orderv::currentOrders($company_id,$page, $size);
+        $orders = Orderv::currentOrders($company_id, $page, $size);
         $orders['data'] = $this->prefixCurrentPush($orders['data']);
         return $orders;
     }
@@ -1520,8 +1520,9 @@ class OrderService
     public
     function CMSManagerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from)
     {
+        $company_id = Token::getCurrentTokenVar('company_id');
         $orders = OrderV::CMSManagerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from);
-        $orders['statistic'] = $this->getManagerOrdersStatistic($driver, $time_begin, $time_end);
+        $orders['statistic'] = $this->getManagerOrdersStatistic($company_id, $driver, $time_begin, $time_end);
         return $orders;
 
 
@@ -1530,8 +1531,9 @@ class OrderService
     public
     function CMSInsuranceOrders($page, $size, $time_begin, $time_end)
     {
+        $company_id = Token::getCurrentTokenVar('company_id');
         $orders = OrderV::CMSInsuranceOrders($page, $size, $time_begin, $time_end);
-        $orders['statistic'] = OrderV::orderCount('', $time_begin, $time_end);
+        $orders['statistic'] = OrderV::orderCount($company_id, '', $time_begin, $time_end);
         return $orders;
 
     }
