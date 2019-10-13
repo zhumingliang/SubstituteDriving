@@ -65,6 +65,7 @@ Route::post('api/:version/SystemPrice/start/handel', 'api/:version.SystemPrice/s
 Route::post('api/:version/SystemPrice/start/open/handel', 'api/:version.SystemPrice/startOpenHandel');
 Route::get('api/:version/SystemPrice/start', 'api/:version.SystemPrice/startPrice');
 Route::post('api/:version/SystemPrice/start/update', 'api/:version.SystemPrice/startUpdate');
+Route::post('api/:version/SystemPrice/farState', 'api/:version.SystemPrice/farState');
 
 Route::get('api/:version/SystemPrice/wait', 'api/:version.SystemPrice/waitPrice');
 Route::post('api/:version/SystemPrice/wait/update', 'api/:version.SystemPrice/waitUpdate');
@@ -138,4 +139,7 @@ Route::rule('api/:version/weixin/public/menu', 'api/:version.WeiXinPublic/create
 Route::rule('api/:version/service/order', 'api/:version.Service/orderHandel');
 Route::rule('api/:version/service/fail', 'api/:version.Service/failHandel');
 
+Route::post('api/:version/agent/save', 'api/:version.Company/save');
+Route::post('api/:version/agent/update', 'api/:version.Company/update');
+Route::get('api/:version/agents', 'api/:version.Company/agents');
 

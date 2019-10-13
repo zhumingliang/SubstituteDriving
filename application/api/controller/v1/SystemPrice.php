@@ -163,10 +163,10 @@ class SystemPrice extends BaseController
     }
 
     /**
-     * @api {POST} /api/v1/SystemPrice/start/update  Android管理端-修改起步价设置/新增远程接驾设置
+     * @api {POST} /api/v1/SystemPrice/start/update  Android管理端-修改起步价设置/修改远程接驾设置
      * @apiGroup  Android
      * @apiVersion 1.0.1
-     * @apiDescription  Android管理端-修改起步价设置/新增远程接驾设置
+     * @apiDescription  Android管理端-修改起步价设置/修改远程接驾设置
      * @apiExample {post}  请求样例:
      *    {
      *       "id":8.0,
@@ -222,6 +222,31 @@ class SystemPrice extends BaseController
         $params['company_id'] = $company_id;
         $start = TimeIntervalT::create($params);
         if (!$start) {
+            throw new UpdateException();
+        }
+        return json(new SuccessMessage());
+
+    }
+
+    /**
+     * @api {POST} /api/v1/SystemPrice/farState  Android管理端-修改远程接驾状态
+     * @apiGroup  Android
+     * @apiVersion 1.0.1
+     * @apiDescription  Android管理端-修改远程接驾状态
+     * @apiExample {post}  请求样例:
+     *    {
+     *       "open":2
+     *     }
+     * @apiParam (请求参数说明) {float} open  状态：1|打开；2|关闭
+     * @apiSuccessExample {json} 返回样例:
+     *{"msg":"ok","errorCode":0}
+     * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误
+     * @apiSuccess (返回参数说明) {String} msg 信息描述
+     */
+    public function farState($open)
+    {
+        $state = FarStateT::update(['open' => $open], ['company_id' => \app\api\service\Token::getCurrentTokenVar('company_id')]);
+        if (!$state) {
             throw new UpdateException();
         }
         return json(new SuccessMessage());
