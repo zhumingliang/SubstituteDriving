@@ -41,7 +41,7 @@ class Token extends Controller
      * @apiParam (请求参数说明) {String} pwd   用户密码
      * @apiSuccessExample {json} 返回样例:
      *{"msg":"ok","errorCode":0,"data":{{"token":"b9c1b6b884c2fc6c53048972eaf785a7","grade":1}}
-     * @apiSuccess (返回参数说明) {String} grade 用户等级:1 | 管理员；2 | 保险公司
+     * @apiSuccess (返回参数说明) {String} grade 用户等级:1 | 管理员；2 | 保险公司;3|系统管理员
      * @apiSuccess (返回参数说明) {String} token 口令令牌，每次请求接口需要传入，有效期 2 hours
      */
     public function getAdminToken()
@@ -122,7 +122,7 @@ class Token extends Controller
     {
         $code = $this->request->param('code');
         $company_id = $this->request->param('company_id');
-        $ut = new UserToken($code,$company_id);
+        $ut = new UserToken($code, $company_id);
         $token = $ut->get();
         return json(new SuccessMessageWithData(['data' => $token]));
     }

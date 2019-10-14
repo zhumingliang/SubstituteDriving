@@ -953,6 +953,10 @@ class OrderService
     public
     function prefixOrderCharge($o_id, $d_id, $money, $ticket_money)
     {
+        $check = OrderMoneyT::where('o_id')->count('id');
+        if ($check) {
+            return 1;
+        }
         $orderCharge = SystemOrderChargeT::find();
         $insurance = $orderCharge->insurance;
         $order = $orderCharge->order;
@@ -1521,7 +1525,7 @@ class OrderService
     function CMSManagerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from)
     {
         $company_id = Token::getCurrentTokenVar('company_id');
-        $orders = OrderV::CMSManagerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from,$company_id);
+        $orders = OrderV::CMSManagerOrders($page, $size, $driver, $time_begin, $time_end, $order_state, $order_from, $company_id);
         $orders['statistic'] = $this->getManagerOrdersStatistic($company_id, $driver, $time_begin, $time_end);
         return $orders;
 
