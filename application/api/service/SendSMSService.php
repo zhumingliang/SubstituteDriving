@@ -21,9 +21,11 @@ class SendSMSService
         $params = ['code' => $code];
         $res = SendSms::instance()->send($phone, $params, $type);
         $token = Request::header('token');
+        LogService::save('first' . $token);
         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
             $redis = new Redis();
-            $redis->set($token, $phone . '-' . $code, 60);
+            $redis->set($token, $phone . '-' . $code, 120);
+            LogService::save('success:' . $phone . '-' . $code);
             return true;
         }
         $this->saveSend($phone, $params, $type, $token);
@@ -124,7 +126,9 @@ class SendSMSService
                     $redis->lPush('send_message_success', json_encode($data));
                     if (!empty($data_arr['token'])) {
                         $redis = new Redis();
-                        $redis->set($data_arr['token'], $data_arr['phone'] . '-' . $data_arr['params']['code'], 60);
+                        $redis->set($data_arr['token'], $data_arr['phone'] . '-' . $data_arr['params']['code'], 120);
+                        LogService::save($data_arr['token']);
+                        LogService::save('second:' . $data_arr['phone'] . '-' . $data_arr['params']);
                     }
                 } else {
                     if ($data_arr['failCount'] > 2) {
