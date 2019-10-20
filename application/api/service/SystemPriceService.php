@@ -35,7 +35,7 @@ class SystemPriceService
 
     public function intervalUpdate($info)
     {
-        if (empty($info['id'])) {
+        if (!empty($info['id'])) {
             $res = TimeIntervalT::update($info);
         } else {
             $info['company_id'] = Token::getCurrentTokenVar('company_id');
