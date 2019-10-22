@@ -933,7 +933,7 @@ class OrderService
                 throw new SaveException(['msg' => '保存结算数据失败']);
             }
             //处理抽成
-            if (!$this->prefixOrderCharge($id, $order->d_id, $money, $ticket_money)) {
+            if (!$this->prefixOrderCharge($id, $order->d_id, $order->company_id, $money, $ticket_money)) {
                 Db::rollback();
                 throw new SaveException(['msg' => '订单抽成失败']);
             }
@@ -951,13 +951,13 @@ class OrderService
     }
 
     public
-    function prefixOrderCharge($o_id, $d_id, $money, $ticket_money)
+    function prefixOrderCharge($o_id, $d_id, $company_id, $money, $ticket_money)
     {
         $check = OrderMoneyT::where('o_id')->count('id');
         if ($check) {
             return 1;
         }
-        $orderCharge = SystemOrderChargeT::find();
+        $orderCharge = SystemOrderChargeT::where('company_id', $company_id)->find();
         $insurance = $orderCharge->insurance;
         $order = $orderCharge->order;
         $order_money = ($money + $ticket_money) * $order;
