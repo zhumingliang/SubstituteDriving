@@ -8,6 +8,8 @@ use app\api\model\DriverT;
 use app\api\model\UserV;
 use app\lib\enum\CommonEnum;
 use app\lib\exception\AuthException;
+use think\facade\Cache;
+use think\facade\Request;
 
 class UserService
 {
@@ -22,9 +24,11 @@ class UserService
     {
         $driver = DriverT::where('id', $driver_id)
             ->find();
-        if ($driver->state !=CommonEnum::STATE_IS_OK){
-            throw new AuthException(['msg'=>"账号状态异常，请联系管理员"]);
+        if ($driver->state != CommonEnum::STATE_IS_OK) {
+            throw new AuthException(['msg' => "账号状态异常，请联系管理员"]);
         }
+        $token = Request::header('token');
+        Cache::rm($token);
 
     }
 

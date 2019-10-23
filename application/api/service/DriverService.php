@@ -86,13 +86,13 @@ class DriverService extends BaseService
     public function online($params)
     {
         try {
-
             Db::startTrans();
             $type = Token::getCurrentTokenVar('type');
+            $id = Token::getCurrentUid();
+            (new UserService())->checkDriverState($id);
             if ($type != "driver") {
                 throw new AuthException();
             }
-            $id = Token::getCurrentUid();
             $driver = DriverT::get($id);
             if ($driver->online == $params['online']) {
                 Db::commit();
