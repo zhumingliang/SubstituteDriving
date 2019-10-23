@@ -67,6 +67,7 @@ class OrderService
     {
         try {
             $d_id = Token::getCurrentUid();
+            (new UserService())->checkDriverState($d_id);
             if ((new DriverService())->checkNoCompleteOrder($d_id)) {
                 throw new SaveException(['msg' => '创建订单失败,已有未完成的订单']);
             }
