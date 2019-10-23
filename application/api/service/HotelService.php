@@ -25,7 +25,7 @@ class HotelService
         }
         $path = 'pages/index/index?hotel_id=%s&lat=%s&lng=%s';
         $path = sprintf($path, $hotel_id, $hotel['lat'], $hotel['lng']);
-        $app = Factory::officialAccount($config);
+        $app = Factory::miniProgram($config);
         $response = $app->app_code->get($path, [
             'width' => 600,
             'line_color' => [
