@@ -146,6 +146,7 @@ Route::get('api/:version/agents', 'api/:version.Company/agents');
 Route::post('api/:version/hotel/save', 'api/:version.Hotel/save');
 Route::post('api/:version/hotel/update', 'api/:version.Hotel/update');
 Route::post('api/:version/hotel/handel', 'api/:version.Hotel/handel');
+Route::post('api/:version/hotel/qrcode/create', 'api/:version.Hotel/createQRCode');
 Route::get('api/:version/hotels', 'api/:version.Hotel/hotels');
 Route::get('api/:version/hotel/orders', 'api/:version.Hotel/orders');
 
