@@ -4,6 +4,7 @@
 namespace app\api\model;
 
 
+use app\lib\enum\CommonEnum;
 use app\lib\enum\OrderEnum;
 use think\Model;
 
@@ -147,7 +148,6 @@ class OrderV extends Model
 
     }
 
-
     public static function currentOrders($company_id, $page, $size)
     {
         $list = self::where(function ($query) use ($company_id) {
@@ -161,7 +161,6 @@ class OrderV extends Model
         return $list;
 
     }
-
 
     public static function managerOrders($company_id, $page, $size, $driver, $time_begin, $time_end, $order_state, $order_from)
     {
@@ -193,5 +192,17 @@ class OrderV extends Model
         return $list;
     }
 
+    public static function hotelOrders($hotel_id, $time_begin, $time_end, $page, $size)
+    {
+        $time_end = addDay(1, $time_end);
+        $orders = self::where('hotel_id', $hotel_id)
+            ->whereBetweenTime('create_time', $time_begin, $time_end)
+            ->where('state', '<', 5)
+            ->field('id,name,driver,phone,money,start,end,hotel,state,create_time')
+            ->order('create_time desc')
+            ->paginate($size, false, ['page' => $page])->toArray();
+        return $orders;
+
+    }
 
 }
