@@ -157,7 +157,6 @@ class UserInfo
         $redis = new Redis();
         $token = Request::header('token');
         $current_code = $redis->get($token);
-        LogService::save($token);
         $u_id = Token::getCurrentUid();
         $company_id = Token::getCurrentTokenVar('company_id');
         if (!$current_code) {

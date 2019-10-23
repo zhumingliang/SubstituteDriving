@@ -93,6 +93,7 @@ class TicketService
         }
         $ticket = TicketT::where('company_id', $company_id)
             ->where('scene', $scene)
+            ->where('state',CommonEnum::STATE_IS_OK)
             ->find();
         if (!$ticket) {
             return [
