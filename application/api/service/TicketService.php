@@ -93,7 +93,9 @@ class TicketService
         }
         $ticket = TicketT::where('company_id', $company_id)
             ->where('scene', $scene)
-            ->where('state',CommonEnum::STATE_IS_OK)
+            ->where('state', CommonEnum::STATE_IS_OK)
+            ->whereBetweenTimeField('time_begin', 'time_end')
+            ->order('create_time desc')
             ->find();
         if (!$ticket) {
             return [
