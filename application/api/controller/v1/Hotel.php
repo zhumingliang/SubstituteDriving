@@ -6,7 +6,6 @@ namespace app\api\controller\v1;
 
 use app\api\controller\BaseController;
 use app\api\model\HotelT;
-use app\api\model\OrderT;
 use app\api\model\OrderV;
 use app\api\service\HotelService;
 use app\lib\enum\CommonEnum;
@@ -187,10 +186,27 @@ class Hotel extends BaseController
     }
 
 
+    /**
+     * @api {POST} /api/v1/hotel/qrcode/create CMS管理端-创建酒店二维码
+     * @apiGroup   CMS
+     * @apiVersion 1.0.1
+     * @apiDescription  CMS管理端-创建酒店二维码
+     * @apiExample {post}  请求样例:
+     *    {
+     *       "hotel_id": 1
+     *     }
+     * @apiParam (请求参数说明) {String} hotel_id  酒店id
+     * @apiSuccessExample {json} 返回样例:
+     *{"msg":"ok","errorCode":0,"data":{"url":"http://"}}
+     * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误
+     * @apiSuccess (返回参数说明) {String} msg 信息描述
+     * @apiSuccess (返回参数说明) {String} url 二维码地址
+     */
     public function createQRCode()
     {
         $hotel_id = Request::param('hotel_id');
         $url = (new HotelService())->createQRCode($hotel_id);
+        return json(new SuccessMessageWithData(["data" => ['url' => $url]]));
 
 
     }

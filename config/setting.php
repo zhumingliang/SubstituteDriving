@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'domain' => 'https://mengant.cn/house/',
+    'domain' => 'https://tonglingok.com',
     'driver_push_expire_in' => 30,
     'driver_nearby_km' => 10,
     'manager_nearby_km' => 300000,

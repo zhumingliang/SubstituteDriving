@@ -37,8 +37,10 @@ class HotelService
         if ($response instanceof \EasyWeChat\Kernel\Http\StreamResponse) {
             $savePath = dirname($_SERVER['SCRIPT_FILENAME']) . '/static/qrcode';
             $filename = $response->saveAs($savePath, $hotel_id . '.png');
-            $hotel->qrcode = $savePath . '/' . $filename;
+            $qrcode_url = '/static/qrcode' . '/' . $filename;
+            $hotel->qrcode = $qrcode_url;
             $hotel->save();
+            return config('setting.domain') . $qrcode_url;
 
         } else {
             throw new SaveException(['msg' => '生成二维码失败']);
