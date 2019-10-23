@@ -13,7 +13,7 @@ class HotelService
 {
     public function createQRCode($hotel_id)
     {
-        $company_id = 3;//Token::getCurrentTokenVar('company_id');
+        $company_id = Token::getCurrentTokenVar('company_id');
         $config = [
             'app_id' => config("wx.$company_id.app_id"),
             'secret' => config("wx.$company_id.app_secret")

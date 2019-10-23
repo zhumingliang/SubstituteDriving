@@ -21,6 +21,7 @@ class Order extends BaseController
      * @apiDescription   小程序端-代驾下单
      * @apiExample {post}  请求样例:
      *    {
+     *       "hotel_id":1,
      *       "start":"铜陵市维也纳大酒店",
      *       "start_lat":"12.1212",
      *       "start_lng":"23.121",
@@ -29,6 +30,7 @@ class Order extends BaseController
      *       "end_lng":"21.1212",
      *       "t_id":1
      *     }
+     * @apiParam (请求参数说明) {int} hotel_id  酒店id
      * @apiParam (请求参数说明) {String} start  出发地
      * @apiParam (请求参数说明) {String} start_lat  出发地纬度
      * @apiParam (请求参数说明) {String} start_lng  出发地经度

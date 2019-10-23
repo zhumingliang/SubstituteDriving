@@ -934,7 +934,7 @@ class OrderService
                 throw new SaveException(['msg' => '保存结算数据失败']);
             }
             //处理抽成
-            if (!$this->prefixOrderCharge($id, $order->d_id, $order->company_id, $money, $ticket_money)) {
+            if (!$this->prefixOrderCharge($id, $order->d_id, $order->company_id, $order->hotel_id, $money, $ticket_money)) {
                 Db::rollback();
                 throw new SaveException(['msg' => '订单抽成失败']);
             }
@@ -952,7 +952,7 @@ class OrderService
     }
 
     public
-    function prefixOrderCharge($o_id, $d_id, $company_id, $money, $ticket_money)
+    function prefixOrderCharge($o_id, $d_id, $company_id, $hotel_id, $money, $ticket_money)
     {
         $check = OrderMoneyT::where('o_id')->count('id');
         if ($check) {
@@ -961,45 +961,76 @@ class OrderService
         $orderCharge = SystemOrderChargeT::where('company_id', $company_id)->find();
         $insurance = $orderCharge->insurance;
         $order = $orderCharge->order;
+        $hotel = $orderCharge->hotel;
         $order_money = ($money + $ticket_money) * $order;
+//        if ($ticket_money) {
+//            $data = [
+//                [
+//                    'o_id' => $o_id,
+//                    'd_id' => $d_id,
+//                    'money' => $insurance,
+//                    'type' => 1,
+//
+//                ], [
+//                    'o_id' => $o_id,
+//                    'd_id' => $d_id,
+//                    'money' => $order_money,
+//                    'type' => 2,
+//                ],
+//                [
+//                    'o_id' => $o_id,
+//                    'd_id' => $d_id,
+//                    'money' => 0 - $ticket_money,
+//                    'type' => 5,
+//                ]
+//            ];
+//        } else {
+//            $data = [
+//                [
+//                    'o_id' => $o_id,
+//                    'd_id' => $d_id,
+//                    'money' => $insurance,
+//                    'type' => 1,
+//
+//                ], [
+//                    'o_id' => $o_id,
+//                    'd_id' => $d_id,
+//                    'money' => $order_money,
+//                    'type' => 2,
+//                ]
+//            ];
+//        }
+
+        $data = [
+            [
+                'o_id' => $o_id,
+                'd_id' => $d_id,
+                'money' => $insurance,
+                'type' => 1,
+
+            ], [
+                'o_id' => $o_id,
+                'd_id' => $d_id,
+                'money' => $order_money,
+                'type' => 2,
+            ]
+        ];
         if ($ticket_money) {
-            $data = [
-                [
-                    'o_id' => $o_id,
-                    'd_id' => $d_id,
-                    'money' => $insurance,
-                    'type' => 1,
-
-                ], [
-                    'o_id' => $o_id,
-                    'd_id' => $d_id,
-                    'money' => $order_money,
-                    'type' => 2,
-                ],
-                [
-                    'o_id' => $o_id,
-                    'd_id' => $d_id,
-                    'money' => 0 - $ticket_money,
-                    'type' => 5,
-                ]
-            ];
-        } else {
-            $data = [
-                [
-                    'o_id' => $o_id,
-                    'd_id' => $d_id,
-                    'money' => $insurance,
-                    'type' => 1,
-
-                ], [
-                    'o_id' => $o_id,
-                    'd_id' => $d_id,
-                    'money' => $order_money,
-                    'type' => 2,
-                ]
-            ];
+            array_push($data, [
+                'o_id' => $o_id,
+                'd_id' => $d_id,
+                'money' => 0 - $ticket_money,
+                'type' => 5,
+            ]);
         }
-
+        if ($hotel_id) {
+            array_push($data, [
+                'o_id' => $o_id,
+                'd_id' => $d_id,
+                'money' => $hotel,
+                'type' => 7,
+            ]);
+        }
         $res = (new OrderMoneyT())->saveAll($data);
         return $res;
 
