@@ -8,6 +8,7 @@ use app\api\controller\BaseController;
 use app\api\model\HotelT;
 use app\api\model\OrderT;
 use app\api\model\OrderV;
+use app\api\service\HotelService;
 use app\lib\enum\CommonEnum;
 use app\lib\exception\SaveException;
 use app\lib\exception\SuccessMessage;
@@ -185,8 +186,12 @@ class Hotel extends BaseController
 
     }
 
-    public function qrcode()
+
+    public function createQRCode()
     {
+        $hotel_id = Request::param('hotel_id');
+        $url = (new HotelService())->createQRCode($hotel_id);
+
 
     }
 

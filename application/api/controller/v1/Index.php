@@ -3,6 +3,7 @@
 namespace app\api\controller\v1;
 
 use app\api\model\DriverT;
+use app\api\model\LocationT;
 use app\api\model\MiniPushT;
 use app\api\model\OrderPushT;
 use app\api\model\OrderRevokeT;
@@ -28,28 +29,21 @@ class Index
 {
     public function index()
     {
-        $redis = new \Redis();
-        $km = config('setting.mini_nearby_km');
-        $driver_location_key = DriverService::getLocationCacheKey(1);
-        $redis->connect('127.0.0.1', 6379, 60);
-        $list = $redis->rawCommand('georadius', $driver_location_key, '117.85543531179428101', '30.94381381254151364', $km, 'km');
-        print_r($list);
-        /*$order = OrderT::getOrder(500);
-        echo $order->start_lat;*/
-        /*$drivers = DriverT::where('state', CommonEnum::STATE_IS_OK)
-            ->select();
-        foreach ($drivers as $k => $v) {
-            $driver_id = 'driver:' . $v->id;
-            $data = [
-                'id' => $v->id,
-                'number' => $v->number,
-                'username' => $v->username,
-                'phone' => $v->phone,
-                'company_id' => $v->company_id
-            ];
-            Redis::instance()->hMset($driver_id, $data);
-        }*/
-
+        $locations = LocationT::where('o_id', 1806)->select();
+        $distance = 0;
+        $old_lat = '';
+        $old_lng = '';
+        foreach ($locations as $k => $v) {
+            if ($k == 0) {
+                $old_lat = $v['lat'];
+                $old_lng = $v['lng'];
+                continue;
+            }
+            $distance += CalculateUtil::GetDistance($old_lat, $old_lng, $v['lat'], $v['lng']);
+            $old_lat = $v['lat'];
+            $old_lng = $v['lng'];
+        }
+        echo $distance;
     }
 
 
