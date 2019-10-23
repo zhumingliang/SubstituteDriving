@@ -34,6 +34,7 @@ class HotelService
                 'b' => 134,
             ],
         ]);
+        print_r($response);
         if ($response instanceof \EasyWeChat\Kernel\Http\StreamResponse) {
             $savePath = dirname($_SERVER['SCRIPT_FILENAME']) . '/static/qrcode';
             $filename = $response->saveAs($savePath, $hotel_id . '.png');
