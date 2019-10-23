@@ -25,10 +25,11 @@ class UserService
         $driver = DriverT::where('id', $driver_id)
             ->find();
         if ($driver->state != CommonEnum::STATE_IS_OK) {
+            $token = Request::header('token');
+            Cache::rm($token);
             throw new AuthException(['msg' => "账号状态异常，请联系管理员"]);
         }
-        $token = Request::header('token');
-        Cache::rm($token);
+
 
     }
 
