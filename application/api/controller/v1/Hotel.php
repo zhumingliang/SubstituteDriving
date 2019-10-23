@@ -125,7 +125,7 @@ class Hotel extends BaseController
      * @apiParam (请求参数说明) {int} page 当前页码
      * @apiParam (请求参数说明) {int} size 每页多少条数据
      * @apiSuccessExample {json} 返回样例:
-     * {"msg":"ok","errorCode":0,"code":200,"data":{"total":1,"per_page":20,"current_page":1,"last_page":1,"data":[{"id":1,"name":"大红灯笼","lat":"111","lng":"111","create_time":"2019-10-23 17:01:00","company_id":3,"username":"张小姐","phone":"18956225230","address":"欣明国际旁"}]}}
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"total":1,"per_page":20,"current_page":1,"last_page":1,"data":[{"id":1,"name":"大红灯笼","lat":"111","lng":"111","create_time":"2019-10-23 17:01:00","company_id":3,"username":"张小姐","phone":"18956225230","qrcode":"http://"}]}}
      * @apiSuccess (返回参数说明) {int} total 数据总数
      * @apiSuccess (返回参数说明) {int} per_page 每页多少条数据
      * @apiSuccess (返回参数说明) {int} current_page 当前页码
@@ -137,6 +137,7 @@ class Hotel extends BaseController
      * @apiSuccess (返回参数说明) {String} phone  手机号
      * @apiSuccess (返回参数说明) {String} lat  纬度
      * @apiSuccess (返回参数说明) {String} lng  经度
+     * @apiSuccess (返回参数说明) {String} qrcode  商家小程序二维码地址
      * @apiSuccess (返回参数说明) {String} create_time 创建时间
      */
     public function hotels($page = 1, $size = 20)
