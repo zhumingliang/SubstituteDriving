@@ -30,6 +30,15 @@ class Index
 {
     public function index()
     {
+        $ticket = TicketT::where('company_id', 1)
+        ->where('scene', 2)
+        ->where('state', CommonEnum::STATE_IS_OK)
+        ->whereTime('time_begin', '<=', date('Y-m-d H:i:s'))
+        ->whereTime('time_end', '>=',  date('Y-m-d H:i:s'))
+        ->order('create_time desc')
+            ->fetchSql(true)
+        ->find();
+        print_r($ticket) ;
 
         /*   $locations = LocationT::where('o_id', 1806)->select();
            $distance = 0;
