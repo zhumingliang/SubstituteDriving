@@ -9,6 +9,7 @@ use app\api\model\OrderPushT;
 use app\api\model\OrderRevokeT;
 use app\api\model\OrderT;
 use app\api\model\StartPriceT;
+use app\api\model\TicketT;
 use app\api\model\TimeIntervalT;
 use app\api\model\WaitPriceT;
 use app\api\model\WeatherT;
@@ -29,21 +30,22 @@ class Index
 {
     public function index()
     {
-        $locations = LocationT::where('o_id', 1806)->select();
-        $distance = 0;
-        $old_lat = '';
-        $old_lng = '';
-        foreach ($locations as $k => $v) {
-            if ($k == 0) {
-                $old_lat = $v['lat'];
-                $old_lng = $v['lng'];
-                continue;
-            }
-            $distance += CalculateUtil::GetDistance($old_lat, $old_lng, $v['lat'], $v['lng']);
-            $old_lat = $v['lat'];
-            $old_lng = $v['lng'];
-        }
-        echo $distance;
+
+        /*   $locations = LocationT::where('o_id', 1806)->select();
+           $distance = 0;
+           $old_lat = '';
+           $old_lng = '';
+           foreach ($locations as $k => $v) {
+               if ($k == 0) {
+                   $old_lat = $v['lat'];
+                   $old_lng = $v['lng'];
+                   continue;
+               }
+               $distance += CalculateUtil::GetDistance($old_lat, $old_lng, $v['lat'], $v['lng']);
+               $old_lat = $v['lat'];
+               $old_lng = $v['lng'];
+           }
+           echo $distance;*/
     }
 
 
