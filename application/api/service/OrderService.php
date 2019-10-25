@@ -1594,4 +1594,23 @@ class OrderService
         return $number;
     }
 
+    private function prefixDistance($id)
+    {
+        $locations = LocationT::where('o_id', $id)->select();
+        $distance = 0;
+        $old_lat = '';
+        $old_lng = '';
+        foreach ($locations as $k => $v) {
+            if ($k == 0) {
+                $old_lat = $v['lat'];
+                $old_lng = $v['lng'];
+                continue;
+            }
+            $distance += CalculateUtil::GetDistance($old_lat, $old_lng, $v['lat'], $v['lng']);
+            $old_lat = $v['lat'];
+            $old_lng = $v['lng'];
+        }
+        return $distance;
+    }
+
 }

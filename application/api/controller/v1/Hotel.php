@@ -208,7 +208,25 @@ class Hotel extends BaseController
         $url = (new HotelService())->createQRCode($hotel_id);
         return json(new SuccessMessageWithData(["data" => ['url' => $url]]));
 
+    }
 
+    /**
+     * @api {POST} /api/v1/hotel/qrcode/download CMS管理端-下载酒店二维码
+     * @apiGroup   CMS
+     * @apiVersion 1.0.1
+     * @apiDescription  CMS管理端-下载酒店二维码
+     * @apiExample {post}  请求样例:
+     *    {
+     *       "hotel_id": 1
+     *     }
+     * @apiParam (请求参数说明) {String} hotel_id  酒店id
+     */
+    public function downLoadQRCode()
+    {
+        $hotel_id = Request::param('hotel_id');
+        $hotel = HotelT::where('id', $hotel_id)->find();
+        $QRCode = dirname($_SERVER['SCRIPT_FILENAME']) . $hotel['qrcode'];
+        return download($QRCode, 'qrcode-' . $hotel_id . '.png');
     }
 
 }

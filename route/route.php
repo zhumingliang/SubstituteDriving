@@ -147,6 +147,7 @@ Route::post('api/:version/hotel/save', 'api/:version.Hotel/save');
 Route::post('api/:version/hotel/update', 'api/:version.Hotel/update');
 Route::post('api/:version/hotel/handel', 'api/:version.Hotel/handel');
 Route::post('api/:version/hotel/qrcode/create', 'api/:version.Hotel/createQRCode');
+Route::post('api/:version/hotel/qrcode/download', 'api/:version.Hotel/downLoadQRCode');
 Route::get('api/:version/hotels', 'api/:version.Hotel/hotels');
 Route::get('api/:version/hotel/orders', 'api/:version.Hotel/orders');
 
