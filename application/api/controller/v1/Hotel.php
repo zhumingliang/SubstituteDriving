@@ -9,6 +9,7 @@ use app\api\model\HotelT;
 use app\api\model\OrderV;
 use app\api\service\HotelService;
 use app\lib\enum\CommonEnum;
+use app\lib\exception\ParameterException;
 use app\lib\exception\SaveException;
 use app\lib\exception\SuccessMessage;
 use app\lib\exception\SuccessMessageWithData;
@@ -225,9 +226,12 @@ class Hotel extends BaseController
     {
         $hotel_id = Request::param('hotel_id');
         $hotel = HotelT::where('id', $hotel_id)->find();
+        if (empty($hotel['qrcode'])) {
+            throw new ParameterException(['msg' => '二维码未生成']);
+        }
         $QRCode = dirname($_SERVER['SCRIPT_FILENAME']) . $hotel['qrcode'];
-        $download =  new \think\response\Download($QRCode);
-        return $download->name('my.jpg');
+        $download = new \think\response\Download($QRCode);
+        return $download->name($hotel['name'] . '.jpg');
     }
 
 }
