@@ -231,7 +231,8 @@ class Hotel extends BaseController
         }
         $QRCode = dirname($_SERVER['SCRIPT_FILENAME']) . $hotel['qrcode'];
         $download = new \think\response\Download($QRCode);
-        return $download->name($hotel['name'] . '.jpg');
+        //return $download->name($hotel['name'] . '.png');
+        return $download->name( '大红灯笼.png');
     }
 
 }
