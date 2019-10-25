@@ -227,7 +227,7 @@ class Hotel extends BaseController
         $hotel = HotelT::where('id', $hotel_id)->find();
         $QRCode = dirname($_SERVER['SCRIPT_FILENAME']) . $hotel['qrcode'];
         var_dump($QRCode);
-        return download($QRCode, 'qrcode-' . $hotel_id . '.png');
+        //return download($QRCode, 'qrcode-' . $hotel_id . '.png');
     }
 
 }
