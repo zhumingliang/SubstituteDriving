@@ -181,7 +181,8 @@ class Hotel extends BaseController
         $time_begin = Request::param('time_begin');
         $time_end = Request::param('time_end');
         $hotel_id = Request::param('hotel_id');
-        $orders = OrderV::hotelOrders($hotel_id, $time_begin, $time_end, $page, $size);
+        $company_id = TokenService::getCurrentTokenVar('company_id');
+        $orders = OrderV::hotelOrders($company_id,$hotel_id, $time_begin, $time_end, $page, $size);
         return json(new SuccessMessageWithData(['data' => $orders]));
 
     }

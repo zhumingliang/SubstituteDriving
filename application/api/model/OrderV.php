@@ -192,10 +192,11 @@ class OrderV extends Model
         return $list;
     }
 
-    public static function hotelOrders($hotel_id, $time_begin, $time_end, $page, $size)
+    public static function hotelOrders($company_id, $hotel_id, $time_begin, $time_end, $page, $size)
     {
         $time_end = addDay(1, $time_end);
         $orders = self::where('hotel_id', $hotel_id)
+            ->where('company_id', $company_id)
             ->whereBetweenTime('create_time', $time_begin, $time_end)
             ->where('state', '<', 5)
             ->field('id,name,driver,phone,money,start,end,hotel,state,create_time')
