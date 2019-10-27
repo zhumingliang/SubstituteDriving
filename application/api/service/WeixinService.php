@@ -118,7 +118,9 @@ class WeixinService
     {
         $fee_msg = "";
         $interval = TimeIntervalT::select();
-        $start = StartPriceT::where('type', 1)->select();
+        $start = StartPriceT::where('company_id', 1)
+            ->where('type', 1)
+            ->select();
         if (!empty($interval)) {
             foreach ($interval as $k => $v) {
                 $fee_msg .= "  时间：(" . $v->time_begin . "-" . $v->time_end . ")" . "起步价" . $v->price . "元";
