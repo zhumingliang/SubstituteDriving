@@ -116,9 +116,10 @@ class WeixinService
 
     private function prefixFee()
     {
+        $company_id = 1;
         $fee_msg = "";
-        $interval = TimeIntervalT::select();
-        $start = StartPriceT::where('company_id', 1)
+        $interval = TimeIntervalT::where('company_id', $company_id)->select();
+        $start = StartPriceT::where('company_id', $company_id)
             ->where('type', 1)
             ->select();
         if (!empty($interval)) {
@@ -141,7 +142,7 @@ class WeixinService
                 $fee_msg .= "\n";
             }
         }
-        $waitObj = WaitPriceT::find();
+        $waitObj = WaitPriceT::where('company_id', $company_id)->find();
         $wait_msg = "  免费等候" . $waitObj->free . "分钟，等候超出" . $waitObj->free . "分钟后每1分钟加收" . $waitObj->price . "元。";
 
         return "资费标准：\n" . $fee_msg . $wait_msg;
