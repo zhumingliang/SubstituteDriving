@@ -7,6 +7,7 @@ namespace app\api\service;
 use app\api\model\StartPriceT;
 use app\api\model\TimeIntervalT;
 use app\api\model\WaitPriceT;
+use app\lib\enum\CommonEnum;
 use app\lib\exception\WeChatException;
 use EasyWeChat\Factory;
 
@@ -118,8 +119,10 @@ class WeixinService
     {
         $company_id = 1;
         $fee_msg = "";
-        $interval = TimeIntervalT::where('company_id', $company_id)->select();
+        $interval = TimeIntervalT::where('company_id', $company_id)
+            ->where('state',CommonEnum::STATE_IS_OK)->select();
         $start = StartPriceT::where('company_id', $company_id)
+            ->where('state',CommonEnum::STATE_IS_OK)
             ->where('type', 1)
             ->select();
         if (!empty($interval)) {
