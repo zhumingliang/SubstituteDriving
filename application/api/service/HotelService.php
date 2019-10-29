@@ -23,8 +23,8 @@ class HotelService
         if (empty($hotel['lat']) || empty($hotel['lng'])) {
             throw new SaveException(['msg' => '酒店地理位置未设置']);
         }
-        $path = 'pages/index/index?hotel_id=%s&lat=%s&lng=%s';
-        $path = sprintf($path, $hotel_id, $hotel['lat'], $hotel['lng']);
+        $path = 'pages/index/index?hotel_id=%s';
+        $path = sprintf($path, $hotel_id);
         $app = Factory::miniProgram($config);
         $response = $app->app_code->get($path, [
             'width' => 600,

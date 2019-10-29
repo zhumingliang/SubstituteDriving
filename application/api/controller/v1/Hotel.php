@@ -182,7 +182,7 @@ class Hotel extends BaseController
         $time_end = Request::param('time_end');
         $hotel_id = Request::param('hotel_id');
         $company_id = TokenService::getCurrentTokenVar('company_id');
-        $orders = OrderV::hotelOrders($company_id,$hotel_id, $time_begin, $time_end, $page, $size);
+        $orders = OrderV::hotelOrders($company_id, $hotel_id, $time_begin, $time_end, $page, $size);
         return json(new SuccessMessageWithData(['data' => $orders]));
 
     }
@@ -233,6 +233,27 @@ class Hotel extends BaseController
         $QRCode = dirname($_SERVER['SCRIPT_FILENAME']) . $hotel['qrcode'];
         $download = new \think\response\Download($QRCode);
         return $download->name($hotel_id . '.png');
+    }
+
+    /**
+     * @api {GET} /api/v1/hotel/location CMS管理端-获取酒店地理位置
+     * @apiGroup  CMS
+     * @apiVersion 1.0.1
+     * @apiDescription CMS管理端-获取酒店地理位置
+     * @apiExample {get}  请求样例:
+     * https://tonglingok.com/api/v1/hotel/location
+     * @apiParam (请求参数说明) {int} hotel_id 酒店id
+     * @apiSuccessExample {json} 返回样例:
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"lat":"23.089062","lng":"113.33306"}}
+     * @apiSuccess (返回参数说明) {String} lat  纬度
+     * @apiSuccess (返回参数说明) {String} lng  经度
+     */
+    public function location($hotel_id)
+    {
+        $hotel = HotelT::where('id', $hotel_id)
+            ->field('lat,lng')
+            ->find();
+        return json(new SuccessMessageWithData(['data' => $hotel]));
     }
 
 }

@@ -150,4 +150,5 @@ Route::post('api/:version/hotel/qrcode/create', 'api/:version.Hotel/createQRCode
 Route::rule('api/:version/hotel/qrcode/download', 'api/:version.Hotel/downLoadQRCode');
 Route::get('api/:version/hotels', 'api/:version.Hotel/hotels');
 Route::get('api/:version/hotel/orders', 'api/:version.Hotel/orders');
+Route::get('api/:version/hotel/location', 'api/:version.Hotel/location');
 
