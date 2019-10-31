@@ -941,9 +941,10 @@ class OrderService
             Db::commit();
             (new DriverService())->handelDriveStateByComplete($order->d_id);
             (new WalletService())->checkDriverBalance(Token::getCurrentUid());
-            (new SendSMSService())->sendOrderCompleteSMS($order->phone, ['distance' => $distance, 'money' => $money]);
+            $company_id = Token::getCurrentTokenVar('company_id');
+            $company = $company_id == 1 ? 'OK' : '安心';
+            (new SendSMSService())->sendOrderCompleteSMS($order->phone, ['money' => $money, 'company' =>$company]);
             return $this->prepareOrderInfo($order);
-
         } catch (Exception $e) {
             Db::rollback();
             throw $e;
