@@ -338,14 +338,15 @@ class OrderService
         //查询待处理订单并将订单状态改为处理中
         $orderList = OrderListT::where('state', OrderEnum::ORDER_LIST_NO)
             ->order('create_time desc')
-            ->limit(0, 3)->select()
+            ->limit(0, 1)->select()
             ->toArray();
         if (!$orderList) {
             return true;
         }
 
         foreach ($orderList as $k => $v) {
-            OrderListT::update(['state' => OrderEnum::ORDER_LIST_ING], ['id' => $v['id']]);
+            OrderListT::update(['state' => OrderEnum::ORDER_LIST_ING],
+                ['id' => $v['id']]);
         }
 
         foreach ($orderList as $k => $v) {
@@ -360,7 +361,6 @@ class OrderService
             //获取订单信息并检测订单状态
             $order = OrderT::getOrder($o_id);
             if (!$order || $order->state != OrderEnum::ORDER_NO
-                || $order->stop == OrderEnum::ORDER_STOP
             ) {
                 OrderListT::update(['state' => OrderEnum::ORDER_LIST_COMPLETE], ['id' => $list_id]);
                 return true;
