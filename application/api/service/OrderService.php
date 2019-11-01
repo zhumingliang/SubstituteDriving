@@ -273,7 +273,7 @@ class OrderService
 
     }
 
-    public function getStartPrice($company_id, $price)
+    public function getStartPrice($company_id, $price, $id = 0)
     {
         $interval = TimeIntervalT::where('company_id', $company_id)
             ->where('state', CommonEnum::STATE_IS_OK)
@@ -281,15 +281,36 @@ class OrderService
         if (!$interval) {
             return $price;
         }
+        $dateTime = time();
+        if ($id) {
+            $order = OrderT::get($id);
+            if (!empty($order->begin_time)) {
+                $dateTime = strtotime($order->begin_time);
+            }
+        }
 
         foreach ($interval as $k => $v) {
-            if (strtotime($v['time_begin']) <= time() && time() <= strtotime($v['time_end'])) {
+            if (strtotime($v['time_begin']) < strtotime($v['time_end'])) {
+                $time_begin = strtotime($v['time_begin']);
+                $time_end = strtotime($v['time_end']);
+            } else {
+                $time_begin = strtotime($v['time_begin']);
+                $time_end = strtotime("+1 day", strtotime($v['time_end']));
+            }
+
+            if ($time_begin <= $dateTime && $dateTime <= $time_end) {
                 $price = $v['price'];
                 break;
             }
-            $price = $v['price'];
-
         }
+        /* foreach ($interval as $k => $v) {
+             if (strtotime($v['time_begin']) <= time() && time() <= strtotime($v['time_end'])) {
+                 $price = $v['price'];
+                 break;
+             }
+             $price = $v['price'];
+
+         }*/
         return $price;
 
     }
@@ -943,7 +964,7 @@ class OrderService
             (new WalletService())->checkDriverBalance(Token::getCurrentUid());
             $company_id = Token::getCurrentTokenVar('company_id');
             $company = $company_id == 1 ? 'OK' : '安心';
-            (new SendSMSService())->sendOrderCompleteSMS($order->phone, ['money' => $money, 'company' =>$company]);
+            (new SendSMSService())->sendOrderCompleteSMS($order->phone, ['money' => $money, 'company' => $company]);
             return $this->prepareOrderInfo($order);
         } catch (Exception $e) {
             Db::rollback();

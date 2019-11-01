@@ -18,6 +18,7 @@ use app\api\service\GatewayService;
 use app\api\service\LogService;
 use app\api\service\OrderService;
 use app\api\service\SendSMSService;
+use app\api\service\SystemPriceService;
 use app\api\service\UserToken;
 use app\lib\enum\CommonEnum;
 use app\lib\enum\OrderEnum;
@@ -30,31 +31,33 @@ class Index
 {
     public function index()
     {
-        $ticket = TicketT::where('company_id', 1)
-        ->where('scene', 2)
-        ->where('state', CommonEnum::STATE_IS_OK)
-        ->whereTime('time_begin', '<=', date('Y-m-d H:i:s'))
-        ->whereTime('time_end', '>=',  date('Y-m-d H:i:s'))
-        ->order('create_time desc')
-            ->fetchSql(true)
-        ->find();
-        print_r($ticket) ;
+       echo (new OrderService())->getStartPrice(1, 10, 0);
+        // echo CalculateUtil::GetDistance(30.95754, 117.85946, 30.960499, 117.847667);
+        /*  $ticket = TicketT::where('company_id', 1)
+          ->where('scene', 2)
+          ->where('state', CommonEnum::STATE_IS_OK)
+          ->whereTime('time_begin', '<=', date('Y-m-d H:i:s'))
+          ->whereTime('time_end', '>=',  date('Y-m-d H:i:s'))
+          ->order('create_time desc')
+              ->fetchSql(true)
+          ->find();
+          print_r($ticket) ;*/
 
-        /*   $locations = LocationT::where('o_id', 1806)->select();
-           $distance = 0;
-           $old_lat = '';
-           $old_lng = '';
-           foreach ($locations as $k => $v) {
-               if ($k == 0) {
-                   $old_lat = $v['lat'];
-                   $old_lng = $v['lng'];
-                   continue;
-               }
-               $distance += CalculateUtil::GetDistance($old_lat, $old_lng, $v['lat'], $v['lng']);
-               $old_lat = $v['lat'];
-               $old_lng = $v['lng'];
-           }
-           echo $distance;*/
+        /* $locations = LocationT::where('o_id', 2035)->select();
+         $distance = 0;
+         $old_lat = '';
+         $old_lng = '';
+         foreach ($locations as $k => $v) {
+             if ($k == 0) {
+                 $old_lat = $v['lat'];
+                 $old_lng = $v['lng'];
+                 continue;
+             }
+             $distance += CalculateUtil::GetDistance($old_lat, $old_lng, $v['lat'], $v['lng']);
+             $old_lat = $v['lat'];
+             $old_lng = $v['lng'];
+         }
+         echo $distance;*/
     }
 
 

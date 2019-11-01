@@ -94,14 +94,15 @@ class SystemPriceService
         return $info;
     }
 
-    public function priceInfoForDriver()
+    public function priceInfoForDriver($id)
     {
+
         $company_id = Token::getCurrentTokenVar('company_id');
         $start = $this->startPrice($company_id);
         if (count($start)) {
             foreach ($start as $k => $v) {
                 if ($k == 0) {
-                    $start[$k]['price'] = (new OrderService())->getStartPrice($company_id, $v['price']);
+                    $start[$k]['price'] = (new OrderService())->getStartPrice($company_id, $v['price'],$id);
                 }
             }
         }
@@ -110,7 +111,8 @@ class SystemPriceService
 
         return [
             'start' => $start,
-            'wait' => $wait];
+            'wait' => $wait
+        ];
 
     }
 

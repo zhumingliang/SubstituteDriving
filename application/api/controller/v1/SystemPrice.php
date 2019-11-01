@@ -536,7 +536,8 @@ class SystemPrice extends BaseController
      */
     public function priceInfoForDriver()
     {
-        $info = (new SystemPriceService())->priceInfoForDriver();
+        $id = Request::param('id');
+        $info = (new SystemPriceService())->priceInfoForDriver($id);
         return json(new SuccessMessageWithData(['data' => $info]));
     }
 
