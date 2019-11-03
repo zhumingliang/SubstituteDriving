@@ -289,28 +289,28 @@ class OrderService
             }
         }
 
-        foreach ($interval as $k => $v) {
-            if (strtotime($v['time_begin']) < strtotime($v['time_end'])) {
-                $time_begin = strtotime($v['time_begin']);
-                $time_end = strtotime($v['time_end']);
-            } else {
-                $time_begin = strtotime($v['time_begin']);
-                $time_end = strtotime("+1 day", strtotime($v['time_end']));
-            }
-
-            if ($time_begin <= $dateTime && $dateTime <= $time_end) {
-                $price = $v['price'];
-                break;
-            }
-        }
         /* foreach ($interval as $k => $v) {
-             if (strtotime($v['time_begin']) <= time() && time() <= strtotime($v['time_end'])) {
+             if (strtotime($v['time_begin']) < strtotime($v['time_end'])) {
+                 $time_begin = strtotime($v['time_begin']);
+                 $time_end = strtotime($v['time_end']);
+             } else {
+                 $time_begin = strtotime($v['time_begin']);
+                 $time_end = strtotime("+1 day", strtotime($v['time_end']));
+             }
+
+             if ($time_begin <= $dateTime && $dateTime <= $time_end) {
                  $price = $v['price'];
                  break;
              }
-             $price = $v['price'];
-
          }*/
+        foreach ($interval as $k => $v) {
+            if (strtotime($v['time_begin']) <= time() && time() <= strtotime($v['time_end'])) {
+                $price = $v['price'];
+                break;
+            }
+            $price = $v['price'];
+
+        }
         return $price;
 
     }
