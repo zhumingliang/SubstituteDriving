@@ -277,7 +277,7 @@ class OrderService
     {
         $interval = TimeIntervalT::where('company_id', $company_id)
             ->where('state', CommonEnum::STATE_IS_OK)
-            ->select();
+            ->select()->toArray();
         if (!$interval) {
             return $price;
         }
@@ -295,12 +295,13 @@ class OrderService
                 $time_end = strtotime($v['time_end']);
             } else {
                 $time_begin = strtotime("-1 day", strtotime($v['time_begin']));
-                // $time_begin = strtotime($v['time_begin']);
                 $time_end = strtotime($v['time_end']);
             }
 
-
+            echo date('Y-m-d H:i:s',$time_begin);
+            echo date('Y-m-d H:i:s',$time_end);
             if ($time_begin <= $dateTime && $dateTime <= $time_end) {
+
                 $price = $v['price'];
                 break;
             }
