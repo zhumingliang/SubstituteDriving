@@ -102,13 +102,15 @@ class SystemPriceService
         if (count($start)) {
             foreach ($start as $k => $v) {
                 if ($k == 0) {
-                    $start[$k]['price'] = (new OrderService())->getStartPrice($company_id, $v['price'],$id);
+                    $start[$k]['price'] = (new OrderService())->getStartPrice($company_id, $v['price'], $id);
                 }
             }
         }
 
         $wait = $this->wait($company_id);
 
+        LogService::save('id:' . $id);
+        LogService::save('start:' . json_encode($start));
         return [
             'start' => $start,
             'wait' => $wait

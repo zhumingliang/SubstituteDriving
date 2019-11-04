@@ -31,7 +31,7 @@ class Index
 {
     public function index()
     {
-        echo (new OrderService())->getStartPrice(1, 10, 429);
+        echo (new OrderService())->getStartPrice(1, 10, 2205);
         // echo CalculateUtil::GetDistance(30.95754, 117.85946, 30.960499, 117.847667);
         /*  $ticket = TicketT::where('company_id', 1)
           ->where('scene', 2)
