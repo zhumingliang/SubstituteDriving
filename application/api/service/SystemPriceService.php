@@ -108,10 +108,6 @@ class SystemPriceService
         }
 
         $wait = $this->wait($company_id);
-
-        LogService::save('d_id:' . Token::getCurrentUid());
-        LogService::save('id:' . $id);
-        LogService::save('start:' . json_encode($start));
         return [
             'start' => $start,
             'wait' => $wait

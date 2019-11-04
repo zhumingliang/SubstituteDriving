@@ -297,9 +297,6 @@ class OrderService
                 $time_begin = strtotime("-1 day", strtotime($v['time_begin']));
                 $time_end = strtotime($v['time_end']);
             }
-
-            echo date('Y-m-d H:i:s',$time_begin);
-            echo date('Y-m-d H:i:s',$time_end);
             if ($time_begin <= $dateTime && $dateTime <= $time_end) {
 
                 $price = $v['price'];
