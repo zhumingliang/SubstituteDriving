@@ -298,7 +298,6 @@ class OrderService
                 $time_end = strtotime($v['time_end']);
             }
             if ($time_begin <= $dateTime && $dateTime <= $time_end) {
-
                 $price = $v['price'];
                 break;
             }

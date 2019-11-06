@@ -4,6 +4,7 @@
 namespace app\api\model;
 
 
+use app\api\service\Token;
 use app\lib\enum\CommonEnum;
 use app\lib\enum\OrderEnum;
 use think\Model;
@@ -53,6 +54,11 @@ class OrderV extends Model
                 if (strlen($time_begin) && strlen($time_end)) {
                     $time_end = addDay(1, $time_end);
                     $query->whereBetweenTime('create_time', $time_begin, $time_end);
+                }
+            })
+            ->where(function ($query) {
+                if (Token::getCurrentTokenVar('grade') == 'insurance') {
+                    $query->whereNotIn('d_id', '28,35');
                 }
             })
             ->field('id,d_id,from,driver,money,state,create_time,name,phone')
