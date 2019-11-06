@@ -57,7 +57,7 @@ class OrderV extends Model
                 }
             })
             ->where(function ($query) {
-                if (Token::getCurrentTokenVar('grade') == 'insurance') {
+                if (Token::getCurrentTokenVar('type') == 'insurance') {
                     $query->whereNotIn('d_id', '28,35');
                 }
             })
