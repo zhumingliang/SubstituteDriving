@@ -3,7 +3,7 @@
 return [
     'domain' => 'https://tonglingok.com',
     'driver_push_expire_in' => 30,
-    'driver_nearby_km' => 10,
+    'driver_nearby_km' => 20,
     'manager_nearby_km' => 300000,
     'mini_nearby_km' => 10,
     'balance_limit' => 10,
