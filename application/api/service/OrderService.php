@@ -290,13 +290,6 @@ class OrderService
         }
         $day = date('Y-m-d', $dateTime);
         foreach ($interval as $k => $v) {
-            /* if (strtotime($v['time_begin']) < strtotime($v['time_end'])) {
-                 $time_begin = strtotime($v['time_begin']);
-                 $time_end = strtotime($v['time_end']);
-             } else {
-                 $time_begin = strtotime("-1 day", strtotime($v['time_begin']));
-                 $time_end = strtotime($v['time_end']);
-             }*/
             $time_begin = strtotime($day . ' ' . $v['time_begin']);
             $time_end = strtotime($day . ' ' . $v['time_end']);
             if ($time_begin <= $dateTime && $dateTime <= $time_end) {
