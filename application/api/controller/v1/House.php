@@ -44,4 +44,12 @@ class House extends BaseController
 
     }
 
+    public function apply()
+    {
+        $params = Request::param();
+        (new HouseService())->apply($params);
+        return json(new SuccessMessage());
+
+    }
+
 }
