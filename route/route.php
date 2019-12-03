@@ -155,5 +155,5 @@ Route::get('api/:version/hotel/location', 'api/:version.Hotel/location');
 Route::post('api/:version/house/save', 'api/:version.House/save');
 Route::get('api/:version/house/cities', 'api/:version.House/cities');
 Route::get('api/:version/house/categories', 'api/:version.House/categories');
-Route::get('api/:version/house/houses', 'api/:version.House/houses');
+Route::get('api/:version/houses', 'api/:version.House/houses');
 Route::get('api/:version/house', 'api/:version.House/house');
