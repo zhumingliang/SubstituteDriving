@@ -16,7 +16,7 @@ class HouseService
 {
     public function save($params)
     {
-        /* $house = HouseBasicT::create($params);
+         $house = HouseBasicT::create($params);
          if (!$house) {
              throw new SaveException();
          }
@@ -26,24 +26,12 @@ class HouseService
              foreach ($images as $k => $v) {
                  array_push($data, [
                      'state' => CommonEnum::STATE_IS_OK,
-                     'url' => '/static/image/' . $v . '.jpg',
+                     'url' => '/static/image/' . $house->id.'-'.$v . '.jpg',
                      'house_id' => $house->id
                  ]);
              }
              (new HouseImageT())->saveAll($data);
-         }*/
-        if (!empty($params['images'])) {
-            $images = explode(',', $params['images']);
-            $data = [];
-            foreach ($images as $k => $v) {
-                array_push($data, [
-                    'state' => CommonEnum::STATE_IS_OK,
-                    'url' => '/static/image/' .'14-'.$v . '.jpg',
-                    'house_id' => 14
-                ]);
-            }
-            (new HouseImageT())->saveAll($data);
-        }
+         }
 
     }
 
