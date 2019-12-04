@@ -6,7 +6,7 @@ namespace app\api\model;
 
 use think\Model;
 
-class ApplyT extends Model
+class HouseApplyT extends Model
 {
 
 }

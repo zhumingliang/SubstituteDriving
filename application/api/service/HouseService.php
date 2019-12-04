@@ -4,7 +4,7 @@
 namespace app\api\service;
 
 
-use app\api\model\ApplyT;
+use app\api\model\HouseApplyT;
 use app\api\model\CategoryT;
 use app\api\model\CityT;
 use app\api\model\HouseBasicT;
@@ -66,7 +66,7 @@ class HouseService
 
     public function apply($params)
     {
-        $apply = ApplyT::create($params);
+        $apply = HouseApplyT::create($params);
         if (!$apply) {
             throw new SaveException();
         }
