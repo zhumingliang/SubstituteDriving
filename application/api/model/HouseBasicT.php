@@ -18,7 +18,11 @@ class HouseBasicT extends Model
     public static function houses($category_id, $city_id, $page, $size)
     {
         $houses = self::where('city_id', $city_id)
-            ->where('category_id', $category_id)
+            ->where(function ($query) use ($category_id) {
+                if (!empty($category_id)) {
+                    $query->where('category_id', $category_id);
+                }
+            })
             ->where('state', CommonEnum::STATE_IS_OK)
             ->with([
                 'images' => function ($query) {

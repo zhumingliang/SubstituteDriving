@@ -31,7 +31,7 @@ class House extends BaseController
         return json(new SuccessMessageWithData(['data' => $categories]));
     }
 
-    public function houses($category_id, $city_id, $page = 1, $size = 10)
+    public function houses( $city_id, $page = 1, $size = 10,$category_id=0)
     {
         $houses = (new HouseService())->houses($category_id, $city_id, $page, $size);
         return json(new SuccessMessageWithData(['data' => $houses]));
