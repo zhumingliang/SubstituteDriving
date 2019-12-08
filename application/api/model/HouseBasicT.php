@@ -15,6 +15,11 @@ class HouseBasicT extends Model
         return $this->hasMany('HouseImageT', 'house_id', 'id');
     }
 
+    public function category()
+    {
+        return $this->belongsTo('CategoryT', 'category_id', 'id');
+    }
+
     public static function houses($category_id, $city_id, $page, $size)
     {
         $houses = self::where('city_id', $city_id)
@@ -26,12 +31,13 @@ class HouseBasicT extends Model
             ->where('state', CommonEnum::STATE_IS_OK)
             ->with([
                 'images' => function ($query) {
-                    $query->where('state', CommonEnum::STATE_IS_OK)
-                        ->field('id,house_id,url')
-                        ->limit(0, 1);
-                }
+                    $query->field('id,house_id,url');
+                },
+                'category'=>function ($query) {
+                    $query->field('id,name');
+                },
             ])
-            ->field('id,name')
+            ->field('id,name,address,category_id,price')
             ->order('id desc')
             ->paginate($size, false, ['page' => $page])->toArray();
         return $houses;
