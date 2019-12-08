@@ -37,7 +37,7 @@ class HouseBasicT extends Model
                     $query->field('id,name');
                 },
             ])
-            ->field('id,name,address,category_id,price')
+            ->field('id,name,address,category_id,price,shop_type,all_area')
             ->order('id desc')
             ->paginate($size, false, ['page' => $page])->toArray();
         return $houses;
