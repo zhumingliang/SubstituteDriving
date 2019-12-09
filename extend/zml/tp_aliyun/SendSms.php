@@ -26,6 +26,7 @@ class SendSms
     protected $TemplateMINICode;
     protected $TemplateDriverCreateOrderCode;
     protected $TemplateOrderCompleteCode;
+    protected $TemplateOrderCompleteCode2;
     protected $TemplateTicketCode;
     protected $signName;
     protected $requestHost = "http://dysmsapi.aliyuncs.com";
@@ -47,6 +48,7 @@ class SendSms
         isset($options["TemplateMINICode"]) && $this->TemplateMINICode = $options["TemplateMINICode"];
         isset($options["TemplateDriverCreateOrderCode"]) && $this->TemplateDriverCreateOrderCode = $options["TemplateDriverCreateOrderCode"];
         isset($options["TemplateOrderCompleteCode"]) && $this->TemplateOrderCompleteCode = $options["TemplateOrderCompleteCode"];
+        isset($options["TemplateOrderCompleteCode2"]) && $this->TemplateOrderCompleteCode2 = $options["TemplateOrderCompleteCode2"];
         isset($options["TemplateTicketCode"]) && $this->TemplateTicketCode = $options["TemplateTicketCode"];
         isset($options["SignName"]) && $this->signName = $options["SignName"];
     }
@@ -152,7 +154,13 @@ class SendSms
             } else if ($type == 'driveCreateOrder') {
                 $templateCode = $this->TemplateDriverCreateOrderCode;
             } else if ($type == 'orderComplete') {
-                $templateCode = $this->TemplateOrderCompleteCode;
+                if (empty($params['phone'])) {
+                    $templateCode = $this->TemplateOrderCompleteCode;
+
+                } else {
+                    $templateCode = $this->TemplateOrderCompleteCode2;
+
+                }
             } elseif ($type == 'ticket') {
                 $templateCode = $this->TemplateTicketCode;
             } else {

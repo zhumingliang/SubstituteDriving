@@ -950,7 +950,12 @@ class OrderService
             (new WalletService())->checkDriverBalance(Token::getCurrentUid());
             $company_id = Token::getCurrentTokenVar('company_id');
             $company = $company_id == 1 ? 'OK' : '安心';
-            (new SendSMSService())->sendOrderCompleteSMS($order->phone, ['money' => $money, 'company' => $company]);
+            $sendData = ['money' => $money,
+                'company' => $company];
+            if ($company_id == 1) {
+                $sendData['phone'] = "19855751988";
+            }
+            (new SendSMSService())->sendOrderCompleteSMS($order->phone, $sendData);
             return $this->prepareOrderInfo($order);
         } catch (Exception $e) {
             Db::rollback();

@@ -28,7 +28,7 @@ class HouseService
             foreach ($images as $k => $v) {
                 array_push($data, [
                     'state' => CommonEnum::STATE_IS_OK,
-                    'url' => '/static/image/' . $house->id . '-' . $v . '.jpg',
+                    'url' => '/static/image/' . $house->id . '-' . $v . '.jpeg',
                     'house_id' => $house->id
                 ]);
             }
