@@ -642,7 +642,10 @@ class OrderService
                 $phone = $driver->phone;
                 (new SendSMSService())->sendOrderSMS($phone, ['code' => 'OK' . $order->order_num,
                     'order_time' => $order->create_time]);
-
+                if ($order['from'] == OrderEnum::FROM_MINI && $order['company_id'] == 1) {
+                    (new SendSMSService())->sendOrderSMS("13515623335", ['code' => 'OK' . $order->order_num,
+                        'order_time' => $order->create_time]);
+                }
                 $orderPush = OrderPushT::create(
                     [
                         'd_id' => $d_id,
