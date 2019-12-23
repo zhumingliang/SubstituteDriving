@@ -209,6 +209,9 @@ class User extends BaseController
      */
     public function users($page = 1, $size = 10, $name = '', $time_begin = '', $time_end = '', $phone = '', $money_min = 0, $money_max = 0, $count_min = 0, $count_max = 0)
     {
+        if (!is_numeric($page)) {
+            $page = 1;
+        }
         $users = (new UserService())->users($page, $size, $name, $time_begin, $time_end, $phone, $money_min, $money_max, $count_min, $count_max);
         return json(new SuccessMessageWithData(['data' => $users]));
 
