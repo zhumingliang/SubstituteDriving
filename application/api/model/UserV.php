@@ -16,6 +16,7 @@ class UserV extends Model
 
     public static function users($page, $size, $name, $time_begin, $time_end, $phone, $money_min, $money_max, $count_min, $count_max, $company_id)
     {
+        $time_end=addDay(1,$time_end);
         $list = self::where(function ($query) use ($company_id) {
             if (!empty($company_id)) {
                 $query->where('company_id', '=', $company_id);
