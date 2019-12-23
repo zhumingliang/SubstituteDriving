@@ -48,7 +48,7 @@ class UserV extends Model
                 }
             })
             ->field('id,nickName,phone,source,create_time,parent_name,company_id,sum(money) as money,count(order_id) as count,order_time')
-            ->order('count desc')
+            ->order('create_time desc')
             ->group('id')
             ->paginate($size, false, ['page' => $page])->toArray();
         return $list;
