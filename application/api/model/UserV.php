@@ -32,7 +32,7 @@ class UserV extends Model
                     $query->where('phone', '=', $phone);
                 }
             })
-            ->where(function ($query) use ($money_min, $money_max) {
+            /*->where(function ($query) use ($money_min, $money_max) {
                 if ($money_min || $money_max) {
                     $query->whereBetween('money', $money_min . ',' . $money_max);
                 }
@@ -41,13 +41,15 @@ class UserV extends Model
                 if ($count_min || $count_max) {
                     $query->whereBetween('count', $count_min . ',' . $count_max);
                 }
-            })
+            })*/
             ->where(function ($query) use ($time_begin, $time_end) {
                 if (strlen($time_begin) && strlen($time_end)) {
                     $query->whereBetweenTime('order_time', $time_begin, $time_end);
                 }
             })
+            ->field('id,nickName,phone,source,create_time,parent_name,company_id,sum(money) as money,count(order_id) as count,order_time')
             ->order('count desc')
+            ->group('id')
             ->paginate($size, false, ['page' => $page])->toArray();
         return $list;
 
