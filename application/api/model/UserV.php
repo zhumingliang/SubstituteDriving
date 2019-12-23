@@ -43,7 +43,7 @@ class UserV extends Model
             })
             ->where(function ($query) use ($time_begin, $time_end) {
                 if (strlen($time_begin) && strlen($time_end)) {
-                    $query->whereBetweenTime('create_time', $time_begin, $time_end);
+                    $query->whereBetweenTime('order_time', $time_begin, $time_end);
                 }
             })
             ->order('count desc')
