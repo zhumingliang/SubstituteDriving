@@ -894,10 +894,11 @@ class OrderService
                 return $this->prepareOrderInfo($order);
             }
 
-            if ($order->type === 2) {
+            if ($order->type == 2) {
                 $money = $order->money;
                 $ticket_money = 0;
-            } else {
+            }
+            else {
                 $distance_money = $params['distance_money'];
                 $wait_money = $params['wait_money'];
                 //处理恶劣天气费用
@@ -926,17 +927,6 @@ class OrderService
                 $order->end_time = date('Y-m-d H:i:s');
             }
 
-            /*  //处理 订单距离/距离产生的价格
-              $redis = new Redis();
-              $distance = $redis->zScore('order:distance', $id);
-              $startRule = StartPriceT::where('type', 1)
-                  ->where('state', CommonEnum::STATE_IS_OK)
-                  ->order('order')
-                  ->select();
-              $distance_money = $this->prefixStartPriceWithDistance($distance, $startRule, 'start');
-
-              //处理等待费用
-              $wait_money = $this->prefixWait($wait_time);*/
             $order->state = OrderEnum::ORDER_COMPLETE;
             $res = $order->save();
             if (!$res) {
@@ -944,10 +934,10 @@ class OrderService
                 throw new SaveException(['msg' => '保存结算数据失败']);
             }
             //处理抽成
-            if (!$this->prefixOrderCharge($id, $order->d_id, $order->company_id, $order->hotel_id, $money, $ticket_money)) {
+          /*  if (!$this->prefixOrderCharge($id, $order->d_id, $order->company_id, $order->hotel_id, $money, $ticket_money)) {
                 Db::rollback();
                 throw new SaveException(['msg' => '订单抽成失败']);
-            }
+            }*/
             Db::commit();
             (new DriverService())->handelDriveStateByComplete($order->d_id);
             (new WalletService())->checkDriverBalance(Token::getCurrentUid());
@@ -979,44 +969,6 @@ class OrderService
         $order = $orderCharge->order;
         $hotel = $orderCharge->hotel;
         $order_money = ($money + $ticket_money) * $order;
-//        if ($ticket_money) {
-//            $data = [
-//                [
-//                    'o_id' => $o_id,
-//                    'd_id' => $d_id,
-//                    'money' => $insurance,
-//                    'type' => 1,
-//
-//                ], [
-//                    'o_id' => $o_id,
-//                    'd_id' => $d_id,
-//                    'money' => $order_money,
-//                    'type' => 2,
-//                ],
-//                [
-//                    'o_id' => $o_id,
-//                    'd_id' => $d_id,
-//                    'money' => 0 - $ticket_money,
-//                    'type' => 5,
-//                ]
-//            ];
-//        } else {
-//            $data = [
-//                [
-//                    'o_id' => $o_id,
-//                    'd_id' => $d_id,
-//                    'money' => $insurance,
-//                    'type' => 1,
-//
-//                ], [
-//                    'o_id' => $o_id,
-//                    'd_id' => $d_id,
-//                    'money' => $order_money,
-//                    'type' => 2,
-//                ]
-//            ];
-//        }
-
         $data = [
             [
                 'o_id' => $o_id,
