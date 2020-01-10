@@ -934,10 +934,10 @@ class OrderService
                 throw new SaveException(['msg' => '保存结算数据失败']);
             }
             //处理抽成
-          /*  if (!$this->prefixOrderCharge($id, $order->d_id, $order->company_id, $order->hotel_id, $money, $ticket_money)) {
+            if (!$this->prefixOrderCharge($id, $order->d_id, $order->company_id, $order->hotel_id, $money, $ticket_money)) {
                 Db::rollback();
                 throw new SaveException(['msg' => '订单抽成失败']);
-            }*/
+            }
             Db::commit();
             (new DriverService())->handelDriveStateByComplete($order->d_id);
             (new WalletService())->checkDriverBalance(Token::getCurrentUid());
