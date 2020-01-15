@@ -897,8 +897,7 @@ class OrderService
             if ($order->type == 2) {
                 $money = $order->money;
                 $ticket_money = 0;
-            }
-            else {
+            } else {
                 $distance_money = $params['distance_money'];
                 $wait_money = $params['wait_money'];
                 //处理恶劣天气费用
@@ -933,11 +932,11 @@ class OrderService
                 Db::rollback();
                 throw new SaveException(['msg' => '保存结算数据失败']);
             }
-           /* //处理抽成
-            if (!$this->prefixOrderCharge($id, $order->d_id, $order->company_id, $order->hotel_id, $money, $ticket_money)) {
-                Db::rollback();
-                throw new SaveException(['msg' => '订单抽成失败']);
-            }*/
+            /* //处理抽成
+             if (!$this->prefixOrderCharge($id, $order->d_id, $order->company_id, $order->hotel_id, $money, $ticket_money)) {
+                 Db::rollback();
+                 throw new SaveException(['msg' => '订单抽成失败']);
+             }*/
             Db::commit();
             (new DriverService())->handelDriveStateByComplete($order->d_id);
             (new WalletService())->checkDriverBalance(Token::getCurrentUid());
@@ -1021,11 +1020,18 @@ class OrderService
     public
     function prefixWeather($distance_money)
     {
+        $money = 0;
+        $time_begin = '2020-01-22 12:00:00';
+        $time_end = '2020-02-02 23:59:00';
+        if (strtotime($time_begin) < time() && strtotime($time_end) > time()) {
+            $money += 6;
+        }
         $weather = WeatherT::find();
         if ((!$weather) || $weather->state == CommonEnum::STATE_IS_FAIL) {
-            return 0;
+            return $money;
         }
-        return ceil($distance_money * ($weather->ratio - 1));
+        $money += round($distance_money * ($weather->ratio - 1));
+        return $money;
 
     }
 

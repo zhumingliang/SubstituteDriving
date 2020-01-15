@@ -31,6 +31,7 @@ class Index
 {
     public function index()
     {
+     echo   round(30 * (1.1 - 1));
         //echo (new OrderService())->getStartPrice(1, 10, 3240);
         // echo CalculateUtil::GetDistance(30.95754, 117.85946, 30.960499, 117.847667);
         /*  $ticket = TicketT::where('company_id', 1)
@@ -43,7 +44,7 @@ class Index
           ->find();
           print_r($ticket) ;*/
 
-          $locations = LocationT::where('o_id', 4277)->select();
+         /* $locations = LocationT::where('o_id', 4277)->select();
           $distance = 0;
           $old_lat = '';
           $old_lng = '';
@@ -57,7 +58,7 @@ class Index
               $old_lat = $v['lat'];
               $old_lng = $v['lng'];
           }
-          echo $distance;
+          echo $distance;*/
     }
 
 
