@@ -31,7 +31,8 @@ class Index
 {
     public function index()
     {
-     echo   round(30 * (1.1 - 1));
+     echo   ceil(31 * 0.1);
+     echo   ceil(3.0);
         //echo (new OrderService())->getStartPrice(1, 10, 3240);
         // echo CalculateUtil::GetDistance(30.95754, 117.85946, 30.960499, 117.847667);
         /*  $ticket = TicketT::where('company_id', 1)

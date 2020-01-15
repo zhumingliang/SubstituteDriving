@@ -1030,7 +1030,8 @@ class OrderService
         if ((!$weather) || $weather->state == CommonEnum::STATE_IS_FAIL) {
             return $money;
         }
-        $money += round($distance_money * ($weather->ratio - 1));
+        $ratio = $weather->ratio - 1;
+        $money += ceil($distance_money * $ratio);
         return $money;
 
     }
