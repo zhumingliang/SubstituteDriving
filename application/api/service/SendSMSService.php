@@ -9,6 +9,7 @@ use app\lib\enum\CommonEnum;
 use app\lib\exception\SaveException;
 use think\Exception;
 use think\facade\Request;
+use think\Queue;
 use zml\tp_aliyun\SendSms;
 use zml\tp_tools\Redis;
 use function GuzzleHttp\Promise\each_limit;
@@ -26,7 +27,28 @@ class SendSMSService
             $redis->set($token, $phone . '-' . $code, 120);
             return true;
         }
-        $this->saveSend($phone, $params, $type, $token);
+        $this->msgTask($phone, $params, $type, $token);
+        //$this->saveSend($phone, $params, $type, $token);
+    }
+
+    //短信队列
+    private function msgTask($phone, $params, $type, $token = '')
+    {
+        //php think queue:work --queue sendMsgQueue
+        $jobHandlerClassName = 'app\api\job\SendMsg';//负责处理队列任务的类
+        $jobQueueName = "sendCanteenMsgQueue";//队列名称
+        $jobData = [
+            'phone' => $phone,
+            'params' => $params,
+            'type' => $type,
+            'token' => $token
+        ];;//当前任务的业务数据
+        $isPushed = Queue::push($jobHandlerClassName, $jobData, $jobQueueName);
+        //将该任务推送到消息队列
+        if ($isPushed == false) {
+            throw new SaveException(['msg' => '发送短信失败']);
+        }
+
     }
 
     public function sendOrderSMS($phone, $params, $num = 1)
@@ -36,7 +58,8 @@ class SendSMSService
         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
             return true;
         }
-        $this->saveSend($phone, $params, 'driver');
+        $this->msgTask($phone, $params, 'driver');
+        //$this->saveSend($phone, $params, 'driver');
     }
 
 
@@ -46,7 +69,8 @@ class SendSMSService
         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
             return true;
         }
-        $this->saveSend($phone, $params, 'recharge');
+        $this->msgTask($phone, $params, 'recharge');
+        //$this->saveSend($phone, $params, 'recharge');
     }
 
     public function sendDriveCreateOrderSMS($phone, $params, $num = 1)
@@ -55,7 +79,7 @@ class SendSMSService
         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
             return true;
         }
-        $this->saveSend($phone, $params, 'driveCreateOrder');
+        $this->msgTask($phone, $params, 'driveCreateOrder');
     }
 
     public function sendOrderCompleteSMS($phone, $params, $num = 1)
@@ -64,7 +88,7 @@ class SendSMSService
         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
             return true;
         }
-        $this->saveSend($phone, $params, 'orderComplete');
+        $this->msgTask($phone, $params, 'orderComplete');
     }
 
     public function sendTicketSMS($phone, $params, $num = 1)
@@ -73,7 +97,7 @@ class SendSMSService
         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
             return true;
         }
-        $this->saveSend($phone, $params, 'orderComplete');
+        $this->msgTask($phone, $params, 'orderComplete');
     }
 
     public function sendMINISMS($phone, $params = '', $num = 1)
@@ -83,7 +107,7 @@ class SendSMSService
         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
             return true;
         }
-        $this->saveSend($phone, $params, 'mini');
+        $this->msgTask($phone, $params, 'mini');
 
     }
 
