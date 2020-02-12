@@ -22,6 +22,7 @@ use app\api\service\SystemPriceService;
 use app\api\service\UserToken;
 use app\lib\enum\CommonEnum;
 use app\lib\enum\OrderEnum;
+use think\Queue;
 use zml\tp_aliyun\SendSms;
 use zml\tp_tools\CalculateUtil;
 use zml\tp_tools\Redis;
@@ -29,10 +30,10 @@ use function GuzzleHttp\Psr7\str;
 
 class Index
 {
-    public function index()
+    public function index($name = '')
     {
-     echo   ceil(31 * 0.1);
-     echo   ceil(3.0);
+        $this->mailTask($name);
+
         //echo (new OrderService())->getStartPrice(1, 10, 3240);
         // echo CalculateUtil::GetDistance(30.95754, 117.85946, 30.960499, 117.847667);
         /*  $ticket = TicketT::where('company_id', 1)
@@ -45,21 +46,21 @@ class Index
           ->find();
           print_r($ticket) ;*/
 
-         /* $locations = LocationT::where('o_id', 4277)->select();
-          $distance = 0;
-          $old_lat = '';
-          $old_lng = '';
-          foreach ($locations as $k => $v) {
-              if ($k == 0) {
-                  $old_lat = $v['lat'];
-                  $old_lng = $v['lng'];
-                  continue;
-              }
-              $distance += CalculateUtil::GetDistance($old_lat, $old_lng, $v['lat'], $v['lng']);
-              $old_lat = $v['lat'];
-              $old_lng = $v['lng'];
-          }
-          echo $distance;*/
+        /* $locations = LocationT::where('o_id', 4277)->select();
+         $distance = 0;
+         $old_lat = '';
+         $old_lng = '';
+         foreach ($locations as $k => $v) {
+             if ($k == 0) {
+                 $old_lat = $v['lat'];
+                 $old_lng = $v['lng'];
+                 continue;
+             }
+             $distance += CalculateUtil::GetDistance($old_lat, $old_lng, $v['lat'], $v['lng']);
+             $old_lat = $v['lat'];
+             $old_lng = $v['lng'];
+         }
+         echo $distance;*/
     }
 
 
@@ -72,6 +73,22 @@ class Index
 
         var_dump($lenth);
         print_r(Redis::instance()->lRanges($name, 0, 10000));
+
+    }
+
+    //邮件队列
+    private function mailTask($email = '')
+    {
+        //php think queue:work --queue sendMsgQueue
+        $jobHandlerClassName = 'app\api\job\SendMsg';//负责处理队列任务的类
+        $jobQueueName = "sendDriverMsgQueue";//队列名称
+        $jobData = ['email' => $email];//当前任务的业务数据
+        $isPushed = Queue::push($jobHandlerClassName, $jobData, $jobQueueName);//将该任务推送到消息队列
+        if ($isPushed !== false) {
+            echo date('Y-m-d H:i:s') . '邮件队列任务发送成功';
+        } else {
+            echo date('Y-m-d H:i:s') . '邮件队列发送失败';
+        }
 
     }
 
