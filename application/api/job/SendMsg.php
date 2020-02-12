@@ -72,6 +72,7 @@ class SendMsg
     private function doJob($data)
     {
         try {
+
             $res = SendSms::instance()->send($data['phone'], $data['params'], $data['type']);
             LogService::save('sendmsg:' . json_encode($data));
             if (key_exists('Code', $res) && $res['Code'] == 'OK') {
