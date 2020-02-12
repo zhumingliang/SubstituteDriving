@@ -36,7 +36,7 @@ class SendSMSService
     {
         //php think queue:work --queue sendMsgQueue
         $jobHandlerClassName = 'app\api\job\SendMsg';//负责处理队列任务的类
-        $jobQueueName = "sendCanteenMsgQueue";//队列名称
+        $jobQueueName = "sendDriverMsgQueue";//队列名称
         $jobData = [
             'phone' => $phone,
             'params' => $params,
