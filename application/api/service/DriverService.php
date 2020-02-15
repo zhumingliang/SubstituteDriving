@@ -277,6 +277,14 @@ class DriverService extends BaseService
     }
 
     public
+    function handelOrderStateToIng($order_id)
+    {
+        $this->redis->sRem('order:no', $order_id);
+        $this->redis->sRem('order:complete', $order_id);
+        $this->redis->sAdd('order:ing', $order_id);
+    }
+
+    public
     function acceptableOrder($o_id)
     {
         $order = OrderT::get($o_id);

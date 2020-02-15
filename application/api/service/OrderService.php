@@ -102,7 +102,6 @@ class OrderService
             (new SendSMSService())->sendDriveCreateOrderSMS($params['phone'], '');
             return $o_id;
         } catch (Exception $e) {
-            LogT::create(['msg' => 'save_order_driver:' . $e->getMessage()]);
             throw  $e;
         }
     }
@@ -478,7 +477,7 @@ class OrderService
         if ($type == OrderEnum::ORDER_PUSH_AGREE) {
             //检测订单状态
             $this->checkOrderState($push->o_id);
-            $this->prefixPushAgree($push->d_id);
+            $this->prefixPushAgree($push->d_id, $push->o_id);
             //处理远程接驾费用
             $this->prefixFarDistance($push->o_id, $push->d_id);
             if ($push_type == "normal") {
@@ -507,7 +506,7 @@ class OrderService
 
             }
         } else if ($type == OrderEnum::ORDER_PUSH_REFUSE) {
-            $this->prefixPushRefuse($push->d_id);
+            $this->prefixPushRefuse($push->d_id, $push->o_id);
         }
 
     }
@@ -529,7 +528,7 @@ class OrderService
 
 
     private
-    function prefixPushAgree($d_id)
+    function prefixPushAgree($d_id, $order_id = 0)
     {
         //更新order表状态 - 用触发器：update_order_state 解决
         //更新司机状态:从正在派单移除；添加到已接单
@@ -540,6 +539,9 @@ class OrderService
         $redis->sRem('driver_order_ing:' . $company_id, $d_id);
         $redis->sAdd('driver_order_receive:' . $company_id, $d_id);
 
+        //将订单由正在处理集合改为已经完成集合
+        $redis->sRem('order:ing', $order_id);
+        $redis->sAdd('order:complete', $order_id);
     }
 
     private
@@ -572,7 +574,7 @@ class OrderService
     }
 
     private
-    function prefixPushRefuse($d_id)
+    function prefixPushRefuse($d_id, $order_id = 0)
     {
         $company_id = (new DriverService())->getDriverCompanyId($d_id);
         //更新司机状态:从正在派单移除；添加到未接单
@@ -581,6 +583,10 @@ class OrderService
         $redis->sRem('driver_order_receive:' . $company_id, $d_id);
         $redis->sRem('driver_order_ing:' . $company_id, $d_id);
         $redis->sAdd('driver_order_no:' . $company_id, $d_id);
+
+        //将订单由正在处理集合改为未处理集合
+        $redis->sRem('order:ing', $order_id);
+        $redis->sAdd('order:no', $order_id);
     }
 
     private
@@ -601,7 +607,14 @@ class OrderService
             'state' => $state
         ];
         OrderListT::create($data);
-
+        //将待处理订单写入待处理队列
+        if ($state == OrderEnum::ORDER_LIST_NO) {
+            Redis::instance()->sAdd('order:no', $o_id);
+        } else if ($state == OrderEnum::ORDER_LIST_COMPLETE) {
+            Redis::instance()->sAdd('order:complete', $o_id);
+        } else if ($state == OrderEnum::ORDER_LIST_ING) {
+            Redis::instance()->sAdd('order:ing', $o_id);
+        }
     }
 
     private
@@ -1152,7 +1165,7 @@ class OrderService
         }
         $d_id = $params['d_id'];
         //检查新司机状态是否有订单，修改司机状态
-        if (!$this->updateDriverCanReceive($d_id)) {
+        if (!$this->updateDriverCanReceive($d_id, $o_id)) {
             throw  new SaveException(['msg' => '该司机有订单派送中，暂时不能接单']);
         }
         //计算距离和价格
@@ -1163,7 +1176,7 @@ class OrderService
     }
 
     private
-    function updateDriverCanReceive($d_id)
+    function updateDriverCanReceive($d_id, $order_id = 0)
     {
         //检查新司机状态是否有订单，修改司机状态
         $redis = new \Redis();
@@ -1177,6 +1190,11 @@ class OrderService
         $redis->sRem('driver_order_receive:' . $company_id, $d_id);
         $redis->sRem('driver_order_no:' . $company_id, $d_id);
         $redis->sAdd('driver_order_ing:' . $company_id, $d_id);
+
+        //将订单状态改为处理中
+        $redis->sRem('order:complete', $order_id);
+        $redis->sRem('order:no:', $order_id);
+        $redis->sAdd('order:ing', $order_id);
         return true;
     }
 
@@ -1287,6 +1305,9 @@ class OrderService
             $o_d_id = $push->d_id;
             (new DriverService())->handelDriveStateByCancel($o_d_id);
         }
+        //修改订单状态：转变为已经处理
+        (new DriverService())->handelOrderStateToIng($o_id);
+
         //2.删除推送
         OrderPushT::where('o_id', $o_id)->delete();
         //推送给司机

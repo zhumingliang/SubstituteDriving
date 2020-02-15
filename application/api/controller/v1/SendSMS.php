@@ -9,6 +9,7 @@ use app\api\service\LogService;
 use app\api\service\SendSMSService;
 use app\lib\exception\SuccessMessage;
 use think\Cache;
+use think\facade\Request;
 use think\facade\Session;
 
 class SendSMS extends BaseController
@@ -65,6 +66,18 @@ class SendSMS extends BaseController
     {
         (new SendSMSService())->sendHandel();
 
+    }
+
+    /**
+     * 发送短信给司机
+     */
+    public function sendOderToDriver()
+    {
+        $phone = Request::param('phone');
+        $order_num = Request::param('order_num');
+        $create_time = Request::param('create_time');
+        (new SendSMSService())->sendOrderSMS($phone, ['code' => 'OK' . $order_num,
+            'order_time' => $create_time]);
     }
 
 }
