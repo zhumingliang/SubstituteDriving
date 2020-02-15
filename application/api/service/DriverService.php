@@ -264,7 +264,7 @@ class DriverService extends BaseService
      * 接单/派单中->未接单
      */
     public
-    function handelDriveStateByCancel($d_id)
+    function handelDriveStateByCancel($d_id, $order_id = 0)
     {
         $company_id = $this->getDriverCompanyId($d_id);
         if ($this->redis->sIsMember('driver_order_ing:' . $company_id, $d_id)) {
@@ -274,6 +274,11 @@ class DriverService extends BaseService
             $this->redis->sRem('driver_order_receive:' . $company_id, $d_id);
         }
         $this->redis->sAdd('driver_order_no:' . $company_id, $d_id);
+
+
+        $this->redis->sRem('order:no', $order_id);
+        $this->redis->sRem('order:complete', $order_id);
+        $this->redis->sRem('order:ing', $order_id);
     }
 
     public

@@ -1538,7 +1538,7 @@ class OrderService
             }
         }
         if ($d_id) {
-            (new DriverService())->handelDriveStateByCancel($d_id);
+            (new DriverService())->handelDriveStateByCancel($d_id,$o_id);
             //记录撤销记录
             if ($type == "revoke") {
                 OrderRevokeT::create(['d_id' => $d_id, 'o_id' => $o_id]);
