@@ -951,6 +951,7 @@ class OrderService
                  throw new SaveException(['msg' => '订单抽成失败']);
              }*/
             Db::commit();
+            Redis::instance()->hSet('driver:' . $order->d_id, 'order_time', time());
             (new DriverService())->handelDriveStateByComplete($order->d_id);
             (new WalletService())->checkDriverBalance(Token::getCurrentUid());
             $company_id = Token::getCurrentTokenVar('company_id');
@@ -1530,7 +1531,6 @@ class OrderService
             if ($orderPush) {
                 $d_id = $orderPush->d_id;
                 //处理推送取消
-                //触发器-处理订单/订单处理列表状态
                 $orderPush->state = OrderEnum::ORDER_PUSH_WITHDRAW;
                 $orderPush->save();
             } else {
@@ -1538,7 +1538,7 @@ class OrderService
             }
         }
         if ($d_id) {
-            (new DriverService())->handelDriveStateByCancel($d_id,$o_id);
+            (new DriverService())->handelDriveStateByCancel($d_id, $o_id);
             //记录撤销记录
             if ($type == "revoke") {
                 OrderRevokeT::create(['d_id' => $d_id, 'o_id' => $o_id]);

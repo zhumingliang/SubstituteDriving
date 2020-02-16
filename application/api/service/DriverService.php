@@ -54,7 +54,8 @@ class DriverService extends BaseService
             'number' => $driver->number,
             'username' => $driver->username,
             'phone' => $driver->phone,
-            'company_id' => $driver->company_id
+            'company_id' => $driver->company_id,
+            'order_time' => time(),
         ];
         Redis::instance()->hMset($driver_id, $data);
     }
