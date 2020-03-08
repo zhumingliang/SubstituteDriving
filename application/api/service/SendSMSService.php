@@ -32,7 +32,7 @@ class SendSMSService
     }
 
     //短信队列
-    private function msgTask($phone, $params, $type, $token = '')
+    public function msgTask($phone, $params, $type, $token = '')
     {
         //php think queue:work --queue sendMsgQueue
         $jobHandlerClassName = 'app\api\job\SendMsg';//负责处理队列任务的类

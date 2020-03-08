@@ -51,7 +51,8 @@ class TicketService
         }
         //派送优惠券通知
         foreach ($data as $k => $v) {
-            (new SendSMSService())->saveSend($v['phone'], ['phone' => '19855751988'], 'ticket');
+            //(new SendSMSService())->saveSend($v['phone'], ['phone' => '19855751988'], 'ticket');
+            (new SendSMSService())->msgTask($v['phone'], ['phone' => '19855751988'], 'ticket');
         }
 
         return true;
