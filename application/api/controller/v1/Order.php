@@ -335,7 +335,7 @@ class Order extends BaseController
     }
 
     /**
-     * @api {POST} /api/v1/order/drive/save   Android司机端-司机自主创建订单
+     * @api {POST} /api/v1/order/drive/save  Android司机端-司机自主创建订单
      * @apiGroup   Android
      * @apiVersion 1.0.1
      * @apiDescription   Android司机端-司机自主创建订单

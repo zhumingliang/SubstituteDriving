@@ -29,6 +29,7 @@ class SendMsg
         $isJobDone = $this->doJob($data);
         if ($isJobDone) {
             // 如果任务执行成功，删除任务
+            LogService::save("<warn>短信队列已执行完成并且已删除！" . "</warn>\n");
             $job->delete();
         } else {
             LogService::save("<warn>任务执行失败！" . "</warn>\n");
@@ -73,6 +74,7 @@ class SendMsg
         try {
 
             $res = SendSms::instance()->send($data['phone'], $data['params'], $data['type']);
+            LogService::save('sendmsg:' . json_encode($data));
             if (key_exists('Code', $res) && $res['Code'] == 'OK') {
                 Redis::instance()->set($data['token'], $data['phone'] . '-' . $data['params']['code'], 120);
                 return true;
