@@ -7,6 +7,7 @@ namespace app\api\service;
 use app\api\model\SendMessageT;
 use app\lib\enum\CommonEnum;
 use app\lib\exception\SaveException;
+use app\lib\sms\AliSms;
 use think\Exception;
 use think\facade\Request;
 use think\Queue;
@@ -20,14 +21,17 @@ class SendSMSService
     {
         $code = rand(10000, 99999);
         $params = ['code' => $code];
-        $res = SendSms::instance()->send($phone, $params, $type);
+        // $res = SendSms::instance()->send($phone, $params, $type);
+        $res = AliSms::sendTemplate($phone, $params, $type);
         $token = Request::header('token');
-        if (key_exists('Code', $res) && $res['Code'] == 'OK') {
+        // if (key_exists('Code', $res) && $res['Code'] == 'OK') {
+        if ($res) {
             $redis = new Redis();
             $redis->set($token, $phone . '-' . $code, 120);
             return true;
         }
-        $this->msgTask($phone, $params, $type, $token);
+        throw  new SaveException(['msg'=>'发送短信失败']);
+        //$this->msgTask($phone, $params, $type, $token);
         //$this->saveSend($phone, $params, $type, $token);
     }
 
@@ -55,10 +59,10 @@ class SendSMSService
     {
 
         $res = SendSms::instance()->send($phone, $params, 'driver');
-        if (key_exists('Code', $res) && $res['Code'] == 'OK') {
-            return true;
+        if (!$res) {
+            throw  new SaveException(['msg'=>'发送短信失败']);
         }
-        $this->msgTask($phone, $params, 'driver');
+        //$this->msgTask($phone, $params, 'driver');
         //$this->saveSend($phone, $params, 'driver');
     }
 
@@ -69,45 +73,48 @@ class SendSMSService
         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
             return true;
         }
-        $this->msgTask($phone, $params, 'recharge');
+        if (!$res) {
+            throw  new SaveException(['msg'=>'发送短信失败']);
+        }
+       // $this->msgTask($phone, $params, 'recharge');
         //$this->saveSend($phone, $params, 'recharge');
     }
 
     public function sendDriveCreateOrderSMS($phone, $params, $num = 1)
     {
         $res = SendSms::instance()->send($phone, $params, 'driveCreateOrder');
-        if (key_exists('Code', $res) && $res['Code'] == 'OK') {
-            return true;
+        if (!$res) {
+            throw  new SaveException(['msg'=>'发送短信失败']);
         }
-        $this->msgTask($phone, $params, 'driveCreateOrder');
+        //$this->msgTask($phone, $params, 'driveCreateOrder');
     }
 
     public function sendOrderCompleteSMS($phone, $params, $num = 1)
     {
         $res = SendSms::instance()->send($phone, $params, 'orderComplete');
-        if (key_exists('Code', $res) && $res['Code'] == 'OK') {
-            return true;
+        if (!$res) {
+            throw  new SaveException(['msg'=>'发送短信失败']);
         }
-        $this->msgTask($phone, $params, 'orderComplete');
+        //$this->msgTask($phone, $params, 'orderComplete');
     }
 
     public function sendTicketSMS($phone, $params, $num = 1)
     {
         $res = SendSms::instance()->send($phone, $params, 'ticket');
-        if (key_exists('Code', $res) && $res['Code'] == 'OK') {
-            return true;
+        if (!$res) {
+            throw  new SaveException(['msg'=>'发送短信失败']);
         }
-        $this->msgTask($phone, $params, 'orderComplete');
+        //$this->msgTask($phone, $params, 'orderComplete');
     }
 
     public function sendMINISMS($phone, $params = '', $num = 1)
     {
 
         $res = SendSms::instance()->send($phone, $params, 'mini');
-        if (key_exists('Code', $res) && $res['Code'] == 'OK') {
-            return true;
+        if (!$res) {
+            throw  new SaveException(['msg'=>'发送短信失败']);
         }
-        $this->msgTask($phone, $params, 'mini');
+        //$this->msgTask($phone, $params, 'mini');
 
     }
 
@@ -149,7 +156,7 @@ class SendSMSService
                     if (!empty($data_arr['token'])) {
                         $redis = new Redis();
                         $redis->set($data_arr['token'], $data_arr['phone'] . '-' . $data_arr['params']['code'], 120);
-                  }
+                    }
                 } else {
                     if ($data_arr['failCount'] > 2) {
                         $data['failMsg'] = json_encode($res);

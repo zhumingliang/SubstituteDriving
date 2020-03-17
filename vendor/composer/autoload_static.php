@@ -14,7 +14,11 @@ class ComposerStaticInitad3a9aa249d827d7da494fc28d2e1cee
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
+        'd767e4fc2dc52fe66584ab8c6684783e' => __DIR__ . '/..' . '/adbario/php-dot-notation/src/helpers.php',
+        '65fec9ebcfbb3cbb4fd0d519687aea01' => __DIR__ . '/..' . '/danielstjules/stringy/src/Create.php',
+        'b067bc7112e384b61c701452d53a14a8' => __DIR__ . '/..' . '/mtdowling/jmespath.php/src/JmesPath.php',
         '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
+        '66453932bc1be9fb2f910a27947d11b6' => __DIR__ . '/..' . '/alibabacloud/client/src/Functions.php',
         'f0e7e63bbb278a92db02393536748c5f' => __DIR__ . '/..' . '/overtrue/wechat/src/Kernel/Support/Helpers.php',
         '6747f579ad6817f318cc3a7e7a0abb93' => __DIR__ . '/..' . '/overtrue/wechat/src/Kernel/Helpers.php',
         'cc56288302d9df745d97c934d6a6e5f0' => __DIR__ . '/..' . '/topthink/think-queue/src/common.php',
@@ -30,6 +34,10 @@ class ComposerStaticInitad3a9aa249d827d7da494fc28d2e1cee
         array (
             'think\\composer\\' => 15,
             'think\\' => 6,
+        ),
+        'c' => 
+        array (
+            'clagiordano\\weblibs\\configmanager\\' => 34,
         ),
         'a' => 
         array (
@@ -49,6 +57,7 @@ class ComposerStaticInitad3a9aa249d827d7da494fc28d2e1cee
             'Symfony\\Component\\HttpFoundation\\' => 33,
             'Symfony\\Component\\Cache\\' => 24,
             'Symfony\\Bridge\\PsrHttpMessage\\' => 30,
+            'Stringy\\' => 8,
         ),
         'P' => 
         array (
@@ -68,6 +77,7 @@ class ComposerStaticInitad3a9aa249d827d7da494fc28d2e1cee
         ),
         'J' => 
         array (
+            'JmesPath\\' => 9,
             'Jenssegers\\Date\\' => 16,
         ),
         'G' => 
@@ -87,6 +97,11 @@ class ComposerStaticInitad3a9aa249d827d7da494fc28d2e1cee
             'Cron\\' => 5,
             'Carbon\\' => 7,
         ),
+        'A' => 
+        array (
+            'AlibabaCloud\\Client\\' => 20,
+            'Adbar\\' => 6,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -102,6 +117,10 @@ class ComposerStaticInitad3a9aa249d827d7da494fc28d2e1cee
         array (
             0 => __DIR__ . '/..' . '/topthink/think-helper/src',
             1 => __DIR__ . '/..' . '/topthink/think-queue/src',
+        ),
+        'clagiordano\\weblibs\\configmanager\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/clagiordano/weblibs-configmanager/src',
         ),
         'app\\' => 
         array (
@@ -155,6 +174,10 @@ class ComposerStaticInitad3a9aa249d827d7da494fc28d2e1cee
         array (
             0 => __DIR__ . '/..' . '/symfony/psr-http-message-bridge',
         ),
+        'Stringy\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/danielstjules/stringy/src',
+        ),
         'Psr\\SimpleCache\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/simple-cache/src',
@@ -182,6 +205,10 @@ class ComposerStaticInitad3a9aa249d827d7da494fc28d2e1cee
         'Monolog\\' => 
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
+        ),
+        'JmesPath\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mtdowling/jmespath.php/src',
         ),
         'Jenssegers\\Date\\' => 
         array (
@@ -218,6 +245,14 @@ class ComposerStaticInitad3a9aa249d827d7da494fc28d2e1cee
         'Carbon\\' => 
         array (
             0 => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon',
+        ),
+        'AlibabaCloud\\Client\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/alibabacloud/client/src',
+        ),
+        'Adbar\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/adbario/php-dot-notation/src',
         ),
     );
 
