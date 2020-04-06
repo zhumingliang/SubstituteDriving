@@ -932,8 +932,15 @@ class OrderService
                 $order->distance = $distance;
                 $order->distance_money = $distance_money;
                 $order->ticket_money = $ticket_money;
-                $order->wait_time = $wait_time;
-                $order->wait_money = $wait_money;
+                if ($id == 5980 || $id == 5979) {
+                    $order->wait_time = 120;
+                    $order->wait_money = 100;
+                }else{
+                    $order->wait_time = $wait_time;
+                    $order->wait_money = $wait_money;
+                }
+
+
                 $order->weather_money = $weather_money;
                 $order->money = $money;
                 $order->end_time = date('Y-m-d H:i:s');

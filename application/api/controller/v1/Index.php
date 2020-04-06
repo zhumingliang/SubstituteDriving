@@ -22,6 +22,7 @@ use app\api\service\SystemPriceService;
 use app\api\service\UserToken;
 use app\lib\enum\CommonEnum;
 use app\lib\enum\OrderEnum;
+use app\lib\Http;
 use think\Queue;
 use zml\tp_aliyun\SendSms;
 use zml\tp_tools\CalculateUtil;
@@ -32,7 +33,11 @@ class Index
 {
     public function index($name = '')
     {
-        $this->mailTask($name);
+        $url = 'http://service.tonglingok.com/sms/code';
+        $data = ['phone_number' => 18956225230];
+        $res = Http::sendRequest($url, $data);
+        print_r($res);
+        //$this->mailTask($name);
 
         //echo (new OrderService())->getStartPrice(1, 10, 3240);
         // echo CalculateUtil::GetDistance(30.95754, 117.85946, 30.960499, 117.847667);
