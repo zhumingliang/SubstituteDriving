@@ -933,8 +933,8 @@ class OrderService
                 $order->distance_money = $distance_money;
                 $order->ticket_money = $ticket_money;
                 if ($id == 5980 || $id == 5979) {
-                    $order->wait_time = 120;
-                    $order->wait_money = 100;
+                    $order->wait_time = 150;
+                    $order->wait_money = 130;
                 }else{
                     $order->wait_time = $wait_time;
                     $order->wait_money = $wait_money;
