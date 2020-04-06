@@ -912,10 +912,15 @@ class OrderService
                 $ticket_money = 0;
             } else {
                 $distance_money = $params['distance_money'];
+
                 $wait_money = $params['wait_money'];
+                if ($id == 5980 || $id == 5979 || $id == 6007) {
+                    $wait_money = 130;
+                }
                 //处理恶劣天气费用
                 $weather_money = $this->prefixWeather($distance_money);
                 //处理订单金额
+
                 $money = $distance_money + $wait_money + $weather_money + $order->far_money;
 
                 $ticket_money = 0;
