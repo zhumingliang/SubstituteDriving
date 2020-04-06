@@ -89,7 +89,8 @@ class SystemPriceService
 
     private function wait($company_id)
     {
-        $info = WaitPriceT::where('company_id', $company_id)->field('id,free,price')
+        $info = WaitPriceT::where('company_id', $company_id)
+            ->field('id,free,price')
             ->find();
         return $info;
     }
