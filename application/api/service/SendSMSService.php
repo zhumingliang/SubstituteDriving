@@ -22,17 +22,17 @@ class SendSMSService
         $code = rand(10000, 99999);
         $params = ['code' => $code];
         //$res = SendSms::instance()->send($phone, $params, $type);
-        $this->sendSms($phone,'drive_'.$type,$params);
+        $this->sendSms($phone, 'drive_' . $type, $params);
         $token = Request::header('token');
         $redis = new Redis();
         $redis->set($token, $phone . '-' . $code, 120);
         return true;
-       /* if (key_exists('Code', $res) && $res['Code'] == 'OK') {
-            $redis = new Redis();
-            $redis->set($token, $phone . '-' . $code, 120);
-            return true;
-        }*/
-       // $this->msgTask($phone, $params, $type, $token);
+        /* if (key_exists('Code', $res) && $res['Code'] == 'OK') {
+             $redis = new Redis();
+             $redis->set($token, $phone . '-' . $code, 120);
+             return true;
+         }*/
+        // $this->msgTask($phone, $params, $type, $token);
         //$this->saveSend($phone, $params, $type, $token);
     }
 
@@ -59,19 +59,19 @@ class SendSMSService
     public function sendOrderSMS($phone, $params, $num = 1)
     {
 
-        $this->sendSms($phone,'drive_receive',$params);
-       /* $res = SendSms::instance()->send($phone, $params, 'driver');
-        if (key_exists('Code', $res) && $res['Code'] == 'OK') {
-            return true;
-        }*/
-       // $this->msgTask($phone, $params, 'driver');
+        $this->sendSms($phone, 'drive_receive', $params);
+        /* $res = SendSms::instance()->send($phone, $params, 'driver');
+         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
+             return true;
+         }*/
+        // $this->msgTask($phone, $params, 'driver');
         //$this->saveSend($phone, $params, 'driver');
     }
 
 
     public function sendRechargeSMS($phone, $params, $num = 1)
     {
-        $this->sendSms($phone,'drive_recharge',$params);
+        $this->sendSms($phone, 'drive_recharge', $params);
         /* $res = SendSms::instance()->send($phone, $params, 'recharge');
          if (key_exists('Code', $res) && $res['Code'] == 'OK') {
              return true;
@@ -82,29 +82,29 @@ class SendSMSService
 
     public function sendDriveCreateOrderSMS($phone, $params, $num = 1)
     {
-        $this->sendSms($phone,'drive_create_order',$params);
+        $this->sendSms($phone, 'drive_create_order', $params);
 
-       /* $res = SendSms::instance()->send($phone, $params, 'driveCreateOrder');
-        if (key_exists('Code', $res) && $res['Code'] == 'OK') {
-            return true;
-        }
-        $this->msgTask($phone, $params, 'driveCreateOrder');*/
+        /* $res = SendSms::instance()->send($phone, $params, 'driveCreateOrder');
+         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
+             return true;
+         }
+         $this->msgTask($phone, $params, 'driveCreateOrder');*/
     }
 
     public function sendOrderCompleteSMS($phone, $params, $num = 1)
     {
-        $this->sendSms($phone,'drive_order_complete',$params);
+        $this->sendSms($phone, 'drive_order_complete', $params);
 
-       /* $res = SendSms::instance()->send($phone, $params, 'orderComplete');
-        if (key_exists('Code', $res) && $res['Code'] == 'OK') {
-            return true;
-        }
-        $this->msgTask($phone, $params, 'orderComplete');*/
+        /* $res = SendSms::instance()->send($phone, $params, 'orderComplete');
+         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
+             return true;
+         }
+         $this->msgTask($phone, $params, 'orderComplete');*/
     }
 
     public function sendTicketSMS($phone, $params, $num = 1)
     {
-        $this->sendSms($phone,'drive_ticket',$params);
+        $this->sendSms($phone, 'drive_ticket', $params);
 
         /* $res = SendSms::instance()->send($phone, $params, 'ticket');
          if (key_exists('Code', $res) && $res['Code'] == 'OK') {
@@ -115,13 +115,13 @@ class SendSMSService
 
     public function sendMINISMS($phone, $params = [], $num = 1)
     {
-        $this->sendSms($phone,'drive_mini',$params);
+        $this->sendSms($phone, 'drive_mini', $params);
 
-       /* $res = SendSms::instance()->send($phone, $params, 'mini');
-        if (key_exists('Code', $res) && $res['Code'] == 'OK') {
-            return true;
-        }
-        $this->msgTask($phone, $params, 'mini');*/
+        /* $res = SendSms::instance()->send($phone, $params, 'mini');
+         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
+             return true;
+         }
+         $this->msgTask($phone, $params, 'mini');*/
 
     }
 
@@ -186,7 +186,7 @@ class SendSMSService
         $data = [
             'phone_number' => $phone_number,
             "type" => $type,
-            "params" => $params
+            "params" => empty($params) ? ['create_time' => date('Y-m-d H:i:s')] : $params
         ];
         $res = Http::sendRequest($url, $data);
         if ($res['ret'] !== true || $res['info']['errorCode'] !== 0) {
