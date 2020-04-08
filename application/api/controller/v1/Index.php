@@ -33,10 +33,22 @@ class Index
 {
     public function index($name = '')
     {
-        $url = 'http://service.tonglingok.com/sms/code';
-        $data = ['phone_number' => 18956225230];
-        $res = Http::sendRequest($url, $data);
-        print_r($res);
+        $url = 'http://service.tonglingok.com/sms/template';
+        $company_id = 1;
+        $company = $company_id == 1 ? 'OK' : '安心';
+        $sendData = ['money' => 100,
+            'company' => $company];
+        if ($company_id == 1) {
+            $sendData['phone'] = "19855751988";
+        }
+
+        $data = [
+            'phone_number' => 18956225230,
+            "type" => 'drive_order_complate',
+            "params" => $sendData
+        ];
+        $res = (new SendSMSService())->sendSms("18956225230", 'drive_order_complate', $sendData);
+        return json($res);
         //$this->mailTask($name);
 
         //echo (new OrderService())->getStartPrice(1, 10, 3240);
