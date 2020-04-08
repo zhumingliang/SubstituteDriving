@@ -11,6 +11,7 @@ class Order extends BaseValidate
         'id' => 'require|isPositiveInteger',
         'type' => 'require|in:2,3',
         'start' => 'require|isNotEmpty',
+        'phone' => 'require|isMobile',
         'start_lng' => 'require|isNotEmpty',
         'start_lat' => 'require|isNotEmpty',
         'end' => 'require|isNotEmpty',
