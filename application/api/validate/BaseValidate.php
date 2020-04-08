@@ -49,7 +49,8 @@ class BaseValidate extends Validate
 
     protected function isMobile($value)
     {
-        $rule = '^1(3|4|5|6|7|8|9)[0-9]\d{8}$^';
+       // $rule = '^1(3|4|5|6|7|8|9)[0-9]\d{8}$^';
+        $rule = '^1[0-9][0-9]\d{8}$^';
         $result = preg_match($rule, $value);
         if ($result) {
             return true;
