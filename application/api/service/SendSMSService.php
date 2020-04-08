@@ -113,7 +113,7 @@ class SendSMSService
          $this->msgTask($phone, $params, 'orderComplete');*/
     }
 
-    public function sendMINISMS($phone, $params = '', $num = 1)
+    public function sendMINISMS($phone, $params = [], $num = 1)
     {
         $this->sendSms($phone,'drive_mini',$params);
 

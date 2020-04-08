@@ -99,7 +99,7 @@ class OrderService
             //未接单状态->已接单状态
             (new DriverService())->handelDriveStateByReceive($d_id);
             //发送短信
-            (new SendSMSService())->sendDriveCreateOrderSMS($params['phone'], '');
+            (new SendSMSService())->sendDriveCreateOrderSMS($params['phone'], []);
             return $o_id;
         } catch (Exception $e) {
             throw  $e;
@@ -567,7 +567,7 @@ class OrderService
                 GatewayService::sendToMiniClient($u_id, $send_data);
             }
             //发送短消息
-            (new SendSMSService())->sendMINISMS($order->phone);
+            (new SendSMSService())->sendMINISMS($order->phone,[]);
 
         }
 
