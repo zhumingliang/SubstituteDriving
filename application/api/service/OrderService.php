@@ -53,6 +53,12 @@ class OrderService
             $params['state'] = OrderEnum::ORDER_NO;
             $params['order_num'] = $this->getOrderNumber();
             $params['company_id'] = Token::getCurrentTokenVar('company_id');
+
+            if ($params['company_id'] == 1) {
+                (new SendSMSService())->sendOrderSMS("13515623335", ['code' => 'OK' . $params['order_num'],
+                    'order_time' => date('Y-m-d H:i:s')]);
+            }
+
             return $this->createOrderWithoutDriver($params);
         } catch (Exception $e) {
             LogT::create(['msg' => 'save_order_mini:' . $e->getMessage()]);
@@ -567,7 +573,7 @@ class OrderService
                 GatewayService::sendToMiniClient($u_id, $send_data);
             }
             //发送短消息
-            (new SendSMSService())->sendMINISMS($order->phone,[]);
+            (new SendSMSService())->sendMINISMS($order->phone, []);
 
         }
 
