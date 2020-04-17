@@ -11,6 +11,7 @@ use app\api\model\LogT;
 use app\api\model\MiniPushT;
 use app\api\model\OrderListT;
 use app\api\model\OrderMoneyT;
+use app\api\model\OrderMsgT;
 use app\api\model\OrderPushT;
 use app\api\model\OrderRevokeT;
 use app\api\model\OrderT;
@@ -54,16 +55,28 @@ class OrderService
             $params['order_num'] = $this->getOrderNumber();
             $params['company_id'] = Token::getCurrentTokenVar('company_id');
 
-            if ($params['company_id'] == 1) {
-                (new SendSMSService())->sendOrderSMS("13515623335", ['code' => 'OK' . $params['order_num'],
-                    'order_time' => date('Y-m-d H:i:s')]);
-            }
-
+            $this->sendMiniMsgToManager($params['company_id'], $params['order_num']);
             return $this->createOrderWithoutDriver($params);
         } catch (Exception $e) {
             LogT::create(['msg' => 'save_order_mini:' . $e->getMessage()]);
             throw  $e;
         }
+    }
+
+    private function sendMiniMsgToManager($company_id, $orderNum)
+    {
+        $config = OrderMsgT::where('company_id', $company_id)->find();
+        if ($config) {
+            $phones = $config->phone;
+            $phoneArr = explode(',', $phones);
+            if (count($phoneArr)) {
+                foreach ($phoneArr as $k => $v) {
+                    (new SendSMSService())->sendOrderSMS($v, ['code' => 'OK' . $orderNum,
+                        'order_time' => date('Y-m-d H:i:s')]);
+                }
+            }
+        }
+
     }
 
     /**
