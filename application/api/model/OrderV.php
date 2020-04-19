@@ -187,7 +187,7 @@ class OrderV extends Model
             }
         })->where(function ($query) use ($driver) {
             if (strlen($driver)) {
-                $query->where('driver', 'like', '%' . $driver . '%');
+                $query->where('driver|phone', 'like', '%' . $driver . '%');
             }
         })->where(function ($query) use ($time_begin, $time_end) {
             if (strlen($time_begin) && strlen($time_end)) {
