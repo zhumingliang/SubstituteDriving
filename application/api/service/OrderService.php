@@ -905,11 +905,13 @@ class OrderService
     public
     function driverCompleteOrder($params)
     {
-
+        $id = $params['id'];
+        $this->checkOrderComplete($id);
         try {
+            //处理订单完成唯一性
             Db::startTrans();
             $distance = round($params['distance'] / 1000, 2);
-            $id = $params['id'];
+
             $wait_time = $params['wait_time'];
             $order = $this->getOrder($id);
             if (!empty($params['end'])) {
@@ -982,6 +984,7 @@ class OrderService
                  throw new SaveException(['msg' => '订单抽成失败']);
              }*/
             Db::commit();
+
             Redis::instance()->hSet('driver:' . $order->d_id, 'order_time', time());
             (new DriverService())->handelDriveStateByComplete($order->d_id);
             (new WalletService())->checkDriverBalance(Token::getCurrentUid());
@@ -995,10 +998,36 @@ class OrderService
             (new SendSMSService())->sendOrderCompleteSMS($order->phone, $sendData);
             return $this->prepareOrderInfo($order);
         } catch (Exception $e) {
+            $this->deleteRedisOrderComplete($id);
             Db::rollback();
             throw $e;
         }
 
+    }
+
+    public function checkOrderComplete($order_id)
+    {
+        if ($this->checkRedisOrderComplete($order_id)) {
+            throw new ParameterException(['msg' => '订单已完成，不能重复完成']);
+        }
+        $this->addRedisOrderComplete($order_id);
+
+    }
+
+    public function addRedisOrderComplete($order_id)
+    {
+
+        Redis::instance()->sAdd('order:complete', $order_id);
+    }
+
+    public function checkRedisOrderComplete($order_id)
+    {
+        return Redis::instance()->sIsMember('order:complete', $order_id);
+    }
+
+    public function deleteRedisOrderComplete($order_id)
+    {
+        Redis::instance()->sRem('order:complete', $order_id);
     }
 
     public
