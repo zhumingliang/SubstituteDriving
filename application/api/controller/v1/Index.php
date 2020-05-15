@@ -33,7 +33,8 @@ class Index
 {
     public function index($name = '')
     {
-        $url = 'http://service.tonglingok.com/sms/template';
+        echo round(60.1);
+        /*$url = 'http://service.tonglingok.com/sms/template';
         $company_id = 1;
         $company = $company_id == 1 ? 'OK' : '安心';
         $sendData = ['money' => 100,
@@ -48,7 +49,7 @@ class Index
             "params" => $sendData
         ];
         $res = (new SendSMSService())->sendSms("18956225230", 'drive_order_complate', $sendData);
-        return json($res);
+        return json($res);*/
         //$this->mailTask($name);
 
         //echo (new OrderService())->getStartPrice(1, 10, 3240);

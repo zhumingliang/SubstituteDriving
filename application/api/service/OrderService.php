@@ -1076,7 +1076,7 @@ class OrderService
             return $money;
         }
         $ratio = $weather->ratio - 1;
-        $money += ceil($distance_money * $ratio);
+        $money += round($distance_money * $ratio);
         return $money;
 
     }
@@ -1498,7 +1498,7 @@ class OrderService
     public
     function current($page, $size)
     {
-        $company_id = Token::getCurrentTokenVar('company_id');
+        $company_id = 1;//Token::getCurrentTokenVar('company_id');
         $orders = Orderv::currentOrders($company_id, $page, $size);
         $orders['data'] = $this->prefixCurrentPush($orders['data']);
         return $orders;
