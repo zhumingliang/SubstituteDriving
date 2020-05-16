@@ -906,7 +906,7 @@ class OrderService
     function driverCompleteOrder($params)
     {
         $id = $params['id'];
-        $this->checkOrderComplete($id);
+      //  $this->checkOrderComplete($id);
         try {
             //处理订单完成唯一性
             Db::startTrans();
