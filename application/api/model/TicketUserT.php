@@ -32,9 +32,7 @@ class TicketUserT extends Model
             ->whereTime('time_begin', '<=', $now)
             ->whereTime('time_end', '>=', $now)
             ->field('id,name,money,time_begin,time_end')
-            ->fetchSql(true)
             ->select();
-        LogService::save($tickets);
         return $tickets;
 
     }
