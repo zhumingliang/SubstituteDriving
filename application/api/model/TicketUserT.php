@@ -4,6 +4,7 @@
 namespace app\api\model;
 
 
+use app\api\service\LogService;
 use app\lib\enum\CommonEnum;
 use think\Model;
 
@@ -31,7 +32,9 @@ class TicketUserT extends Model
             ->whereTime('time_begin', '<=', $now)
             ->whereTime('time_end', '>=', $now)
             ->field('id,name,money,time_begin,time_end')
+            ->fetchSql(true)
             ->select();
+        LogService::save($tickets);
         return $tickets;
 
     }

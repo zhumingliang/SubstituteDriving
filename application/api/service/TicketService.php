@@ -77,7 +77,7 @@ class TicketService
          } else {
              $ticks = TicketUserT::userPhoneTickets($phone);
          }*/
-        $phone = Token::getCurrentTokenVar('phone');
+        $phone =Token::getCurrentTokenVar('phone');
         $ticks = TicketUserT::userPhoneTickets($phone);
         return $ticks;
     }
