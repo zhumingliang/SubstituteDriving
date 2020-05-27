@@ -186,6 +186,7 @@ class SendSMSService
         $data = [
             'phone_number' => $phone_number,
             "type" => $type,
+            "sign" => "ok",
             "params" => empty($params) ? ['create_time' => date('Y-m-d H:i:s')] : $params
         ];
         $res = Http::sendRequest($url, $data);
