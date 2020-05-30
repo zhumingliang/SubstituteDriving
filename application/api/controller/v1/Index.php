@@ -35,12 +35,18 @@ class Index
     {
 
         $locations = LocationT::where('u_id', 93)
-            ->where('create_time','>','2020-05-29 21:50:00')
-            ->where('create_time','<','2020-05-29 22:10:00')
+            ->where('create_time', '>', '2020-05-29 21:50:00')
+            ->where('create_time', '<', '2020-05-29 22:10:00')
             ->field('create_time,lat,lng')
             ->order('create_time')
-            ->select();
-        return json($locations);
+            ->paginate(1, false, ['page' => 10000])->toArray();
+        $data = [
+            'start' => 1,
+            'end' => 1,
+            'state' => 1,
+            'locations' => $locations
+        ];
+        return json($data);
         /*$url = 'http://service.tonglingok.com/sms/template';
         $company_id = 1;
         $company = $company_id == 1 ? 'OK' : '安心';
