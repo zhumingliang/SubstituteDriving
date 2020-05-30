@@ -33,7 +33,14 @@ class Index
 {
     public function index($name = '')
     {
-        echo round(60.1);
+
+        $locations = LocationT::where('u_id', 93)
+            ->where('create_time','>','2020-05-29 21:50:00')
+            ->where('create_time','<','2020-05-29 22:10:00')
+            ->field('create_time,lat,lng')
+            ->order('create_time')
+            ->select();
+        return json($locations);
         /*$url = 'http://service.tonglingok.com/sms/template';
         $company_id = 1;
         $company = $company_id == 1 ? 'OK' : '安心';
@@ -64,21 +71,21 @@ class Index
           ->find();
           print_r($ticket) ;*/
 
-        /* $locations = LocationT::where('o_id', 4277)->select();
-         $distance = 0;
-         $old_lat = '';
-         $old_lng = '';
-         foreach ($locations as $k => $v) {
-             if ($k == 0) {
-                 $old_lat = $v['lat'];
-                 $old_lng = $v['lng'];
-                 continue;
-             }
-             $distance += CalculateUtil::GetDistance($old_lat, $old_lng, $v['lat'], $v['lng']);
-             $old_lat = $v['lat'];
-             $old_lng = $v['lng'];
-         }
-         echo $distance;*/
+        /*  $locations = LocationT::where('o_id', 8509)->select();
+          $distance = 0;
+          $old_lat = '';
+          $old_lng = '';
+          foreach ($locations as $k => $v) {
+              if ($k == 0) {
+                  $old_lat = $v['lat'];
+                  $old_lng = $v['lng'];
+                  continue;
+              }
+              $distance += CalculateUtil::GetDistance($old_lat, $old_lng, $v['lat'], $v['lng']);
+              $old_lat = $v['lat'];
+              $old_lng = $v['lng'];
+          }
+          echo $distance;*/
     }
 
 
