@@ -39,7 +39,7 @@ class Index
             ->where('create_time', '<', '2020-05-29 22:10:00')
             ->field('create_time,lat,lng')
             ->order('create_time')
-            ->paginate(1, false, ['page' => 10000])->toArray();
+            ->paginate(10000, false, ['page' => 1])->toArray();
         $data = [
             'start' => 1,
             'end' => 1,
