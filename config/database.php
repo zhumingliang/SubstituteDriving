@@ -9,19 +9,21 @@
 // | Author: liu21st <liu21st@gmail.com>
 // +----------------------------------------------------------------------
 
+
+
 return [
     // 数据库类型
     'type'            => 'mysql',
     // 服务器地址
-    'hostname'        => '55a32a9887e03.gz.cdb.myqcloud.com',
+    'hostname'        => '127.0.0.1',
     // 数据库名
     'database'        => 'drive',
     // 用户名
-    'username'        => 'cdb_outerroot',
+    'username'        => 'root',
     // 密码
-    'password'        => 'Libo1234',
+    'password'        => 'k8k7bmzzf52Xptrx',
     // 端口
-    'hostport'        => '16273',
+    'hostport'        => '3306',
     // 连接dsn
     'dsn'             => '',
     // 数据库连接参数
@@ -67,15 +69,15 @@ return [
     // 数据库类型
     'type'            => 'mysql',
     // 服务器地址
-    'hostname'        => '127.0.0.1',
+    'hostname'        => '55a32a9887e03.gz.cdb.myqcloud.com',
     // 数据库名
     'database'        => 'drive',
     // 用户名
-    'username'        => 'root',
+    'username'        => 'cdb_outerroot',
     // 密码
-    'password'        => 'mengant123456',
+    'password'        => 'Libo1234',
     // 端口
-    'hostport'        => '3306',
+    'hostport'        => '16273',
     // 连接dsn
     'dsn'             => '',
     // 数据库连接参数
