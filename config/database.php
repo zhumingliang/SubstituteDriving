@@ -19,9 +19,9 @@ return [
     // 数据库名
     'database'        => 'drive',
     // 用户名
-    'username'        => 'root',
+    'username'        => 'drive',
     // 密码
-    'password'        => 'mengant123456',
+    'password'        => 'k8k7bmzzf52Xptrx',
     // 端口
     'hostport'        => '3306',
     // 连接dsn
