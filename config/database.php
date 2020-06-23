@@ -11,7 +11,7 @@
 
 
 
-return [
+/*return [
     // 数据库类型
     'type'            => 'mysql',
     // 服务器地址
@@ -62,10 +62,10 @@ return [
     'break_reconnect' => false,
     // 断线标识字符串
     'break_match_str' => [],
-];
+];*/
 
 
-/*return [
+return [
     // 数据库类型
     'type'            => 'mysql',
     // 服务器地址
@@ -116,5 +116,5 @@ return [
     'break_reconnect' => false,
     // 断线标识字符串
     'break_match_str' => [],
-];*/
+];
 
