@@ -11,7 +11,7 @@
 
 
 
-/*return [
+return [
     // 数据库类型
     'type'            => 'mysql',
     // 服务器地址
@@ -21,7 +21,7 @@
     // 用户名
     'username'        => 'root',
     // 密码
-    'password'        => 'k8k7bmzzf52Xptrx',
+    'password'        => 'mengant123456',
     // 端口
     'hostport'        => '3306',
     // 连接dsn
@@ -63,9 +63,9 @@
     // 断线标识字符串
     'break_match_str' => [],
 ];
-*/
 
-return [
+
+/*return [
     // 数据库类型
     'type'            => 'mysql',
     // 服务器地址
@@ -116,5 +116,5 @@ return [
     'break_reconnect' => false,
     // 断线标识字符串
     'break_match_str' => [],
-];
+];*/
 
