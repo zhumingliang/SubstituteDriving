@@ -27,7 +27,7 @@ class TaskService
             'distance' => $params['distance'],
             'distance_money' => 0,
             'create_time' => $params['create_time'],
-            'limit' => $params['limit'],
+            'limit_time' => $params['limit_time'],
             'p_id' => $params['p_id']
         ];
         $isPushed = Queue::push($jobHandlerClassName, $jobData, $jobQueueName);

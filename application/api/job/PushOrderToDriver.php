@@ -101,8 +101,6 @@ class PushOrderToDriver
                 ]
             ];
             $d_id = $data['d_id'];
-            LogService::save('driver' . '-' . $d_id);
-            LogService::save(self::prefixMessage($push_data));
             Gateway::sendToUid('driver' . '-' . $d_id, self::prefixMessage($push_data));
             return false;
         } catch (Exception $e) {
