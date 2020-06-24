@@ -76,6 +76,7 @@ class PushOrderToDriver
         $set = "webSocketReceiveCode";
         $code = $data['p_id'];
         $check = Redis::instance()->sIsMember($set, $code);
+        LogService::save('check:'.$check);
         return $check;
     }
 
