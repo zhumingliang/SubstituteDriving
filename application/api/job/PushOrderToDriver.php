@@ -20,8 +20,6 @@ class PushOrderToDriver
      */
     public function fire(Job $job, $data)
     {
-        LogService::save('begin');
-        LogService::save(\GuzzleHttp\json_encode($data));
         // 有些消息在到达消费者时,可能已经不再需要执行了
         $isJobStillNeedToBeDone = $this->checkDatabaseToSeeIfJobNeedToBeDone($data);
         if (!$isJobStillNeedToBeDone) {
@@ -76,6 +74,7 @@ class PushOrderToDriver
     private function checkDatabaseToSeeIfJobNeedToBeDone($data)
     {
         $set = "webSocketReceiveCode";
+        LogService::save(json_encode($data));
         $code = $data['p_id'];
         LogService::save('p_id:', $code);
         $check = Redis::instance()->sIsMember($set, $code);
