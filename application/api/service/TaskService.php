@@ -27,7 +27,7 @@ class TaskService
             'distance' => $params['distance'],
             'distance_money' => 0,
             'create_time' => $params['create_time'],
-            'limit_time' => $params['limit_time'],
+            'limit' => $params['limit'],
             'p_id' => $params['p_id']
         ];
         LogService::save(json_encode($jobData));
