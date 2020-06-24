@@ -29,6 +29,7 @@ class TaskService
             'limit_time' => $params['limit_time'],
             'p_id' => $params['p_id']
         ];
+        LogService::save(json_encode($jobData));
         $isPushed = Queue::push($jobHandlerClassName, $jobData, $jobQueueName);
         LogService::save($isPushed);
         //将该任务推送到消息队列
