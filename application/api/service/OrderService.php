@@ -71,8 +71,8 @@ class OrderService
             $phoneArr = explode(',', $phones);
             if (count($phoneArr)) {
                 foreach ($phoneArr as $k => $v) {
-                    (new SendSMSService())->sendOrderSMS($v, ['code' => 'OK' . $orderNum,
-                        'order_time' => date('Y-m-d H:i:s')]);
+                    (new SendSMSService())->sendOrderSMS($v,
+                        ['code' => 'OK' . $orderNum, 'order_time' => date('Y-m-d H:i:s')]);
                 }
             }
         }
@@ -198,34 +198,33 @@ class OrderService
         $phone = $driver->phone;
         (new SendSMSService())->sendOrderSMS($phone, ['code' => 'OK' . $order->order_num, 'order_time' => date('H:i', strtotime($order->create_time))]);
 
-        $orderPush = OrderPushT::create(
-            [
-                'd_id' => $d_id,
-                'o_id' => $order->id,
-                'state' => OrderEnum::ORDER_PUSH_NO,
-                'limit_time' => time()
-            ]
-        );
         $distance_info = $this->getDistanceInfoToPush($order, $d_id);
         //通过websocket推送给司机
         $push_data = [
             'type' => 'order',
-            'order_info' => [
-                'o_id' => $order->id,
-                'name' => $order->name,
-                'phone' => $order->phone,
-                'start' => $order->start,
-                'end' => $order->end,
-                'distance' => $distance_info['distance'],
-                'distance_money' => 0,
-                'create_time' => $order->create_time,
-                'p_id' => $orderPush->id,
-
-            ]
+            'o_id' => $order->id,
+            'd_id' => $d_id,
+            'name' => $order->name,
+            'company_id' => $order->company_id,
+            'from' => "管理员建单",
+            'phone' => $order->phone,
+            'start' => $order->start,
+            'end' => $order->end,
+            'distance' => $distance_info['distance'],
+            'distance_money' => 0,
+            'create_time' => $order->create_time,
+            'limit_time' => time(),
+            'p_id' => $this->savePushCode()
         ];
-        GatewayService::sendToDriverClient($d_id, $push_data);
-        $orderPush->message = json_encode($push_data);
-        $orderPush->save();
+        (new TaskService())->sendToDriverTask($push_data);
+    }
+
+    public function savePushCode()
+    {
+        $set = "webSocketReceiveCode";
+        $sortCode = getRandChar(8);
+        Redis::instance()->sAdd($set, $sortCode);
+        return $sortCode;
     }
 
     private function prefixFar($start_lng, $start_lat, $driver_lng, $driver_lat)
@@ -621,11 +620,11 @@ class OrderService
     private
     function saveOrderList($o_id, $state)
     {
-        $data = [
-            'o_id' => $o_id,
-            'state' => $state
-        ];
-        OrderListT::create($data);
+        /*        $data = [
+                    'o_id' => $o_id,
+                    'state' => $state
+                ];
+                OrderListT::create($data);*/
         //将待处理订单写入待处理队列
         if ($state == OrderEnum::ORDER_LIST_NO) {
             Redis::instance()->sAdd('order:no', $o_id);
@@ -906,7 +905,7 @@ class OrderService
     function driverCompleteOrder($params)
     {
         $id = $params['id'];
-      //  $this->checkOrderComplete($id);
+        //  $this->checkOrderComplete($id);
         try {
             //处理订单完成唯一性
             Db::startTrans();

@@ -34,36 +34,36 @@ class Index
 {
     public function index($name = '')
     {
-
-        $locations = LocationT::where('u_id', 93)
-            ->where('create_time', '>', '2020-05-29 21:50:00')
-            ->where('create_time', '<', '2020-05-29 22:10:00')
-            ->field('lat,lng')
-            ->order('create_time')
-            ->paginate(10000, false, ['page' => 1])->toArray();
         $data = [
-            'start' => 1,
-            'end' => 1,
-            'state' => 1,
-            'locations' => $locations
+            [
+                'id' => 1,
+                'lat' => 2,
+                'lng' => 3
+            ], [
+                'id' => 2,
+                'lat' => 4,
+                'lng' => 5
+            ]
         ];
-        return json(new SuccessMessageWithData(['data' => $data]));
-      /*$url = 'http://service.tonglingok.com/sms/template';
-        $company_id = 1;
-        $company = $company_id == 1 ? 'OK' : '安心';
-        $sendData = ['money' => 100,
-            'company' => $company];
-        if ($company_id == 1) {
-            $sendData['phone'] = "19855751988";
-        }
 
-        $data = [
-            'phone_number' => 18956225230,
-            "type" => 'drive_order_complate',
-            "params" => $sendData
-        ];
-        $res = (new SendSMSService())->sendSms("18956225230", 'drive_order_complate', $sendData);
-        return json($res);*/
+        $a = array_column($data, 'id');
+        echo implode(',', $a);
+        /*$url = 'http://service.tonglingok.com/sms/template';
+          $company_id = 1;
+          $company = $company_id == 1 ? 'OK' : '安心';
+          $sendData = ['money' => 100,
+              'company' => $company];
+          if ($company_id == 1) {
+              $sendData['phone'] = "19855751988";
+          }
+
+          $data = [
+              'phone_number' => 18956225230,
+              "type" => 'drive_order_complate',
+              "params" => $sendData
+          ];
+          $res = (new SendSMSService())->sendSms("18956225230", 'drive_order_complate', $sendData);
+          return json($res);*/
         //$this->mailTask($name);
 
         //echo (new OrderService())->getStartPrice(1, 10, 3240);
