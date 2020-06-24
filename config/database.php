@@ -19,7 +19,7 @@ return [
     // 数据库名
     'database'        => 'drive',
     // 用户名
-    'username'        => 'cdb_outerroot',
+    'username'        => 'root',
     // 密码
     'password'        => 'mengant123456',
     // 端口
