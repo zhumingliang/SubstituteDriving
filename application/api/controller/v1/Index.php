@@ -32,22 +32,12 @@ use function GuzzleHttp\Psr7\str;
 
 class Index
 {
-    public function index($name = '')
+    public function index($d_id = 50)
     {
-        $data = [
-            [
-                'id' => 1,
-                'lat' => 2,
-                'lng' => 3
-            ], [
-                'id' => 2,
-                'lat' => 4,
-                'lng' => 5
-            ]
-        ];
+        Redis::instance()->sAdd('driver_order_no:' . 1, $d_id);
+        Redis::instance()->sRem('driver_order_receive:' . 1, $d_id);
+        Redis::instance()->sRem('driver_order_ing:' . 1, $d_id);
 
-        $a = array_column($data, 'id');
-        echo implode(',', $a);
         /*$url = 'http://service.tonglingok.com/sms/template';
           $company_id = 1;
           $company = $company_id == 1 ? 'OK' : '安心';
