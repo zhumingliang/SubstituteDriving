@@ -12,7 +12,7 @@ class TaskService
     public function sendToDriverTask($params)
     {
         $jobHandlerClassName = 'app\api\job\PushOrderToDriver';//负责处理推送订单消息给司机
-        $jobQueueName = "pushOrderToDriver";//队列名称
+        $jobQueueName = "pushDriverQueue";//队列名称
         $jobData = [
             'type' => $params['type'],
             'd_id' => $params['d_id'],
