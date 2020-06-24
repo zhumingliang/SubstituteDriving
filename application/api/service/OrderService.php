@@ -173,7 +173,7 @@ class OrderService
             $this->pushToDriver($d_id, $order);
             return $o_id;
         } catch (Exception $e) {
-            LogT::create(['msg' => 'save_order__manager:' . $e->getMessage()]);
+            LogT::create(['msg' => 'save_order_manager:' . $e->getMessage()]);
             throw  $e;
         }
     }
