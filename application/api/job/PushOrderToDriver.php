@@ -86,6 +86,7 @@ class PushOrderToDriver
     private function doJob($data)
     {
         try {
+            LogService::save(\GuzzleHttp\json_encode($data));
             $push_data = [
                 'type' => $data['order'],
                 'order_info' => [
@@ -102,11 +103,12 @@ class PushOrderToDriver
                 ]
             ];
             $d_id = $data['d_id'];
-            LogService::save($d_id);
             LogService::save(self::prefixMessage($push_data));
             Gateway::sendToUid('driver' . '-' . $d_id, self::prefixMessage($push_data));
             return false;
         } catch (Exception $e) {
+            LogService::save('error:'.$e->getMessage());
+
             return false;
         }
     }
