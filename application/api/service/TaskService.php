@@ -30,9 +30,7 @@ class TaskService
             'limit' => $params['limit'],
             'p_id' => $params['p_id']
         ];
-        LogService::save(json_encode($jobData));
         $isPushed = Queue::push($jobHandlerClassName, $jobData, $jobQueueName);
-        LogService::save($isPushed);
         //将该任务推送到消息队列
         if ($isPushed == false) {
             LogService::save('启动队列失败');
