@@ -11,7 +11,6 @@ class TaskService
 {
     public function sendToDriverTask($params)
     {
-        LogService::save(json_encode($params));
         $jobHandlerClassName = 'app\api\job\PushOrderToDriver';//负责处理推送订单消息给司机
         $jobQueueName = "pushOrderToDriver";//队列名称
         $jobData = [
@@ -31,6 +30,7 @@ class TaskService
             'p_id' => $params['p_id']
         ];
         $isPushed = Queue::push($jobHandlerClassName, $jobData, $jobQueueName);
+        LogService::save($isPushed);
         //将该任务推送到消息队列
         if ($isPushed == false) {
             LogService::save('启动队列失败');
