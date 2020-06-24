@@ -88,7 +88,7 @@ class PushOrderToDriver
         try {
             LogService::save(\GuzzleHttp\json_encode($data));
             $push_data = [
-                'type' => $data['order'],
+                'type' => $data['type'],
                 'order_info' => [
                     'o_id' => $data['o_id'],
                     'from' => $data['from'],
