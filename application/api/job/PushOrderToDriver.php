@@ -75,9 +75,7 @@ class PushOrderToDriver
     {
         $set = "webSocketReceiveCode";
         $code = $data['p_id'];
-        LogService::save('p_id:' . $code);
         $check = Redis::instance()->sIsMember($set, $code);
-        LogService::save('check:' . $check);
         return $check;
     }
 
@@ -103,6 +101,7 @@ class PushOrderToDriver
                 ]
             ];
             $d_id = $data['d_id'];
+            LogService::save('driver' . '-' . $d_id);
             LogService::save(self::prefixMessage($push_data));
             Gateway::sendToUid('driver' . '-' . $d_id, self::prefixMessage($push_data));
             return false;
