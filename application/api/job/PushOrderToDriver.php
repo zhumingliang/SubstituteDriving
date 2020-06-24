@@ -34,7 +34,7 @@ class PushOrderToDriver
             $job->delete();
         } else {
             if ($job->attempts() > 15) {
-                $this->updateOrderStatusToNo($data['o_id'],$data['company_id'],$data['d_id']);
+                $this->updateOrderStatusToNo($data['o_id'], $data['company_id'], $data['d_id']);
                 $job->delete();
             } else {
                 $job->release(3); //重发任务
@@ -42,7 +42,7 @@ class PushOrderToDriver
         }
     }
 
-    private function updateOrderStatusToNo($order_id,$company_id,$d_id)
+    private function updateOrderStatusToNo($order_id, $company_id, $d_id)
     {
         Redis::instance()->sRem('driver_order_receive:' . $company_id, $d_id);
         Redis::instance()->sRem('driver_order_ing:' . $company_id, $d_id);
@@ -60,7 +60,7 @@ class PushOrderToDriver
     public function failed($data)
     {
         //可以发送邮件给相应的负责人员
-        $this->updateOrderStatusToNo($data['o_id'],$data['company_id'],$data['d_id']);
+        $this->updateOrderStatusToNo($data['o_id'], $data['company_id'], $data['d_id']);
         LogService::save("失败:" . json_encode($data));
 
 //        print("Warning: Job failed after max retries. job data is :".var_export($data,true)."\n");
@@ -75,6 +75,8 @@ class PushOrderToDriver
     {
         $set = "webSocketReceiveCode";
         $code = $data['p_id'];
+        LogService::save('p_id:', $code);
+
         $check = Redis::instance()->sIsMember($set, $code);
         return $check;
     }
@@ -101,6 +103,7 @@ class PushOrderToDriver
                 ]
             ];
             $d_id = $data['d_id'];
+            LogService::save(self::prefixMessage($push_data));
             Gateway::sendToUid('driver' . '-' . $d_id, self::prefixMessage($push_data));
             return false;
         } catch (Exception $e) {

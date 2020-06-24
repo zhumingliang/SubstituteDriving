@@ -33,6 +33,7 @@ class TaskService
         $isPushed = Queue::push($jobHandlerClassName, $jobData, $jobQueueName);
         //将该任务推送到消息队列
         if ($isPushed == false) {
+            LogService::save('启动队列失败');
             throw new SaveException(['msg' => '发送推送给司机失败']);
         }
     }
