@@ -74,10 +74,10 @@ class PushOrderToDriver
     private function checkDatabaseToSeeIfJobNeedToBeDone($data)
     {
         $set = "webSocketReceiveCode";
-        LogService::save(json_encode($data));
         $code = $data['p_id'];
-        LogService::save('p_id:', $code);
+        LogService::save('p_id:' . $code);
         $check = Redis::instance()->sIsMember($set, $code);
+        LogService::save('check:' . $check);
         return $check;
     }
 
