@@ -582,9 +582,9 @@ class OrderService
     }
 
     private
-    function sendToMini($push)
+    function sendToMini($order_id)
     {
-        $order = $this->getOrder($push->o_id);
+        $order = $this->getOrder($order_id);
         $u_id = $order->u_id;
         $d_id = $order->d_id;
 
@@ -592,14 +592,14 @@ class OrderService
             $send_data = [
                 'type' => 'order',
                 'order_info' => [
-                    'id' => $order->id,
+                    'id' => $order_id,
                     'u_id' => $u_id,
                     'driver_name' => $order->driver->username,
                     'driver_phone' => $order->driver->phone,
                     'distance' => $this->getDriverDistance($order->start_lng, $order->start_lat, $d_id)
                 ]
             ];
-            MiniPushT::create(['u_id' => $u_id, 'message' => json_encode($send_data), 'count' => 1, 'o_id' => $order->id, 'state' => 1]);
+            MiniPushT::create(['u_id' => $u_id, 'message' => json_encode($send_data), 'count' => 1, 'o_id' => $order_id, 'state' => 1]);
             if (GatewayService::isMINIUidOnline($u_id)) {
                 GatewayService::sendToMiniClient($u_id, $send_data);
             }
@@ -850,7 +850,7 @@ class OrderService
 
 
     private
-    function checkOrderState($o_id, $receive = false)
+    function checkOrderState($o_id, $receive = true)
     {
         $order = OrderT::get($o_id);
         if ($order->state == OrderEnum::ORDER_CANCEL) {
