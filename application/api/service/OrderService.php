@@ -205,7 +205,7 @@ class OrderService
             'type' => 'order',
             'o_id' => $order->id,
             'd_id' => $d_id,
-            'name' => $order->name,
+            'name' => $driver->name,
             'company_id' => $order->company_id,
             'from' => "管理员建单",
             'phone' => $order->phone,
@@ -227,8 +227,10 @@ class OrderService
             'order_id' => $order_id,
             'driver_id' => $driver_id,
             'type' => $type,
-            'f_d_id' => $f_d_id];
+            'f_d_id' => $f_d_id
+        ];
         Redis::instance()->hMset($hashKey, $data);
+        LogService::save('p_id:' . $hashKey);
         return $hashKey;
     }
 
@@ -1288,16 +1290,16 @@ class OrderService
             'order_time' => date('H:i',
                 strtotime($order->create_time))]);
 
-      /*  $orderPush = OrderPushT::create(
-            [
-                'f_d_id' => $order->d_id,
-                'd_id' => $d_id,
-                'o_id' => $order->id,
-                'type' => 'transfer',
-                'state' => OrderEnum::ORDER_PUSH_NO,
-                'limit_time' => time()
-            ]
-        );*/
+        /*  $orderPush = OrderPushT::create(
+              [
+                  'f_d_id' => $order->d_id,
+                  'd_id' => $d_id,
+                  'o_id' => $order->id,
+                  'type' => 'transfer',
+                  'state' => OrderEnum::ORDER_PUSH_NO,
+                  'limit_time' => time()
+              ]
+          );*/
         //通过websocket推送给司机
         /*     $push_data = [
                  'type' => 'transfer',

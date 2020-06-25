@@ -78,10 +78,10 @@ class PushOrderToDriver
         $state = Redis::instance()->hGet($code, 'state');
         if ($state && $state == CommonEnum::STATE_IS_OK) {
             LogService::save('check:' . 1);
-            return true;
+            return false;
         }
         LogService::save('check:' . 2);
-        return false;
+        return true;
     }
 
     /**
