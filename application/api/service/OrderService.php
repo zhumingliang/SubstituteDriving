@@ -205,7 +205,7 @@ class OrderService
             'type' => 'order',
             'o_id' => $order->id,
             'd_id' => $d_id,
-            'name' => $driver->name,
+            'name' => $order->name,
             'company_id' => $order->company_id,
             'from' => "管理员建单",
             'phone' => $order->phone,
