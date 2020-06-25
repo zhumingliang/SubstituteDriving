@@ -508,36 +508,37 @@ class OrderService
 
             if ($type == OrderEnum::ORDER_PUSH_AGREE) {
                 //检测订单状态
-                $this->checkOrderState($order_id);
+                $order = $this->checkOrderState($order_id);
                 $this->prefixPushAgree($driver_id, $order_id);
                 //处理远程接驾费用
-                $this->prefixFarDistance($order_id, $driver_id);
+                $this->prefixFarDistance($order, $driver_id);
                 if ($push_type == "normal") {
                     $this->sendToMini($push);
                 } else
                     if ($push_type == "transfer") {
-                    //释放转单司机
-                    $this->prefixPushRefuse($f_d_id);
-                    //处理原订单状态
-                    //由触发器解决
-                    $send_data = [
-                        'type' => 'orderTransfer',
-                        'order_info' => [
-                            'id' => $order_id,
+                        //释放转单司机
+                        $this->prefixPushRefuse($f_d_id);
+                        //处理原订单状态
+                        //由触发器解决
+                        $send_data = [
+                            'type' => 'orderTransfer',
+                            'order_info' => [
+                                'id' => $order_id,
+                                'u_id' => $f_d_id,
+                                'msg' => '转单成功'
+                            ]
+                        ];
+                        MiniPushT::create([
                             'u_id' => $f_d_id,
-                            'msg' => '转单成功'
-                        ]
-                    ];
-                    MiniPushT::create([
-                        'u_id' => $f_d_id,
-                        'message' => json_encode($send_data),
-                        'count' => 1,
-                        'state' => 1,
-                        'send_to' => 2,
-                        'o_id' => $order_id
-                    ]);
+                            'message' => json_encode($send_data),
+                            'count' => 1,
+                            'state' => 1,
+                            'send_to' => 2,
+                            'o_id' => $order_id
+                        ]);
 
-                }
+                    }
+                OrderT::update(['d_id' => $driver_id], ['id' => $order_id]);
             } else if ($type == OrderEnum::ORDER_PUSH_REFUSE) {
                 $this->prefixPushRefuse($driver_id, $order_id);
             }
@@ -549,15 +550,14 @@ class OrderService
     }
 
     private
-    function prefixFarDistance($o_id, $d_id)
+    function prefixFarDistance($order, $d_id)
     {
-        $order = $this->getOrder($o_id);
+        // $order = $this->getOrder($o_id);
         if ($order->from == OrderEnum::FROM_DRIVER) {
             return true;
         }
         $location = $this->getDriverLocation($d_id);
         $far = $this->prefixFar($order->start_lng, $order->start_lat, $location['lng'], $location['lat']);
-
         $order->far_distance = $far['far_distance'];
         $order->far_money = $far['far_money'];
         $order->save();
