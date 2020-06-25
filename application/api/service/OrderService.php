@@ -149,7 +149,6 @@ class OrderService
             if (!empty($params['t_id'])) {
                 (new TicketService())->prefixTicketHandel($params['t_id'], TicketEnum::STATE_ING);
             }
-
             //处理无司机订单
             if (empty($params['d_id'])) {
                 return $this->createOrderWithoutDriver($params);
@@ -164,7 +163,6 @@ class OrderService
             $o_id = $order->id;
             //新增到订单待处理队列-状态：正在派单
             $this->saveOrderList($o_id, OrderEnum::ORDER_LIST_ING);
-
             //处理司机状态
             //未接单状态->已接单状态
             (new DriverService())->handelDriveStateByING($d_id);
@@ -200,8 +198,6 @@ class OrderService
             (new SendSMSService())->sendOrderSMS($phone, ['code' => 'OK' . $order->order_num, 'order_time' => date('H:i', strtotime($order->create_time))]);
 
             $distance_info = $this->getDistanceInfoToPush($order, $d_id);
-            LogService::save('begin:push');
-
             //通过websocket推送给司机
             $push_data = [
                 'type' => 'order',
@@ -499,50 +495,56 @@ class OrderService
     public
     function orderPushHandel($params)
     {
-        $p_id = $params['p_id'];
-        $type = $params['type'];
-        //修改推送表状态
-        $push = Redis::instance()->hGet($p_id);
-        // Redis::instance()->hSet($p_id, 'state', $type);
-        $push_type = $push['type'];
-        $order_id = $push['order_id'];
-        $driver_id = $push['driver_id'];
-        $f_d_id = $push['f_d_id'];
+        try {
+            $p_id = $params['p_id'];
+            $type = $params['type'];
+            //修改推送表状态
+            $push = Redis::instance()->hGet($p_id);
+            // Redis::instance()->hSet($p_id, 'state', $type);
+            $push_type = $push['type'];
+            $order_id = $push['order_id'];
+            $driver_id = $push['driver_id'];
+            $f_d_id = $push['f_d_id'];
 
-        if ($type == OrderEnum::ORDER_PUSH_AGREE) {
-            //检测订单状态
-            $this->checkOrderState($order_id);
-            $this->prefixPushAgree($driver_id, $order_id);
-            //处理远程接驾费用
-            $this->prefixFarDistance($order_id, $driver_id);
-            if ($push_type == "normal") {
-                $this->sendToMini($push);
-            } else if ($push_type == "transfer") {
-                //释放转单司机
-                $this->prefixPushRefuse($f_d_id);
-                //处理原订单状态
-                //由触发器解决
-                $send_data = [
-                    'type' => 'orderTransfer',
-                    'order_info' => [
-                        'id' => $order_id,
+            if ($type == OrderEnum::ORDER_PUSH_AGREE) {
+                //检测订单状态
+                $this->checkOrderState($order_id);
+                $this->prefixPushAgree($driver_id, $order_id);
+                //处理远程接驾费用
+                $this->prefixFarDistance($order_id, $driver_id);
+                if ($push_type == "normal") {
+                    $this->sendToMini($push);
+                } else
+                    if ($push_type == "transfer") {
+                    //释放转单司机
+                    $this->prefixPushRefuse($f_d_id);
+                    //处理原订单状态
+                    //由触发器解决
+                    $send_data = [
+                        'type' => 'orderTransfer',
+                        'order_info' => [
+                            'id' => $order_id,
+                            'u_id' => $f_d_id,
+                            'msg' => '转单成功'
+                        ]
+                    ];
+                    MiniPushT::create([
                         'u_id' => $f_d_id,
-                        'msg' => '转单成功'
-                    ]
-                ];
-                MiniPushT::create([
-                    'u_id' => $f_d_id,
-                    'message' => json_encode($send_data),
-                    'count' => 1,
-                    'state' => 1,
-                    'send_to' => 2,
-                    'o_id' => $order_id
-                ]);
+                        'message' => json_encode($send_data),
+                        'count' => 1,
+                        'state' => 1,
+                        'send_to' => 2,
+                        'o_id' => $order_id
+                    ]);
 
+                }
+            } else if ($type == OrderEnum::ORDER_PUSH_REFUSE) {
+                $this->prefixPushRefuse($driver_id, $order_id);
             }
-        } else if ($type == OrderEnum::ORDER_PUSH_REFUSE) {
-            $this->prefixPushRefuse($driver_id, $order_id);
+        } catch (Exception $e) {
+            LogService::save($e->getMessage());
         }
+
 
     }
 
@@ -801,7 +803,7 @@ class OrderService
     {
         $o_id = $params['id'];
         //检测订单是否被取消
-        $order = $this->checkOrderState($o_id,true);
+        $order = $this->checkOrderState($o_id, true);
         $order->begin = CommonEnum::STATE_IS_OK;
         if (!empty($params['start'])) {
             $order->start = CommonEnum::STATE_IS_OK;
@@ -823,7 +825,7 @@ class OrderService
     public
     function beginWait($params)
     {
-        $order = $this->checkOrderState($params['id'],true);
+        $order = $this->checkOrderState($params['id'], true);
         $order->begin = CommonEnum::STATE_IS_OK;
         $order->begin_wait = date('Y-m-d H:i:s', time());
         $res = $order->save();
@@ -838,7 +840,7 @@ class OrderService
     public
     function arrivingStart($id)
     {
-        $order = $this->checkOrderState($id,true);
+        $order = $this->checkOrderState($id, true);
         $order->arriving_time = date('Y-m-d H:i:s', time());
         $res = $order->save();
         if (!$res) {
