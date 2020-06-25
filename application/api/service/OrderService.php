@@ -508,7 +508,7 @@ class OrderService
 
             if ($type == OrderEnum::ORDER_PUSH_AGREE) {
                 //检测订单状态
-                $order = $this->checkOrderState($order_id);
+                $order = $this->checkOrderState($order_id, false);
                 $this->prefixPushAgree($driver_id, $order_id);
                 //处理远程接驾费用
                 $this->prefixFarDistance($order, $driver_id);
