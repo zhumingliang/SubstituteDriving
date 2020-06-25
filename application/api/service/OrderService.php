@@ -132,7 +132,6 @@ class OrderService
     public function saveManagerOrder($params)
     {
         try {
-
             if (key_exists('phone', $params) && strlen($params['phone'])) {
                 $params['u_id'] = (new UserInfo('', ''))->checkUserByPhone($params['phone'], $params['name'], 4, "管理员");
             }
@@ -194,35 +193,44 @@ class OrderService
      */
     private function pushToDriver($d_id, $order)
     {
-        //通过短信推送给司机
-        $driver = DriverT::where('id', $d_id)->find();
-        $phone = $driver->phone;
-        (new SendSMSService())->sendOrderSMS($phone, ['code' => 'OK' . $order->order_num, 'order_time' => date('H:i', strtotime($order->create_time))]);
+        try {
+            //通过短信推送给司机
+            $driver = DriverT::where('id', $d_id)->find();
+            $phone = $driver->phone;
+            (new SendSMSService())->sendOrderSMS($phone, ['code' => 'OK' . $order->order_num, 'order_time' => date('H:i', strtotime($order->create_time))]);
 
-        $distance_info = $this->getDistanceInfoToPush($order, $d_id);
-        //通过websocket推送给司机
-        $push_data = [
-            'type' => 'order',
-            'o_id' => $order->id,
-            'd_id' => $d_id,
-            'name' => $order->name,
-            'company_id' => $order->company_id,
-            'from' => "管理员建单",
-            'phone' => $order->phone,
-            'start' => $order->start,
-            'end' => $order->end,
-            'distance' => $distance_info['distance'],
-            'distance_money' => 0,
-            'create_time' => $order->create_time,
-            'limit_time' => time(),
-            'p_id' => $this->savePushCode($order->id, $d_id, 'normal')
-        ];
-        (new TaskService())->sendToDriverTask($push_data);
+            $distance_info = $this->getDistanceInfoToPush($order, $d_id);
+            LogService::save('begin:push');
+
+            //通过websocket推送给司机
+            $push_data = [
+                'type' => 'order',
+                'o_id' => $order->id,
+                'd_id' => $d_id,
+                'name' => $order->name,
+                'company_id' => $order->company_id,
+                'from' => "管理员建单",
+                'phone' => $order->phone,
+                'start' => $order->start,
+                'end' => $order->end,
+                'distance' => $distance_info['distance'],
+                'distance_money' => 0,
+                'create_time' => $order->create_time,
+                'limit_time' => time(),
+                'p_id' => $this->savePushCode($order->id, $d_id, 'normal')
+            ];
+            (new TaskService())->sendToDriverTask($push_data);
+        } catch (Exception $e) {
+            LogService::save('error:' . $e->getMessage()
+            );
+        }
+
     }
 
     public function savePushCode($order_id, $driver_id, $type = "normal", $f_d_id = 0)
     {
         $hashKey = getRandChar(8);
+        LogService::save('begin_p_id:' . $hashKey);
         $data = [
             'order_id' => $order_id,
             'driver_id' => $driver_id,
