@@ -508,14 +508,13 @@ class OrderService
 
             if ($type == OrderEnum::ORDER_PUSH_AGREE) {
                 //检测订单状态
-                $order = $this->checkOrderState($order_id, false);
+                OrderT::update(['d_id' => $driver_id], ['id' => $order_id]);
+                $order = $this->checkOrderState($order_id);
                 $this->prefixPushAgree($driver_id, $order_id);
                 //处理远程接驾费用
                 $this->prefixFarDistance($order, $driver_id);
                 if ($push_type == "normal") {
-                    LogService::save('1');
-                    $this->sendToMini($push);
-                    LogService::save('2');
+                    $this->sendToMini($order_id);
                 } else
                     if ($push_type == "transfer") {
                         //释放转单司机
@@ -540,7 +539,6 @@ class OrderService
                         ]);
 
                     }
-                OrderT::update(['d_id' => $driver_id], ['id' => $order_id]);
             } else if ($type == OrderEnum::ORDER_PUSH_REFUSE) {
                 $this->prefixPushRefuse($driver_id, $order_id);
             }
@@ -1227,7 +1225,7 @@ class OrderService
     private
     function getOrder($id)
     {
-        $order = OrderT::with(['ticket', 'driver'])->where('id',$id)->find();
+        $order = OrderT::with(['ticket', 'driver'])->where('id', $id)->find();
         if (!$order) {
             throw new UpdateException(['msg' => '订单不存在']);
         }
