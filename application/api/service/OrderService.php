@@ -31,6 +31,7 @@ use app\lib\exception\UpdateException;
 use GuzzleHttp\Handler\CurlHandler;
 use think\Db;
 use think\Exception;
+use think\facade\Log;
 use zml\tp_tools\CalculateUtil;
 use zml\tp_tools\Redis;
 
@@ -214,17 +215,21 @@ class OrderService
             'distance_money' => 0,
             'create_time' => $order->create_time,
             'limit_time' => time(),
-            'p_id' => $this->savePushCode()
+            'p_id' => $this->savePushCode($order->id, $d_id, 'normal')
         ];
         (new TaskService())->sendToDriverTask($push_data);
     }
 
-    public function savePushCode()
+    public function savePushCode($order_id, $driver_id, $type = "normal", $f_d_id = 0)
     {
-        $set = "webSocketReceiveCode";
-        $sortCode = getRandChar(8);
-        Redis::instance()->sAdd($set, $sortCode);
-        return $sortCode;
+        $hashKey = getRandChar(8);
+        $data = [
+            'order_id' => $order_id,
+            'driver_id' => $driver_id,
+            'type' => $type,
+            'f_d_id' => $f_d_id];
+        Redis::instance()->hMset($hashKey, $data);
+        return $hashKey;
     }
 
     private function prefixFar($start_lng, $start_lat, $driver_lng, $driver_lat)
@@ -487,44 +492,47 @@ class OrderService
         $p_id = $params['p_id'];
         $type = $params['type'];
         //修改推送表状态
-        $push = OrderPushT::get($p_id);
-        $push->state = $type;
-        $push->save();
-        $push_type = $push->type;
+        $push = Redis::instance()->hGet($p_id);
+        LogService::save(json_encode($push));
+        Redis::instance()->hSet($p_id, 'state', $type);
+        $push_type = $push['type'];
+        $order_id = $push['order_id'];
+        $driver_id = $push['driver_id'];
+        $f_d_id = $push['f_d_id'];
 
         if ($type == OrderEnum::ORDER_PUSH_AGREE) {
             //检测订单状态
-            $this->checkOrderState($push->o_id);
-            $this->prefixPushAgree($push->d_id, $push->o_id);
+            $this->checkOrderState($order_id);
+            $this->prefixPushAgree($driver_id, $order_id);
             //处理远程接驾费用
-            $this->prefixFarDistance($push->o_id, $push->d_id);
+            $this->prefixFarDistance($order_id, $driver_id);
             if ($push_type == "normal") {
                 $this->sendToMini($push);
             } else if ($push_type == "transfer") {
                 //释放转单司机
-                $this->prefixPushRefuse($push->f_d_id);
+                $this->prefixPushRefuse($f_d_id);
                 //处理原订单状态
                 //由触发器解决
                 $send_data = [
                     'type' => 'orderTransfer',
                     'order_info' => [
-                        'id' => $push->o_id,
-                        'u_id' => $push->f_d_id,
+                        'id' => $order_id,
+                        'u_id' => $f_d_id,
                         'msg' => '转单成功'
                     ]
                 ];
                 MiniPushT::create([
-                    'u_id' => $push->f_d_id,
+                    'u_id' => $f_d_id,
                     'message' => json_encode($send_data),
                     'count' => 1,
                     'state' => 1,
                     'send_to' => 2,
-                    'o_id' => $push->o_id
+                    'o_id' => $order_id
                 ]);
 
             }
         } else if ($type == OrderEnum::ORDER_PUSH_REFUSE) {
-            $this->prefixPushRefuse($push->d_id, $push->o_id);
+            $this->prefixPushRefuse($order_id, $order_id);
         }
 
     }
@@ -1280,7 +1288,7 @@ class OrderService
             'order_time' => date('H:i',
                 strtotime($order->create_time))]);
 
-        $orderPush = OrderPushT::create(
+      /*  $orderPush = OrderPushT::create(
             [
                 'f_d_id' => $order->d_id,
                 'd_id' => $d_id,
@@ -1289,27 +1297,47 @@ class OrderService
                 'state' => OrderEnum::ORDER_PUSH_NO,
                 'limit_time' => time()
             ]
-        );
+        );*/
+        //通过websocket推送给司机
+        /*     $push_data = [
+                 'type' => 'transfer',
+                 'order_info' => [
+                     'from_type' => $push_type == "transfer" ? 'driver' : 'manager',
+                     'from' => $from_name,
+                     'o_id' => $order->id,
+                     'name' => $order->name,
+                     'phone' => $order->phone,
+                     'start' => $order->start,
+                     'end' => $order->end,
+                     'create_time' => $order->create_time,
+                     'p_id' => $orderPush->id,
+                     'distance' => $distance_info['distance'],
+                     'distance_money' => $distance_info['distance_money']
+                 ]
+             ];
+             GatewayService::sendToDriverClient($d_id, $push_data);
+             $orderPush->message = json_encode($push_data);
+             $orderPush->save();*/
+
         //通过websocket推送给司机
         $push_data = [
+            'from_type' => $push_type == "transfer" ? 'driver' : 'manager',
             'type' => 'transfer',
-            'order_info' => [
-                'from_type' => $push_type == "transfer" ? 'driver' : 'manager',
-                'from' => $from_name,
-                'o_id' => $order->id,
-                'name' => $order->name,
-                'phone' => $order->phone,
-                'start' => $order->start,
-                'end' => $order->end,
-                'create_time' => $order->create_time,
-                'p_id' => $orderPush->id,
-                'distance' => $distance_info['distance'],
-                'distance_money' => $distance_info['distance_money']
-            ]
+            'o_id' => $order->id,
+            'd_id' => $d_id,
+            'name' => $order->name,
+            'company_id' => $order->company_id,
+            'from' => $from_name,
+            'phone' => $order->phone,
+            'start' => $order->start,
+            'end' => $order->end,
+            'distance' => $distance_info['distance'],
+            'distance_money' => 0,
+            'create_time' => $order->create_time,
+            'limit_time' => time(),
+            'p_id' => $this->savePushCode($order->id, $d_id, 'transfer', $order->d_id)
         ];
-        GatewayService::sendToDriverClient($d_id, $push_data);
-        $orderPush->message = json_encode($push_data);
-        $orderPush->save();
+        (new TaskService())->sendToDriverTask($push_data);
     }
 
 

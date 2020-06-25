@@ -37,7 +37,6 @@ class Index
         Redis::instance()->sAdd('driver_order_no:' . 1, $d_id);
         Redis::instance()->sRem('driver_order_receive:' . 1, $d_id);
         Redis::instance()->sRem('driver_order_ing:' . 1, $d_id);
-
         /*$url = 'http://service.tonglingok.com/sms/template';
           $company_id = 1;
           $company = $company_id == 1 ? 'OK' : '安心';

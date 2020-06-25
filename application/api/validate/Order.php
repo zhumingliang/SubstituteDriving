@@ -7,7 +7,6 @@ namespace app\api\validate;
 class Order extends BaseValidate
 {
     protected $rule = [
-        'p_id' => 'require|isPositiveInteger',
         'id' => 'require|isPositiveInteger',
         'type' => 'require|in:2,3',
         'start' => 'require|isNotEmpty',
@@ -22,7 +21,7 @@ class Order extends BaseValidate
     ];
 
     protected $scene = [
-        'orderPushHandel' => ['p_id', 'type'],
+        'orderPushHandel' => ['type'],
         'miniCancel' => ['id', 'remark'],
         'miniOrder' => ['id'],
         'driverOrder' => ['id'],

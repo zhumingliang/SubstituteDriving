@@ -5,6 +5,7 @@ namespace app\api\job;
 
 
 use app\api\service\LogService;
+use app\lib\enum\CommonEnum;
 use GatewayClient\Gateway;
 use think\Exception;
 use think\queue\Job;
@@ -73,11 +74,14 @@ class PushOrderToDriver
      */
     private function checkDatabaseToSeeIfJobNeedToBeDone($data)
     {
-        $set = "webSocketReceiveCode";
         $code = $data['p_id'];
-        $check = Redis::instance()->sIsMember($set, $code);
-        LogService::save('check:'.$check);
-        return $check;
+        $state = Redis::instance()->hGet($code, 'state');
+        if ($state && $state == CommonEnum::STATE_IS_OK) {
+            LogService::save('check:' . 1);
+            return true;
+        }
+        LogService::save('check:' . 2);
+        return false;
     }
 
     /**
@@ -107,7 +111,7 @@ class PushOrderToDriver
             Gateway::sendToUid('driver' . '-' . $d_id, self::prefixMessage($push_data));
             return false;
         } catch (Exception $e) {
-            LogService::save('error:'.$e->getMessage());
+            LogService::save('error:' . $e->getMessage());
 
             return false;
         }
