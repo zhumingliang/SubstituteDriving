@@ -513,7 +513,9 @@ class OrderService
                 //处理远程接驾费用
                 $this->prefixFarDistance($order, $driver_id);
                 if ($push_type == "normal") {
+                    LogService::save('1');
                     $this->sendToMini($push);
+                    LogService::save('2');
                 } else
                     if ($push_type == "transfer") {
                         //释放转单司机
@@ -1225,7 +1227,7 @@ class OrderService
     private
     function getOrder($id)
     {
-        $order = OrderT::with(['ticket', 'driver'])->get($id);
+        $order = OrderT::with(['ticket', 'driver'])->where('id',$id)->find();
         if (!$order) {
             throw new UpdateException(['msg' => '订单不存在']);
         }
