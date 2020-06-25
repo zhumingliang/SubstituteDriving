@@ -503,8 +503,7 @@ class OrderService
         $type = $params['type'];
         //修改推送表状态
         $push = Redis::instance()->hGet($p_id);
-        LogService::save(json_encode($push));
-        Redis::instance()->hSet($p_id, 'state', $type);
+        // Redis::instance()->hSet($p_id, 'state', $type);
         $push_type = $push['type'];
         $order_id = $push['order_id'];
         $driver_id = $push['driver_id'];
@@ -542,7 +541,7 @@ class OrderService
 
             }
         } else if ($type == OrderEnum::ORDER_PUSH_REFUSE) {
-            $this->prefixPushRefuse($order_id, $order_id);
+            $this->prefixPushRefuse($driver_id, $order_id);
         }
 
     }
@@ -802,7 +801,7 @@ class OrderService
     {
         $o_id = $params['id'];
         //检测订单是否被取消
-        $order = $this->checkOrderState($o_id);
+        $order = $this->checkOrderState($o_id,true);
         $order->begin = CommonEnum::STATE_IS_OK;
         if (!empty($params['start'])) {
             $order->start = CommonEnum::STATE_IS_OK;
@@ -824,7 +823,7 @@ class OrderService
     public
     function beginWait($params)
     {
-        $order = $this->checkOrderState($params['id']);
+        $order = $this->checkOrderState($params['id'],true);
         $order->begin = CommonEnum::STATE_IS_OK;
         $order->begin_wait = date('Y-m-d H:i:s', time());
         $res = $order->save();
@@ -839,7 +838,7 @@ class OrderService
     public
     function arrivingStart($id)
     {
-        $order = $this->checkOrderState($id);
+        $order = $this->checkOrderState($id,true);
         $order->arriving_time = date('Y-m-d H:i:s', time());
         $res = $order->save();
         if (!$res) {
@@ -849,7 +848,7 @@ class OrderService
 
 
     private
-    function checkOrderState($o_id)
+    function checkOrderState($o_id, $receive = false)
     {
         $order = OrderT::get($o_id);
         if ($order->state == OrderEnum::ORDER_CANCEL) {
@@ -860,10 +859,11 @@ class OrderService
             }
             throw new UpdateException(['errorCode' => 40011, 'msg' => $msg]);
         }
-        if ($order->d_id != Token::getCurrentUid()) {
-            throw new UpdateException(['errorCode' => 40012, 'msg' => '订单被转派或者撤回']);
+        if ($receive) {
+            if ($order->d_id != Token::getCurrentUid()) {
+                throw new UpdateException(['errorCode' => 40012, 'msg' => '订单被转派或者撤回']);
+            }
         }
-
         //检测订单是否被撤回
         $revoke = OrderRevokeT::where('o_id', $o_id)
             ->where('d_id', Token::getCurrentUid())
