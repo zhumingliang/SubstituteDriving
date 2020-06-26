@@ -226,12 +226,12 @@ class OrderService
     public function savePushCode($order_id, $driver_id, $type = "normal", $f_d_id = 0)
     {
         $hashKey = getRandChar(8);
-        LogService::save('begin_p_id:' . $hashKey);
         $data = [
             'order_id' => $order_id,
             'driver_id' => $driver_id,
             'type' => $type,
-            'f_d_id' => $f_d_id
+            'f_d_id' => $f_d_id,
+            'state'=>1
         ];
         Redis::instance()->hMset($hashKey, $data);
         LogService::save('p_id:' . $hashKey);

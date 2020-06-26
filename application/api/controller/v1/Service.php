@@ -5,6 +5,7 @@ namespace app\api\controller\v1;
 
 
 use app\api\controller\BaseController;
+use app\api\service\LogService;
 use app\api\service\OrderService;
 use app\api\service\TaskService;
 use app\lib\exception\SaveException;
@@ -31,6 +32,7 @@ class Service extends BaseController
 
     public function sendOrderNoticeToDriver()
     {
+
         $params = Request::param();
         (new TaskService())->sendToDriverTask($params);
         return json(new SuccessMessage());
