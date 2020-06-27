@@ -793,6 +793,7 @@ class OrderService
             Db::commit();
         } catch (Exception $e) {
             Db::rollback();
+            LogService::save($e->getMessage());
             throw $e;
         }
     }
