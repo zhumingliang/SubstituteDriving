@@ -225,15 +225,15 @@ class OrderService
 
     public function savePushCode($order_id, $driver_id, $type = "normal", $f_d_id = 0)
     {
-        $hashKey = getRandChar(8);
+        $hashKey = $order_id;
         $data = [
             'order_id' => $order_id,
             'driver_id' => $driver_id,
             'type' => $type,
             'f_d_id' => $f_d_id,
-            'state'=>1
+            'state' => 1
         ];
-        Redis::instance()->hMset($hashKey, $data,45);
+        Redis::instance()->hMset($hashKey, $data, 45);
         LogService::save('p_id:' . $hashKey);
         return $hashKey;
     }
@@ -1623,15 +1623,19 @@ class OrderService
             //发送推送给司机说明订单撤销
             $this->pushDriverWithOrderRevoke($d_id);
         } else {
-            $orderPush = OrderPushT::where('o_id', $o_id)
-                ->where('state', CommonEnum::STATE_IS_OK)
-                ->order('create_time desc')
-                ->find();
-            if ($orderPush) {
-                $d_id = $orderPush->d_id;
+            /* $orderPush = OrderPushT::where('o_id', $o_id)
+                 ->where('state', CommonEnum::STATE_IS_OK)
+                 ->order(
+            'create_time desc')
+                ->find();*/
+
+            $p_id = $o_id;
+            //修改推送表状态
+            $push = Redis::instance()->hGet($p_id);
+            if ($push) {
+                $d_id = $push['driver_id'];
                 //处理推送取消
-                $orderPush->state = OrderEnum::ORDER_PUSH_WITHDRAW;
-                $orderPush->save();
+                Redis::instance()->hSet($p_id, 'state', 2);
             } else {
                 $d_id = '';
             }
