@@ -233,7 +233,7 @@ class OrderService
             'f_d_id' => $f_d_id,
             'state'=>1
         ];
-        Redis::instance()->hMset($hashKey, $data);
+        Redis::instance()->hMset($hashKey, $data,45);
         LogService::save('p_id:' . $hashKey);
         return $hashKey;
     }

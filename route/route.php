@@ -10,6 +10,7 @@
 // +----------------------------------------------------------------------
 
 Route::rule('api/:version/index', 'api/:version.Index/index');
+Route::rule('api/:version/log', 'api/:version.Index/log');
 Route::rule('api/:version/send', 'api/:version.Index/send');
 
 Route::post('api/:version/token/admin', 'api/:version.Token/getAdminToken');

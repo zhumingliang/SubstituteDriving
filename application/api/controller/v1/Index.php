@@ -84,6 +84,15 @@ class Index
           echo $distance;*/
     }
 
+    public function log($msg = '')
+    {
+        $data = [
+            'phone' => \app\api\service\Token::getCurrentTokenVar('phone'),
+            'msg' => $msg
+        ];
+        LogService::save(json_encode($data));
+
+    }
 
     public
     function sendMessage($name)
