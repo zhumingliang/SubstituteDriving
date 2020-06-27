@@ -508,7 +508,7 @@ class OrderService
 
             if ($type == OrderEnum::ORDER_PUSH_AGREE) {
                 //检测订单状态
-                OrderT::update(['d_id' => $driver_id], ['id' => $order_id]);
+                OrderT::update(['d_id' => $driver_id, 'state' => 2], ['id' => $order_id]);
                 $order = $this->checkOrderState($order_id);
                 $this->prefixPushAgree($driver_id, $order_id);
                 //处理远程接驾费用
