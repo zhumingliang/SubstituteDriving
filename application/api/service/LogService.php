@@ -13,7 +13,6 @@ class LogService
         LogT::create([
             'msg' => $msg
         ]);
-
     }
 
 }

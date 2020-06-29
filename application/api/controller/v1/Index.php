@@ -3,6 +3,7 @@
 namespace app\api\controller\v1;
 
 use app\api\model\DriverT;
+use app\api\model\LocationLogT;
 use app\api\model\LocationT;
 use app\api\model\MiniPushT;
 use app\api\model\OrderPushT;
@@ -91,7 +92,7 @@ class Index
             'phone' => \app\api\service\Token::getCurrentTokenVar('phone'),
             'msg' => $msg
         ];
-        LogService::save(json_encode($data));
+        LocationLogT::create($data);
         return json(new SuccessMessage());
 
     }
