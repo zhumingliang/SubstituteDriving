@@ -22,6 +22,7 @@ use app\api\service\SystemPriceService;
 use app\api\service\UserToken;
 use app\lib\enum\CommonEnum;
 use app\lib\enum\OrderEnum;
+use app\lib\exception\SuccessMessage;
 use app\lib\exception\SuccessMessageWithData;
 use app\lib\Http;
 use think\Queue;
@@ -91,6 +92,7 @@ class Index
             'msg' => $msg
         ];
         LogService::save(json_encode($data));
+        return json(new SuccessMessage());
 
     }
 

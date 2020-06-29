@@ -624,6 +624,8 @@ class OrderService
         //将订单由正在处理集合改为未处理集合
         $redis->sRem('order:ing', $order_id);
         $redis->sAdd('order:no', $order_id);
+
+        //将司机加入巨拒单列表，不会重复发送
     }
 
     private
@@ -1636,7 +1638,7 @@ class OrderService
             if ($push) {
                 $d_id = $push['driver_id'];
                 //处理推送取消
-                Redis::instance()->hSet($p_id, 'state', 2);
+               // Redis::instance()->hSet($p_id, 'state', 2);
             } else {
                 $d_id = '';
             }
