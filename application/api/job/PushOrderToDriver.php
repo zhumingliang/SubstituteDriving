@@ -76,6 +76,7 @@ class PushOrderToDriver
     {
         $code = $data['p_id'];
         $state = Redis::instance()->hGet($code, 'state');
+        LogService::save("state:" . $state);
         if ($state && $state > CommonEnum::STATE_IS_OK) {
             return false;
         }
@@ -108,7 +109,6 @@ class PushOrderToDriver
             return false;
         } catch (Exception $e) {
             LogService::save('error:' . $e->getMessage());
-
             return false;
         }
     }

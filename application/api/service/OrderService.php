@@ -499,6 +499,7 @@ class OrderService
             $type = $params['type'];
             //修改推送表状态
             $push = Redis::instance()->hGet($p_id);
+            LogService::save(json_encode($push));
             // Redis::instance()->hSet($p_id, 'state', $type);
             $push_type = $push['type'];
             $order_id = $push['order_id'];
@@ -542,7 +543,7 @@ class OrderService
                 $this->prefixPushRefuse($driver_id, $order_id);
             }
         } catch (Exception $e) {
-            LogService::save($e->getMessage());
+            LogService::save("handel:" . $e->getTraceAsString());
         }
 
 
@@ -681,7 +682,7 @@ class OrderService
         //设置三个set: 司机未接单 driver_order_no；司机正在派单 driver_order_ing；司机已经接单 driver_order_receive
         foreach ($list as $k => $v) {
             $d_id = $v;
-            $checkDriver = (new DriverService())->checkDriverCanReceiveOrder($d_id,$order['id']);
+            $checkDriver = (new DriverService())->checkDriverCanReceiveOrder($d_id, $order['id']);
             if ($checkDriver) {
                 $check = $this->checkDriverPush($order_id, $d_id);
                 if ($check == 2) {

@@ -26,6 +26,7 @@ use app\lib\enum\OrderEnum;
 use app\lib\exception\SuccessMessage;
 use app\lib\exception\SuccessMessageWithData;
 use app\lib\Http;
+use think\Exception;
 use think\Queue;
 use zml\tp_aliyun\SendSms;
 use zml\tp_tools\CalculateUtil;
@@ -36,9 +37,14 @@ class Index
 {
     public function index($d_id = 50)
     {
-        Redis::instance()->sAdd('driver_order_no:' . 1, $d_id);
-        Redis::instance()->sRem('driver_order_receive:' . 1, $d_id);
-        Redis::instance()->sRem('driver_order_ing:' . 1, $d_id);
+        try {
+
+            $a = [
+                'age'=>1
+            ];
+            $b=$a['name'];
+        } catch (Exception $e) {
+        }
         /*$url = 'http://service.tonglingok.com/sms/template';
           $company_id = 1;
           $company = $company_id == 1 ? 'OK' : '安心';

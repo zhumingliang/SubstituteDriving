@@ -12,7 +12,6 @@ class TaskService
     public function sendToDriverTask($params)
     {
 
-        LogService::save(json_encode($params));
         $jobHandlerClassName = 'app\api\job\PushOrderToDriver';//负责处理推送订单消息给司机
         $jobQueueName = "pushDriverQueue";//队列名称
         $jobData = [

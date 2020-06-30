@@ -20,6 +20,7 @@ class CORS
 {
     public function appInit($params)
     {
+
         //解决跨域
         header('Access-Control-Allow-Origin: *');
         header("Access-Control-Allow-Headers: token,Origin, X-Requested-With, Content-Type, Accept");
