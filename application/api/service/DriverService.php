@@ -607,18 +607,22 @@ class DriverService extends BaseService
     }
 
     public
-    function checkDriverCanReceiveOrder($d_id)
+    function checkDriverCanReceiveOrder($d_id, $order_id = 0)
     {
         if (!(GatewayService::isDriverUidOnline($d_id))) {
+            return false;
+        }
+        if (!($this->checkOnline($d_id))) {
             return false;
         }
         $company_id = $this->getDriverCompanyId($d_id);
         if (!($this->redis->sIsMember('driver_order_no:' . $company_id, $d_id))) {
             return false;
         }
-        if (!($this->checkOnline($d_id))) {
+        if ($order_id && $this->redis->sIsMember("refuse:$order_id", $d_id)) {
             return false;
         }
+
         return true;
     }
 

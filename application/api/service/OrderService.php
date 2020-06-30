@@ -626,7 +626,11 @@ class OrderService
         $redis->sAdd('order:no', $order_id);
 
         //将司机加入巨拒单列表，不会重复发送
+        if ($order_id) {
+            $redis->sAdd("refuse:$order_id", $d_id);
+        }
     }
+
 
     private
     function saveOrder($data)
@@ -665,6 +669,7 @@ class OrderService
         //查询所有司机并按距离排序
         $lat = $order['start_lat'];
         $lng = $order['start_lng'];
+        $order_id = $order['id'];
         $driver_location_key = BaseService::getLocationCacheKey($company_id);
         $list = $redis->rawCommand('georadius',
             $driver_location_key, $lng, $lat,
@@ -677,13 +682,12 @@ class OrderService
         //设置三个set: 司机未接单 driver_order_no；司机正在派单 driver_order_ing；司机已经接单 driver_order_receive
         foreach ($list as $k => $v) {
             $d_id = $v;
-            $checkDriver = (new DriverService())->checkDriverCanReceiveOrder($d_id);
+            $checkDriver = (new DriverService())->checkDriverCanReceiveOrder($d_id,$order['id']);
             if ($checkDriver) {
-                $check = $this->checkDriverPush($order->id, $d_id);
+                $check = $this->checkDriverPush($order_id, $d_id);
                 if ($check == 2) {
                     continue;
                 }
-
                 //将司机从'未接单'移除，添加到：正在派单
                 $redis->sRem('driver_order_no:' . $company_id, $d_id);
                 $redis->sRem('driver_order_receive:' . $company_id, $d_id);
@@ -1638,7 +1642,7 @@ class OrderService
             if ($push) {
                 $d_id = $push['driver_id'];
                 //处理推送取消
-               // Redis::instance()->hSet($p_id, 'state', 2);
+                // Redis::instance()->hSet($p_id, 'state', 2);
             } else {
                 $d_id = '';
             }
