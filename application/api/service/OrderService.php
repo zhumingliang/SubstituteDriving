@@ -495,12 +495,11 @@ class OrderService
     function orderPushHandel($params)
     {
         try {
-            $p_id = $params['p_id'];
+            $p_id = (int)($params['p_id']);
+            LogService::save("p_id:$p_id");
             $type = $params['type'];
             //修改推送表状态
-            LogService::save(json_encode($p_id));
             $push = Redis::instance()->hGet($p_id);
-            LogService::save(json_encode($push));
             // Redis::instance()->hSet($p_id, 'state', $type);
             $push_type = $push['type'];
             $order_id = $push['order_id'];

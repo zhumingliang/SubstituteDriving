@@ -68,7 +68,7 @@ class Index
           ->find();
           print_r($ticket) ;*/
 
-          $locations = LocationT::where('o_id', 8509)->select();
+          $locations = LocationT::where('o_id', 10442)->select();
           $distance = 0;
           $old_lat = '';
           $old_lng = '';
