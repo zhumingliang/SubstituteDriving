@@ -37,14 +37,7 @@ class Index
 {
     public function index($d_id = 50)
     {
-        try {
 
-            $a = [
-                'age'=>1
-            ];
-            $b=$a['name'];
-        } catch (Exception $e) {
-        }
         /*$url = 'http://service.tonglingok.com/sms/template';
           $company_id = 1;
           $company = $company_id == 1 ? 'OK' : '安心';
@@ -75,7 +68,7 @@ class Index
           ->find();
           print_r($ticket) ;*/
 
-        /*  $locations = LocationT::where('o_id', 8509)->select();
+          $locations = LocationT::where('o_id', 8509)->select();
           $distance = 0;
           $old_lat = '';
           $old_lng = '';
@@ -89,7 +82,7 @@ class Index
               $old_lat = $v['lat'];
               $old_lng = $v['lng'];
           }
-          echo $distance;*/
+          echo $distance;
     }
 
     public function log($msg = '')

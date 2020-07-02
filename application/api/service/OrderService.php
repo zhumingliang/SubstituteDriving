@@ -498,6 +498,7 @@ class OrderService
             $p_id = $params['p_id'];
             $type = $params['type'];
             //修改推送表状态
+            LogService::save(json_encode($p_id));
             $push = Redis::instance()->hGet($p_id);
             LogService::save(json_encode($push));
             // Redis::instance()->hSet($p_id, 'state', $type);
