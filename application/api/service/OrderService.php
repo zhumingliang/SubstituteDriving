@@ -933,10 +933,10 @@ class OrderService
     {
 
         try {
+            Db::startTrans();
             $id = $params['id'];
             $this->checkOrderComplete($id);
             //处理订单完成唯一性
-            Db::startTrans();
             $distance = round($params['distance'] / 1000, 2);
 
             $wait_time = $params['wait_time'];
@@ -1025,7 +1025,6 @@ class OrderService
             (new SendSMSService())->sendOrderCompleteSMS($order->phone, $sendData);
             return $this->prepareOrderInfo($order);
         } catch (Exception $e) {
-            LogService::save($e->getMessage());
             $this->deleteRedisOrderComplete($id);
             Db::rollback();
             throw $e;
@@ -1050,9 +1049,7 @@ class OrderService
 
     public function checkRedisOrderComplete($order_id)
     {
-        $res = Redis::instance()->sIsMember('driver:complete', $order_id);
-        LogService::save($res);
-        return $res;
+        return Redis::instance()->sIsMember('driver:complete', $order_id);
     }
 
     public function deleteRedisOrderComplete($order_id)
