@@ -1045,19 +1045,19 @@ class OrderService
     public function addRedisOrderComplete($order_id)
     {
 
-        Redis::instance()->sAdd('order:complete', $order_id);
+        Redis::instance()->sAdd('driver:complete', $order_id);
     }
 
     public function checkRedisOrderComplete($order_id)
     {
-        $res = Redis::instance()->sIsMember('order:complete', $order_id);
+        $res = Redis::instance()->sIsMember('driver:complete', $order_id);
         LogService::save($res);
         return $res;
     }
 
     public function deleteRedisOrderComplete($order_id)
     {
-        Redis::instance()->sRem('order:complete', $order_id);
+        Redis::instance()->sRem('driver:complete', $order_id);
     }
 
     public
