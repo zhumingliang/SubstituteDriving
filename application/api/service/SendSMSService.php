@@ -21,107 +21,43 @@ class SendSMSService
     {
         $code = rand(10000, 99999);
         $params = ['code' => $code];
-        //$res = SendSms::instance()->send($phone, $params, $type);
         $this->sendSms($phone, 'drive_' . $type, $params);
         $token = Request::header('token');
         $redis = new Redis();
         $redis->set($token, $phone . '-' . $code, 120);
         return true;
-        /* if (key_exists('Code', $res) && $res['Code'] == 'OK') {
-             $redis = new Redis();
-             $redis->set($token, $phone . '-' . $code, 120);
-             return true;
-         }*/
-        // $this->msgTask($phone, $params, $type, $token);
-        //$this->saveSend($phone, $params, $type, $token);
-    }
-
-    //短信队列
-    public function msgTask($phone, $params, $type, $token = '')
-    {
-        //php think queue:work --queue sendMsgQueue
-        $jobHandlerClassName = 'app\api\job\SendMsg';//负责处理队列任务的类
-        $jobQueueName = "sendDriverMsgQueue";//队列名称
-        $jobData = [
-            'phone' => $phone,
-            'params' => $params,
-            'type' => $type,
-            'token' => $token
-        ];;//当前任务的业务数据
-        $isPushed = Queue::push($jobHandlerClassName, $jobData, $jobQueueName);
-        //将该任务推送到消息队列
-        if ($isPushed == false) {
-            throw new SaveException(['msg' => '发送短信失败']);
-        }
-
     }
 
     public function sendOrderSMS($phone, $params, $num = 1)
     {
-
         $this->sendSms($phone, 'drive_receive', $params);
-        /* $res = SendSms::instance()->send($phone, $params, 'driver');
-         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
-             return true;
-         }*/
-        // $this->msgTask($phone, $params, 'driver');
-        //$this->saveSend($phone, $params, 'driver');
     }
 
 
     public function sendRechargeSMS($phone, $params, $num = 1)
     {
         $this->sendSms($phone, 'drive_recharge', $params);
-        /* $res = SendSms::instance()->send($phone, $params, 'recharge');
-         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
-             return true;
-         }*/
-        //$this->msgTask($phone, $params, 'recharge');
-        //$this->saveSend($phone, $params, 'recharge');
     }
 
     public function sendDriveCreateOrderSMS($phone, $params, $num = 1)
     {
         $this->sendSms($phone, 'drive_create_order', $params);
 
-        /* $res = SendSms::instance()->send($phone, $params, 'driveCreateOrder');
-         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
-             return true;
-         }
-         $this->msgTask($phone, $params, 'driveCreateOrder');*/
     }
 
     public function sendOrderCompleteSMS($phone, $params, $num = 1)
     {
         $this->sendSms($phone, 'drive_order_complete', $params);
-
-        /* $res = SendSms::instance()->send($phone, $params, 'orderComplete');
-         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
-             return true;
-         }
-         $this->msgTask($phone, $params, 'orderComplete');*/
     }
 
     public function sendTicketSMS($phone, $params, $num = 1)
     {
         $this->sendSms($phone, 'drive_ticket', $params);
-
-        /* $res = SendSms::instance()->send($phone, $params, 'ticket');
-         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
-             return true;
-         }
-         $this->msgTask($phone, $params, 'orderComplete');*/
     }
 
     public function sendMINISMS($phone, $params = [], $num = 1)
     {
         $this->sendSms($phone, 'drive_mini', $params);
-
-        /* $res = SendSms::instance()->send($phone, $params, 'mini');
-         if (key_exists('Code', $res) && $res['Code'] == 'OK') {
-             return true;
-         }
-         $this->msgTask($phone, $params, 'mini');*/
 
     }
 

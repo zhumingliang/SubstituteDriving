@@ -37,6 +37,7 @@ class Index
 {
     public function index($d_id = 50)
     {
+        (new SendSMSService())->sendTicketSMS('18956225230', ['phone' => '19855751988']);
 
         /*$url = 'http://service.tonglingok.com/sms/template';
           $company_id = 1;
@@ -68,21 +69,21 @@ class Index
           ->find();
           print_r($ticket) ;*/
 
-          $locations = LocationT::where('o_id', 10442)->select();
-          $distance = 0;
-          $old_lat = '';
-          $old_lng = '';
-          foreach ($locations as $k => $v) {
-              if ($k == 0) {
-                  $old_lat = $v['lat'];
-                  $old_lng = $v['lng'];
-                  continue;
-              }
-              $distance += CalculateUtil::GetDistance($old_lat, $old_lng, $v['lat'], $v['lng']);
-              $old_lat = $v['lat'];
-              $old_lng = $v['lng'];
-          }
-          echo $distance;
+     /*   $locations = LocationT::where('o_id', 10442)->select();
+        $distance = 0;
+        $old_lat = '';
+        $old_lng = '';
+        foreach ($locations as $k => $v) {
+            if ($k == 0) {
+                $old_lat = $v['lat'];
+                $old_lng = $v['lng'];
+                continue;
+            }
+            $distance += CalculateUtil::GetDistance($old_lat, $old_lng, $v['lat'], $v['lng']);
+            $old_lat = $v['lat'];
+            $old_lng = $v['lng'];
+        }
+        echo $distance;*/
     }
 
     public function log($msg = '')
