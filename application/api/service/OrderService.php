@@ -1050,7 +1050,9 @@ class OrderService
 
     public function checkRedisOrderComplete($order_id)
     {
-        return Redis::instance()->sIsMember('order:complete', $order_id);
+        $res = Redis::instance()->sIsMember('order:complete', $order_id);
+        LogService::save($res);
+        return $res;
     }
 
     public function deleteRedisOrderComplete($order_id)
