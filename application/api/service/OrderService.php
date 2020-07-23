@@ -931,9 +931,10 @@ class OrderService
     public
     function driverCompleteOrder($params)
     {
-        $id = $params['id'];
-        $this->checkOrderComplete($id);
+
         try {
+            $id = $params['id'];
+            $this->checkOrderComplete($id);
             //处理订单完成唯一性
             Db::startTrans();
             $distance = round($params['distance'] / 1000, 2);
