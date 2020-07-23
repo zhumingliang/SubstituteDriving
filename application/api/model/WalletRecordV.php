@@ -4,13 +4,14 @@
 namespace app\api\model;
 
 
+use app\lib\enum\CommonEnum;
 use think\Model;
 
 class WalletRecordV extends Model
 {
     public function getTypeAttr($value)
     {
-        $state = [1 => "保险/信息费", 2 => "订单服务费", 3 => "账户余额充值", 4 => "初始化", 5 => "优惠券返还", 6 => "代驾行驶费",7=>"酒店代叫服务费"];
+        $state = [1 => "保险/信息费", 2 => "订单服务费", 3 => "账户余额充值", 4 => "初始化", 5 => "优惠券返还", 6 => "代驾行驶费", 7 => "酒店代叫服务费"];
         return $state[$value];
     }
 
@@ -47,6 +48,7 @@ class WalletRecordV extends Model
 
                 }
             })
+            ->where('state', CommonEnum::STATE_IS_OK)
             ->whereIn('type', '1,2,3,4,5')
             ->field('id ,account,number,username,phone,sum(money) as money,state,create_time')
             ->group('id')
