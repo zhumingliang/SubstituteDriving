@@ -17,6 +17,14 @@ use function GuzzleHttp\Promise\each_limit;
 
 class SendSMSService
 {
+    private $sign = "";
+
+    public function __construct()
+    {
+        $this->sign = Token::getCurrentTokenVar('sign');
+
+    }
+
     public function sendCode($phone, $type, $num = 1)
     {
         $code = rand(10000, 99999);
@@ -122,7 +130,7 @@ class SendSMSService
         $data = [
             'phone_number' => $phone_number,
             "type" => $type,
-            "sign" => "ok",
+            "sign" => $this->sign,
             "params" => empty($params) ? ['create_time' => date('Y-m-d H:i:s')] : $params
         ];
         $res = Http::sendRequest($url, $data);

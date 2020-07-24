@@ -29,11 +29,7 @@ class AdminToken extends Token
     public function get()
     {
         try {
-
-            $admin = AdminT::where('account', '=', $this->account)
-                ->where('state', CommonEnum::STATE_IS_OK)
-                ->find();
-
+            $admin = AdminT::admin($this->account);
             if (is_null($admin) || (sha1($this->pwd) != $admin->pwd)) {
                 throw new TokenException([
                     'msg' => '账号或密码不正确',
@@ -87,6 +83,7 @@ class AdminToken extends Token
     private function prepareCachedValue($admin)
     {
 
+
         $cachedValue = [
             'u_id' => $admin->id,
             'phone' => $admin->phone,
@@ -94,6 +91,7 @@ class AdminToken extends Token
             'username' => $admin->username,
             'account' => $admin->account,
             'grade' => $admin->grade,
+            'sign' => empty($admin->company) ? 0 : $admin->company->sign,
             'type' => $this->getAdminType($admin->grade)
         ];
         return $cachedValue;
