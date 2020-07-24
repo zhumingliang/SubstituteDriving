@@ -32,16 +32,6 @@ class UserV extends Model
                     $query->where('phone', '=', $phone);
                 }
             })
-            /*->where(function ($query) use ($money_min, $money_max) {
-                if ($money_min || $money_max) {
-                    $query->whereBetween('money', $money_min . ',' . $money_max);
-                }
-            })
-            ->where(function ($query) use ($count_min, $count_max) {
-                if ($count_min || $count_max) {
-                    $query->whereBetween('count', $count_min . ',' . $count_max);
-                }
-            })*/
             ->where(function ($query) use ($time_begin, $time_end) {
                 if (strlen($time_begin) && strlen($time_end)) {
                     $query->whereBetweenTime('order_time', $time_begin, $time_end);

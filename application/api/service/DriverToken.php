@@ -36,14 +36,9 @@ class DriverToken extends Token
         try {
 
             if ($this->type == 'driver') {
-                $admin = DriverT::where('account', '=', $this->account)
-                    ->where('state', CommonEnum::STATE_IS_OK)
-                    ->find();
+                $admin = DriverT::driver($this->account);
             } else if ($this->type == 'manager') {
-                $admin = AdminT::where('account', '=', $this->account)
-                    ->where('state', CommonEnum::STATE_IS_OK)
-                    ->where('grade', 1)
-                    ->find();
+                $admin = AdminT::manager($this->account);
             }
 
             if (!$admin || sha1($this->pwd) != $admin->pwd) {
@@ -116,6 +111,7 @@ class DriverToken extends Token
             'online' => $this->type == 'driver' ? $admin->online : '',
             'type' => $this->type,
             'company_id' => $admin->company_id,
+            'sign' => empty($admin->company) ? '' : $admin->company->sign
         ];
         return $cachedValue;
     }

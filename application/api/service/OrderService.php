@@ -45,7 +45,7 @@ class OrderService
         try {
             //  $far = $this->prefixFar($params);
             $params['u_id'] = Token::getCurrentUid();
-            $params['name'] = '先生/女士';
+            $params['name'] = Token::getCurrentTokenVar('nickName');
             $params['phone'] = Token::getCurrentTokenVar('phone');
             $params['order_lat'] = empty($params['start_lat']) ? '' : $params['start_lat'];
             $params['order_lng'] = empty($params['start_lng']) ? '' : $params['start_lng'];

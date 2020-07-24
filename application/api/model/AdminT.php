@@ -27,4 +27,14 @@ class AdminT extends Model
             ->find();
         return $admin;
     }
+
+    public static function manager($account)
+    {
+        $admin = self::where('account', '=', $account)
+            ->where('state', CommonEnum::STATE_IS_OK)
+            ->where('grade', 1)
+            ->with('company')
+            ->find();
+        return $admin;
+    }
 }
