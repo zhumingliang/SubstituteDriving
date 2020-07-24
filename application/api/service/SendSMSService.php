@@ -4,6 +4,7 @@
 namespace app\api\service;
 
 
+use app\api\model\CompanyT;
 use app\api\model\SendMessageT;
 use app\lib\enum\CommonEnum;
 use app\lib\exception\SaveException;
@@ -17,11 +18,13 @@ use function GuzzleHttp\Promise\each_limit;
 
 class SendSMSService
 {
-    private $sign = "";
 
-    public function __construct()
+
+    public function getSign()
     {
-        $this->sign = Token::getCurrentTokenVar('sign');
+        $company_id = Token::getCurrentTokenVar('company_id');
+        $company = CompanyT::where('id', $company_id)->find();
+        return $company->sign;
 
     }
 
@@ -130,7 +133,7 @@ class SendSMSService
         $data = [
             'phone_number' => $phone_number,
             "type" => $type,
-            "sign" => $this->sign,
+            "sign" => $this->getSign(),
             "params" => empty($params) ? ['create_time' => date('Y-m-d H:i:s')] : $params
         ];
         $res = Http::sendRequest($url, $data);
