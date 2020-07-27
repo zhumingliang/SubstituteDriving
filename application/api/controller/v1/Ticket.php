@@ -187,9 +187,11 @@ class Ticket extends BaseController
      */
     public function send()
     {
-        $params = $this->request->param();
+        $company_id =Request::param('company_id');
+        $phone =Request::param('phone');
+        $t_id =Request::param('t_id');
 
-        (new TicketService())->sendTicket($params['company_id'], $params['phone'], $params['t_id']);
+        (new TicketService())->sendTicket($company_id, $phone, $t_id);
         return json(new SuccessMessage());
 
     }
