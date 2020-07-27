@@ -17,6 +17,7 @@ class Ticket extends BaseValidate
         'source' => 'require|in:1,2',
         'state' => 'require|in:1,2,3',
         'u_id' => 'require|isNotEmpty',
+        'phone' => 'require|isNotEmpty',
         't_id' => 'require|isPositiveInteger'
     ];
 
@@ -24,7 +25,7 @@ class Ticket extends BaseValidate
         'save' => ['name', 'price', 'time_begin', 'time_end', 'count', 'scene'],
         'handel' => ['id', 'state'],
         'update' => ['id'],
-        'send' => ['u_id', 't_id'],
+        'send' => ['phone', 't_id'],
     ];
 
 }

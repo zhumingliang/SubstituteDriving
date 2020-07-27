@@ -173,9 +173,9 @@ class Ticket extends BaseController
      * @apiExample {POST}  请求样例:
      * {
      * "u_id": 1,2,
-     * "t_id": 1,
+     * "phone": 18956225230,18956225231
      * }
-     * @apiParam (请求参数说明) {String} u_id 用户id，多个用户用逗号分隔
+     * @apiParam (请求参数说明) {String} phone 用户手机号，多个用户用逗号分隔
      * @apiParam (请求参数说明) {int} t_id 优惠券ID
      * @apiSuccessExample {json} 返回样例:
      * {"msg": "ok","errorCode": 0}
