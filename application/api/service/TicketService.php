@@ -15,9 +15,9 @@ use app\lib\exception\SaveException;
 
 class TicketService
 {
-    public function sendTicket($u_id, $t_id)
+    public function sendTicket($company_id, $phone, $t_id)
     {
-        $phone_arr = explode(',', $u_id);
+        $phone_arr = explode(',', $phone);
         $ticket = TicketT::where('id', $t_id)->find();
         if (!$ticket) {
             throw new SaveException(['msg' => '卡券不存在']);
@@ -71,7 +71,7 @@ class TicketService
          } else {
              $ticks = TicketUserT::userPhoneTickets($phone);
          }*/
-        $phone =Token::getCurrentTokenVar('phone');
+        $phone = Token::getCurrentTokenVar('phone');
         $ticks = TicketUserT::userPhoneTickets($phone);
         return $ticks;
     }

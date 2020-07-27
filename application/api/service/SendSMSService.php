@@ -20,6 +20,7 @@ class SendSMSService
 {
 
 
+
     public function getSign()
     {
         $company_id = Token::getCurrentTokenVar('company_id');

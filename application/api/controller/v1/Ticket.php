@@ -172,11 +172,13 @@ class Ticket extends BaseController
      * @apiDescription  管理员给指定用户发送优惠券
      * @apiExample {POST}  请求样例:
      * {
+     * "company_id": 1
      * "u_id": 1,2,
      * "phone": 18956225230,18956225231
      * }
      * @apiParam (请求参数说明) {String} phone 用户手机号，多个用户用逗号分隔
      * @apiParam (请求参数说明) {int} t_id 优惠券ID
+     * @apiParam (请求参数说明) {int} company_id 代理id
      * @apiSuccessExample {json} 返回样例:
      * {"msg": "ok","errorCode": 0}
      * @apiSuccess (返回参数说明) {int} errorCode 错误代码 0 表示没有错误
@@ -187,7 +189,7 @@ class Ticket extends BaseController
     {
         $params = $this->request->param();
 
-        (new TicketService())->sendTicket($params['u_id'], $params['t_id']);
+        (new TicketService())->sendTicket($params['company_id'], $params['phone'], $params['t_id']);
         return json(new SuccessMessage());
 
     }

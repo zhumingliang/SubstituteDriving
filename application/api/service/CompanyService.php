@@ -8,6 +8,7 @@ use app\api\model\CompanyT;
 use app\api\model\TicketOpenT;
 use app\api\model\WeatherT;
 use app\lib\enum\CommonEnum;
+use app\lib\enum\UserEnum;
 use app\lib\exception\SaveException;
 use app\lib\exception\UpdateException;
 use think\Db;
@@ -66,7 +67,13 @@ class CompanyService
 
     public function agents($page, $size, $phone, $company, $username)
     {
-        $agents = CompanyT::agents($page, $size, $phone, $company, $username);
+        $grade = Token::getCurrentTokenVar('grade');
+        if ($grade == UserEnum::USER_GRADE_VILLAGE) {
+            $company_id = 0;
+        } else {
+            $company_id = Token::getCurrentTokenVar('company_id');
+        }
+        $agents = CompanyT::agents($page, $size, $company_id, $phone, $company, $username);
         return $agents;
     }
 

@@ -8,13 +8,19 @@ use think\Model;
 
 class CompanyT extends Model
 {
-    public static function agents($page, $size, $phone, $company, $username)
+    public static function agents($page, $size, $company_id, $phone, $company, $username)
     {
-        return self::where(function ($query) use ($phone) {
-            if (!empty($phone)) {
-                $query->where('phone', $phone);
+        return self::
+        where(function ($query) use ($company_id) {
+            if (!empty($company_id)) {
+                $query->where('id', $company_id);
             }
         })
+            ->where(function ($query) use ($phone) {
+                if (!empty($phone)) {
+                    $query->where('phone', $phone);
+                }
+            })
             ->where(function ($query) use ($company) {
                 if (!empty($company)) {
                     $query->where('company', 'like', '%' . $company . '%');
