@@ -14,7 +14,7 @@ class UserV extends Model
         return $data[$value];
     }
 
-    public static function users($page, $size, $name, $time_begin, $time_end, $phone, $money_min, $money_max, $count_min, $count_max, $company_id)
+    public static function users($page, $size, $name, $time_begin, $time_end, $phone, $company_id)
     {
         $time_end=addDay(1,$time_end);
         $list = self::where(function ($query) use ($company_id) {
@@ -39,7 +39,7 @@ class UserV extends Model
             })
             ->field('id,nickName,phone,source,create_time,parent_name,company_id,sum(money) as money,count(order_id) as count,order_time')
             ->order('create_time desc')
-            ->group('id')
+            ->group('phone')
             ->paginate($size, false, ['page' => $page])->toArray();
         return $list;
 

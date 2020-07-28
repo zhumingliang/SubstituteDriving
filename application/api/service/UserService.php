@@ -7,16 +7,19 @@ namespace app\api\service;
 use app\api\model\DriverT;
 use app\api\model\UserV;
 use app\lib\enum\CommonEnum;
+use app\lib\enum\UserEnum;
 use app\lib\exception\AuthException;
 use think\facade\Cache;
 use think\facade\Request;
 
 class UserService
 {
-    public function users($page, $size, $name, $time_begin, $time_end, $phone, $money_min, $money_max, $count_min, $count_max)
+    public function users($page, $size, $name, $time_begin, $time_end, $phone, $company_id)
     {
-        $company_id = Token::getCurrentTokenVar('company_id');
-        $users = UserV::users($page, $size, $name, $time_begin, $time_end, $phone, $money_min, $money_max, $count_min, $count_max, $company_id);
+        if (Token::getCurrentTokenVar('grade') != UserEnum::USER_GRADE_VILLAGE) {
+            $company_id = Token::getCurrentTokenVar('company_id');
+        }
+        $users = UserV::users($page, $size, $name, $time_begin, $time_end, $phone, $company_id);
         return $users;
     }
 
