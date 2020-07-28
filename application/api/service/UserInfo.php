@@ -201,6 +201,7 @@ class UserInfo
                 'username' => $username,
                 'parent_name' => $name,
                 'nickName' => $username,
+                'company_id' => Token::getCurrentTokenVar('company_id'),
                 'source' => $source
             ]);
         }
