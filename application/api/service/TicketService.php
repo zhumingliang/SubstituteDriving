@@ -56,7 +56,7 @@ class TicketService
 
     }
 
-    private function getManagerPhone()
+    private function getCompanyInfo()
     {
         $company_id = Token::getCurrentTokenVar('company_id');
         if ($company_id == 1) {
