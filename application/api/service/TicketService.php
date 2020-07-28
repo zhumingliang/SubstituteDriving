@@ -46,9 +46,10 @@ class TicketService
         }
         //派送优惠券通知
         foreach ($data as $k => $v) {
-            $managerPhone = $this->getManagerPhone();
+            $data = $this->getCompanyInfo();
+            $data['money'] = $ticket->price;
             //(new SendSMSService())->sendTicketSMS($v['phone'], ['phone' => '19855751988']);
-            (new SendSMSService())->sendTicketSMS($v['phone'], ['phone' => $managerPhone, 'money' => $ticket->price]);
+            (new SendSMSService())->sendTicketSMS($v['phone'], $data);
         }
 
         return true;
@@ -59,9 +60,15 @@ class TicketService
     {
         $company_id = Token::getCurrentTokenVar('company_id');
         if ($company_id == 1) {
-            return '19855751988';
+            return [
+                'company' => 'OK代驾',
+                'phone' => '19855751988'
+            ];
         }
-        return "17855583347";
+        return [
+            'company' => '安心代驾',
+            'phone' => "17855583347"
+        ];
 
     }
 
