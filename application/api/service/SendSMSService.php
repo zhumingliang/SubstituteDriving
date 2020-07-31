@@ -6,7 +6,9 @@ namespace app\api\service;
 
 use app\api\model\CompanyT;
 use app\api\model\SendMessageT;
+use app\api\model\SmsRecordT;
 use app\lib\enum\CommonEnum;
+use app\lib\enum\UserEnum;
 use app\lib\exception\SaveException;
 use app\lib\Http;
 use think\Exception;
@@ -14,11 +16,9 @@ use think\facade\Request;
 use think\Queue;
 use zml\tp_aliyun\SendSms;
 use zml\tp_tools\Redis;
-use function GuzzleHttp\Promise\each_limit;
 
 class SendSMSService
 {
-
 
 
     public function getSign()
@@ -138,10 +138,23 @@ class SendSMSService
             "params" => empty($params) ? ['create_time' => date('Y-m-d H:i:s')] : $params
         ];
         $res = Http::sendRequest($url, $data);
+        LogService::save(json_encode($res));
         if ($res['ret'] !== true || $res['info']['errorCode'] !== 0) {
             throw new SaveException(['msg' => '发送验证码失败']);
         }
 
+    }
+
+    public function records($params)
+    {
+        $grade = 3;//Token::getCurrentTokenVar('grade');
+        if ($grade == UserEnum::USER_GRADE_VILLAGE) {
+            $sign = $params['sign'];
+        } else {
+            $sign = Token::getCurrentTokenVar('sign');
+        }
+        $records = SmsRecordT::getList($sign, $params['phone'], $params['state'], $params['time_begin'], $params['time_end'], $params['page'], $params['size']);
+        return $records;
     }
 
 

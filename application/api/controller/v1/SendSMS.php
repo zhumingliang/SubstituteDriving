@@ -8,6 +8,7 @@ use app\api\controller\BaseController;
 use app\api\service\LogService;
 use app\api\service\SendSMSService;
 use app\lib\exception\SuccessMessage;
+use app\lib\exception\SuccessMessageWithData;
 use think\Cache;
 use think\facade\Request;
 use think\facade\Session;
@@ -78,6 +79,16 @@ class SendSMS extends BaseController
         $create_time = Request::param('create_time');
         (new SendSMSService())->sendOrderSMS($phone, ['code' => 'OK' . $order_num,
             'order_time' => $create_time]);
+    }
+
+    public function records($sign = 0, $phone = '', $state = 3)
+    {
+        $params = Request::param();
+        $params['sign'] = $sign;
+        $params['phone'] = $phone;
+        $params['state'] = $state;
+        $records = (new SendSMSService())->records($params);
+        return json(new  SuccessMessageWithData(['data' => $records]));
     }
 
 }

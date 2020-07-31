@@ -120,7 +120,6 @@ class TicketService
         $data = [
             'u_id' => $u_id,
             't_id' => $ticket->id,
-            'phone' => '',
             'state' => CommonEnum::STATE_IS_OK,
             'money' => $ticket->price,
             'time_begin' => date('Y-m-d', time()),

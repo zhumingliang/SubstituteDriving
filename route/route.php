@@ -100,6 +100,7 @@ Route::post('api/:version/sms/register', 'api/:version.SendSMS/sendCodeToMINI');
 Route::post('api/:version/sms/login', 'api/:version.SendSMS/sendCodeToAndroid');
 Route::post('api/:version/sms/driver', 'api/:version.SendSMS/sendOderToDriver');
 Route::rule('api/:version/sms/handel', 'api/:version.SendSMS/sendHandel');
+Route::get('api/:version/sms/records', 'api/:version.SendSMS/records');
 
 Route::post('api/:version/order/mini/save', 'api/:version.Order/saveMiniOrder');
 Route::post('api/:version/order/drive/save', 'api/:version.Order/saveDriverOrder');
