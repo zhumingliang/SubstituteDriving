@@ -79,14 +79,12 @@ class Http
         curl_setopt_array($ch, (array)$options + $defaults);
 
         $ret = curl_exec($ch);
-        print_r($ret);
         $err = curl_error($ch);
-        $errno = curl_errno($ch);
-        $info = curl_getinfo($ch);
-        print_r($info);
-        curl_close($ch);
-        print_r($info);
+
         if (false === $ret || !empty($err)) {
+            $errno = curl_errno($ch);
+            $info = curl_getinfo($ch);
+            curl_close($ch);
             return [
                 'ret' => false,
                 'errno' => $errno,
@@ -94,6 +92,7 @@ class Http
                 'info' => $info,
             ];
         }
+        curl_close($ch);
         return [
             'ret' => true,
             'info' => json_decode($ret,true),
