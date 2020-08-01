@@ -5,10 +5,14 @@ namespace app\api\service;
 
 
 use app\api\model\CompanyT;
+use app\api\model\RechargeT;
+use app\api\model\RechargeTemplateT;
 use app\api\model\SendMessageT;
+use app\api\model\SmsRechargeT;
 use app\api\model\SmsRecordT;
 use app\lib\enum\CommonEnum;
 use app\lib\enum\UserEnum;
+use app\lib\exception\ParameterException;
 use app\lib\exception\SaveException;
 use app\lib\Http;
 use think\Exception;
@@ -146,7 +150,7 @@ class SendSMSService
 
     public function records($params)
     {
-        $grade = 3;//Token::getCurrentTokenVar('grade');
+        $grade = Token::getCurrentTokenVar('grade');
         if ($grade == UserEnum::USER_GRADE_VILLAGE) {
             $sign = $params['sign'];
         } else {
@@ -156,5 +160,91 @@ class SendSMSService
         return $records;
     }
 
+    public function statistic($sign)
+    {
+        $grade = Token::getCurrentTokenVar('grade');
+        if ($grade != UserEnum::USER_GRADE_VILLAGE) {
+            $sign = Token::getCurrentTokenVar('sign');
+        }
+        $successCount = $failCount = 0;
+        $sendCount = SmsRecordT::sendCount($sign);
+        foreach ($sendCount as $k => $v) {
+            if ($v['state'] == CommonEnum::STATE_IS_OK) {
+                $successCount = $v['count'];
+            } else if ($v['state'] == CommonEnum::STATE_IS_FAIL) {
+                $failCount = $v['count'];
+            }
+        }
+        $rechargeCount = SmsRechargeT::rechargeCount($sign);
+        return [
+            'sendAll' => $successCount + $failCount,
+            'success' => $successCount,
+            'fail' => $failCount,
+            'balance' => $rechargeCount - $successCount - $failCount
+        ];
+    }
+
+    public function managerRecharge($params)
+    {
+        $params['state'] = CommonEnum::STATE_IS_OK;
+        $params['pay'] = CommonEnum::STATE_IS_OK;
+        $params['order_number'] = makeOrderNo();
+        $params['company'] = (new CompanyService())->getCompanyName($params['sign']);
+        $recharge = SmsRechargeT::create($params);
+        if (!$recharge) {
+            throw new SaveException();
+        }
+    }
+
+    public function saveRechargeTemplate($params)
+    {
+        $params['state'] = CommonEnum::STATE_IS_OK;
+        $recharge = RechargeTemplateT::create($params);
+        if (!$recharge) {
+            throw new SaveException();
+        }
+    }
+
+    public function rechargeTemplates($page, $size)
+    {
+        $templates = RechargeTemplateT::templates($page, $size);
+        return $templates;
+    }
+
+    public function agentRecharge($template_id)
+    {
+        $template = RechargeTemplateT::template($template_id);
+        if (empty($template)) {
+            throw new ParameterException(['msg' => '参数错误，充值模板不存在']);
+        }
+        $data = [
+            'count' => $template->count,
+            'money' => $template->money,
+            'state' => CommonEnum::STATE_IS_OK,
+            'company' => Token::getCurrentTokenVar('company'),
+            'pay' => CommonEnum::STATE_IS_FAIL,
+            'order_number' => makeOrderNo(),
+            'sign' => Token::getCurrentTokenVar('sign'),
+            'type' => 1
+        ];
+        $recharge = RechargeT::create($data);
+        if (!$recharge) {
+            throw new SaveException();
+        }
+    }
+
+    public function rechargeTemplate($id)
+    {
+        return RechargeTemplateT::template($id);
+    }
+
+    public function recharges($sign, $page, $size, $time_begin, $time_end)
+    {
+     /*   if (Token::getCurrentTokenVar('grade') == UserEnum::USER_GRADE_ADMIN) {
+            $sign = Token::getCurrentTokenVar('sign');
+        }*/
+        $list = SmsRechargeT::recharges($sign, $page, $size, $time_begin, $time_end);
+        return $list;
+    }
 
 }

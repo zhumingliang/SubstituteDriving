@@ -9,6 +9,7 @@ use app\api\model\TicketOpenT;
 use app\api\model\WeatherT;
 use app\lib\enum\CommonEnum;
 use app\lib\enum\UserEnum;
+use app\lib\exception\ParameterException;
 use app\lib\exception\SaveException;
 use app\lib\exception\UpdateException;
 use think\Db;
@@ -75,6 +76,17 @@ class CompanyService
         }
         $agents = CompanyT::agents($page, $size, $company_id, $phone, $company, $username);
         return $agents;
+    }
+
+    public function getCompanyName($sign)
+    {
+        $company = CompanyT::where('sign', $sign)
+            ->where('state', CommonEnum::STATE_IS_OK)
+            ->find();
+        if (!$company) {
+            throw new ParameterException(['msg' => '企业不存在']);
+        }
+        return $company->company;
     }
 
 }

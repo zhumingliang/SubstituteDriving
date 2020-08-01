@@ -14,9 +14,10 @@ class ComposerStaticInitad3a9aa249d827d7da494fc28d2e1cee
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
-        '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
         'f0e7e63bbb278a92db02393536748c5f' => __DIR__ . '/..' . '/overtrue/wechat/src/Kernel/Support/Helpers.php',
         '6747f579ad6817f318cc3a7e7a0abb93' => __DIR__ . '/..' . '/overtrue/wechat/src/Kernel/Helpers.php',
+        '9b552a3cc426e3287cc811caefa3cf53' => __DIR__ . '/..' . '/topthink/think-helper/src/helper.php',
+        '0e1a642d4bee6d131ff3aa76738d7d2c' => __DIR__ . '/..' . '/naixiaoxin/think-wechat/src/helper.php',
         'cc56288302d9df745d97c934d6a6e5f0' => __DIR__ . '/..' . '/topthink/think-queue/src/common.php',
         '3100cff22f765da1db9a0066e61878fd' => __DIR__ . '/..' . '/yunwuxin/think-cron/src/helper.php',
     );
@@ -61,6 +62,10 @@ class ComposerStaticInitad3a9aa249d827d7da494fc28d2e1cee
         'O' => 
         array (
             'Overtrue\\Socialite\\' => 19,
+        ),
+        'N' => 
+        array (
+            'Naixiaoxin\\ThinkWechat\\' => 23,
         ),
         'M' => 
         array (
@@ -178,6 +183,10 @@ class ComposerStaticInitad3a9aa249d827d7da494fc28d2e1cee
         'Overtrue\\Socialite\\' => 
         array (
             0 => __DIR__ . '/..' . '/overtrue/socialite/src',
+        ),
+        'Naixiaoxin\\ThinkWechat\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/naixiaoxin/think-wechat/src',
         ),
         'Monolog\\' => 
         array (

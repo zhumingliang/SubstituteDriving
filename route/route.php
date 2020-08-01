@@ -101,6 +101,14 @@ Route::post('api/:version/sms/login', 'api/:version.SendSMS/sendCodeToAndroid');
 Route::post('api/:version/sms/driver', 'api/:version.SendSMS/sendOderToDriver');
 Route::rule('api/:version/sms/handel', 'api/:version.SendSMS/sendHandel');
 Route::get('api/:version/sms/records', 'api/:version.SendSMS/records');
+Route::get('api/:version/sms/statistic', 'api/:version.SendSMS/statistic');
+Route::post('api/:version/sms/recharge/template/save', 'api/:version.SendSMS/saveRechargeTemplate');
+Route::post('api/:version/sms/recharge/template/update', 'api/:version.SendSMS/updateRechargeTemplate');
+Route::get('api/:version/sms/recharge/templates', 'api/:version.SendSMS/rechargeTemplates');
+Route::get('api/:version/sms/recharge/template', 'api/:version.SendSMS/rechargeTemplate');
+Route::get('api/:version/sms/recharge/manager', 'api/:version.SendSMS/managerRecharge');
+Route::get('api/:version/sms/recharge/agent', 'api/:version.SendSMS/agentRecharge');
+Route::get('api/:version/sms/recharges', 'api/:version.SendSMS/recharges');
 
 Route::post('api/:version/order/mini/save', 'api/:version.Order/saveMiniOrder');
 Route::post('api/:version/order/drive/save', 'api/:version.Order/saveDriverOrder');

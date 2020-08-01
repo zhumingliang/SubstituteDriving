@@ -91,6 +91,7 @@ class AdminToken extends Token
             'username' => $admin->username,
             'account' => $admin->account,
             'grade' => $admin->grade,
+            'company' => $admin->company->company,
             'sign' => empty($admin->company) ? 0 : $admin->company->sign,
             'type' => $this->getAdminType($admin->grade)
         ];

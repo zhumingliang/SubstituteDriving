@@ -22,7 +22,9 @@
         "phpoffice/phpexcel": "^1.8",
         "overtrue/wechat": "~4.0",
         "topthink/think-queue": "2.0.x-dev",
-        "yunwuxin/think-cron": "2.0.*"
+        "yunwuxin/think-cron": "2.0.*",
+        "naixiaoxin/think-wechat": "^1.6",
+        "endroid/qr-code": "^3.9"
     },
     "autoload": {
         "psr-4": {

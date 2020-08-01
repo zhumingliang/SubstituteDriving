@@ -433,6 +433,62 @@
         "abandoned": "dragonmantank/cron-expression"
     },
     {
+        "name": "naixiaoxin/think-wechat",
+        "version": "1.6.0",
+        "version_normalized": "1.6.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://github.com/qiqizjl/think-wechat.git",
+            "reference": "ab04f31ae35c548407baf7b463ffae1a56ea2411"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://api.github.com/repos/qiqizjl/think-wechat/zipball/ab04f31ae35c548407baf7b463ffae1a56ea2411",
+            "reference": "ab04f31ae35c548407baf7b463ffae1a56ea2411",
+            "shasum": ""
+        },
+        "require": {
+            "overtrue/wechat": "~4.0",
+            "psr/simple-cache": "^1.0",
+            "topthink/framework": "~5.1"
+        },
+        "time": "2019-06-02T15:00:51+00:00",
+        "type": "think-extend",
+        "extra": {
+            "think-config": {
+                "wechat": "src/config.php"
+            }
+        },
+        "installation-source": "dist",
+        "autoload": {
+            "psr-4": {
+                "Naixiaoxin\\ThinkWechat\\": "src/"
+            },
+            "files": [
+                "src/helper.php"
+            ]
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+            "MIT"
+        ],
+        "authors": [
+            {
+                "name": "耐小心",
+                "email": "qiqizjl@qq.com"
+            }
+        ],
+        "description": "EasyWechat For Thnkphp5.1+",
+        "keywords": [
+            "easywechat",
+            "sdk",
+            "think",
+            "thinkphp",
+            "wechat",
+            "weixin"
+        ]
+    },
+    {
         "name": "nesbot/carbon",
         "version": "2.30.0",
         "version_normalized": "2.30.0.0",
