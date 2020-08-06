@@ -14,6 +14,7 @@ use app\lib\enum\CommonEnum;
 use app\lib\enum\UserEnum;
 use app\lib\exception\ParameterException;
 use app\lib\exception\SaveException;
+use app\lib\exception\UpdateException;
 use app\lib\Http;
 use think\Exception;
 use think\facade\Request;
@@ -205,6 +206,14 @@ class SendSMSService
         }
     }
 
+    public function updateRechargeTemplate($params)
+    {
+        $recharge = RechargeTemplateT::update($params);
+        if (!$recharge) {
+            throw new UpdateException();
+        }
+    }
+
     public function rechargeTemplates($page, $size)
     {
         $templates = RechargeTemplateT::templates($page, $size);
@@ -221,16 +230,39 @@ class SendSMSService
             'count' => $template->count,
             'money' => $template->money,
             'state' => CommonEnum::STATE_IS_OK,
-            'company' => Token::getCurrentTokenVar('company'),
-            'pay' => CommonEnum::STATE_IS_FAIL,
+            'template_id' => $template_id,
+            'company' => 1,//Token::getCurrentTokenVar('company'),
+            'status' => 'paid_fail',
             'order_number' => makeOrderNo(),
-            'sign' => Token::getCurrentTokenVar('sign'),
+            'sign' => 'ok',//Token::getCurrentTokenVar('sign'),
             'type' => 1
         ];
-        $recharge = RechargeT::create($data);
+        $recharge = SmsRechargeT::create($data);
         if (!$recharge) {
             throw new SaveException();
         }
+        //发起支付请求
+        $data = $this->getPayUrl($recharge->id);
+        $url = (new QrcodeService())->qr_code($data['url']);
+        return config('setting.domain') . $url;
+
+    }
+
+
+    public function getPayUrl($order_id)
+    {
+        $url = 'http://service.tonglingok.com/pay/unifiedOrder';
+        $data = [
+            'id' => $order_id,
+            'pay_type' => 'weixin'
+        ];
+        $res = Http::sendRequest($url, $data);
+        if ($res['ret'] !== true || $res['info']['errorCode'] !== 0) {
+            throw new SaveException(['msg' => '获取支付参数失败']);
+        }
+
+        return $res['info']['data'];
+
     }
 
     public function rechargeTemplate($id)
@@ -240,9 +272,9 @@ class SendSMSService
 
     public function recharges($sign, $page, $size, $time_begin, $time_end)
     {
-     /*   if (Token::getCurrentTokenVar('grade') == UserEnum::USER_GRADE_ADMIN) {
+        if (Token::getCurrentTokenVar('grade') == UserEnum::USER_GRADE_ADMIN) {
             $sign = Token::getCurrentTokenVar('sign');
-        }*/
+        }
         $list = SmsRechargeT::recharges($sign, $page, $size, $time_begin, $time_end);
         return $list;
     }

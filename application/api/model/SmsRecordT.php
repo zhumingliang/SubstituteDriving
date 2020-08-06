@@ -28,7 +28,13 @@ class SmsRecordT extends Model
                     $query->where('phone', $phone);
                 }
             })
-            ->whereBetweenTime('create_time', $time_begin, $time_end)
+            ->where(function ($query) use ($time_begin, $time_end) {
+                if (!empty($time_begin) && !empty($time_end)) {
+                    $query->whereBetweenTime('create_time', $time_begin, $time_end);
+
+                }
+            })
+//            ->whereBetweenTime('create_time', $time_begin, $time_end)
             ->hidden(['sign', 'update_time', 'type', 'return_data'])
             ->order('create_time desc')
             ->paginate($size, false, ['page' => $page])->toArray();

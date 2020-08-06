@@ -82,8 +82,6 @@ class AdminToken extends Token
 
     private function prepareCachedValue($admin)
     {
-
-
         $cachedValue = [
             'u_id' => $admin->id,
             'phone' => $admin->phone,
@@ -91,7 +89,7 @@ class AdminToken extends Token
             'username' => $admin->username,
             'account' => $admin->account,
             'grade' => $admin->grade,
-            'company' => $admin->company->company,
+            'company' => empty($admin->company) ? '' : $admin->company->company,
             'sign' => empty($admin->company) ? 0 : $admin->company->sign,
             'type' => $this->getAdminType($admin->grade)
         ];

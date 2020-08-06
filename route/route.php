@@ -107,7 +107,7 @@ Route::post('api/:version/sms/recharge/template/update', 'api/:version.SendSMS/u
 Route::get('api/:version/sms/recharge/templates', 'api/:version.SendSMS/rechargeTemplates');
 Route::get('api/:version/sms/recharge/template', 'api/:version.SendSMS/rechargeTemplate');
 Route::get('api/:version/sms/recharge/manager', 'api/:version.SendSMS/managerRecharge');
-Route::get('api/:version/sms/recharge/agent', 'api/:version.SendSMS/agentRecharge');
+Route::post('api/:version/sms/recharge/agent', 'api/:version.SendSMS/agentRecharge');
 Route::get('api/:version/sms/recharges', 'api/:version.SendSMS/recharges');
 
 Route::post('api/:version/order/mini/save', 'api/:version.Order/saveMiniOrder');

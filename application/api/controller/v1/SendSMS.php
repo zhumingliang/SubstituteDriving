@@ -177,15 +177,16 @@ class SendSMS extends BaseController
      *     }
      * @apiParam (请求参数说明) {String} template_id  充值模板
      * @apiSuccessExample {json} 返回样例:
-     *{"msg":"ok","errorCode":0}
+     * {"msg":"ok","errorCode":0,"code":200,"data":{"url":"https:\/\/tonglingok.com\/static\/qrcode\/071ed6a23cc52562d9b3f163d24a29cb81ea6377.png"}}
      * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误
      * @apiSuccess (返回参数说明) {String} msg 信息描述
+     * @apiSuccess (返回参数说明) {String} url 支付二维码地址
      */
     public function agentRecharge()
     {
         $template_id = Request::param('template_id');
-        (new SendSMSService())->agentRecharge($template_id);
-        return json(new SuccessMessage());
+        $url = (new SendSMSService())->agentRecharge($template_id);
+        return json(new SuccessMessageWithData(['data' => ['url' => $url]]));
 
     }
 
