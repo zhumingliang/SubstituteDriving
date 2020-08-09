@@ -231,10 +231,10 @@ class SendSMSService
             'money' => $template->money,
             'state' => CommonEnum::STATE_IS_OK,
             'template_id' => $template_id,
-            'company' => 1,//Token::getCurrentTokenVar('company'),
+            'company' => Token::getCurrentTokenVar('company'),
             'status' => 'paid_fail',
             'order_number' => makeOrderNo(),
-            'sign' => 'ok',//Token::getCurrentTokenVar('sign'),
+            'sign' => Token::getCurrentTokenVar('sign'),
             'type' => 1
         ];
         $recharge = SmsRechargeT::create($data);

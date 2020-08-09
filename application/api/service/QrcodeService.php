@@ -15,12 +15,12 @@ class QrcodeService
     function qr_code($link)
     {
         $sha1 = sha1($link);
-        $qrcode_dir = dirname($_SERVER['SCRIPT_FILENAME']) . '/static/qrcode/';
+        $qrcode_dir = dirname($_SERVER['SCRIPT_FILENAME']) . '/pay/qrcode/';
         if (!file_exists($qrcode_dir)) mkdir($qrcode_dir, 0777, true);
         $file_name = $qrcode_dir . $sha1 . '.png';
         $qrCode = new QrCode($link);
         $qrCode->writeFile($file_name);
-        return '/static/qrcode/' . $sha1 . '.png';
+        return '/pay/qrcode/' . $sha1 . '.png';
     }
 
 }

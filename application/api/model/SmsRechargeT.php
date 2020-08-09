@@ -16,7 +16,7 @@ class SmsRechargeT extends Model
 
         $count = self::where('sign', $sign)
             ->where('state', CommonEnum::STATE_IS_OK)
-            ->where('status', CommonEnum::STATE_IS_OK)
+            ->where('status', 'paid')
             ->sum('count');
         return $count;
 
@@ -30,6 +30,7 @@ class SmsRechargeT extends Model
                 $query->where('sign', $sign);
             }
         })
+            ->where('status', 'paid')
             ->whereBetweenTime('create_time', $time_begin, $time_end)
             ->order('create_time desc')
             ->paginate($size, false, ['page' => $page])->toArray();
