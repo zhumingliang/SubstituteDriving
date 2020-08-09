@@ -16,7 +16,7 @@ class SmsRechargeT extends Model
 
         $count = self::where('sign', $sign)
             ->where('state', CommonEnum::STATE_IS_OK)
-            ->where('pay', CommonEnum::STATE_IS_OK)
+            ->where('status', CommonEnum::STATE_IS_OK)
             ->sum('count');
         return $count;
 

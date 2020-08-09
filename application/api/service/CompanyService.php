@@ -21,7 +21,6 @@ class CompanyService
     {
         try {
             Db::startTrans();
-
             Token::getCurrentUid();
             $agent = CompanyT::create($params);
             if (!$agent) {
