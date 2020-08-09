@@ -244,7 +244,7 @@ class SendSMSService
         //发起支付请求
         $data = $this->getPayUrl($recharge->id);
         $url = (new QrcodeService())->qr_code($data['url']);
-        return config('setting.domain') . $url;
+        return config('setting.image_domain') . $url;
 
     }
 
