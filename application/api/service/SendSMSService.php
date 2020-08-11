@@ -188,7 +188,7 @@ class SendSMSService
     public function managerRecharge($params)
     {
         $params['state'] = CommonEnum::STATE_IS_OK;
-        $params['pay'] = 'paid';
+        $params['status'] = 'paid';
         $params['order_number'] = makeOrderNo();
         $params['company'] = (new CompanyService())->getCompanyName($params['sign']);
         $recharge = SmsRechargeT::create($params);
