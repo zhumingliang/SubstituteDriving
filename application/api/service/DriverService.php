@@ -301,48 +301,16 @@ class DriverService extends BaseService
         $start_lat = $order->start_lat;
 
         $company_id = $order->company_id;
-        $driver_location_key = self::getLocationCacheKey($company_id);
-        $list = $this->redis->rawCommand('georadius',
-            $driver_location_key, $start_lng, $start_lat, 100000, 'km', 'WITHDIST', 'WITHCOORD');
-
-        $driver_ids = $this->redis->sMembers("driver_order_no:$company_id");
-        if (!$driver_ids || !count($list)) {
-            return array();
-        }
-
-        $return_data = [];
-        foreach ($list as $k => $v) {
-            $d_id = $v[0];
-            if (in_array($d_id, $driver_ids) && GatewayService::isDriverUidOnline($d_id) && $this->checkOnline($d_id)) {
-                $driver = $this->redis->lPop("driver:$d_id:location");
-                if (!$driver) {
-                    continue;
-                }
-                $driver = json_decode($driver, true);
-                $data = [
-                    'id' => $d_id,
-                    'distance' => round($v[1], 2),
-                    'name' => empty($driver['username']) ? '' : $driver['username'],
-                    'phone' => empty($driver['phone']) ? '' : $driver['phone'],
-                    'citycode' => empty($driver['citycode']) ? '' : $driver['citycode'],
-                    'city' => empty($driver['city']) ? '' : $driver['city'],
-                    'district' => empty($driver['district']) ? '' : $driver['district'],
-                    'street' => empty($driver['street']) ? '' : $driver['street'],
-                    'addr' => empty($driver['addr']) ? '' : $driver['addr'],
-                    'locationdescribe' => empty($driver['locationdescribe']) ? '' : $driver['locationdescribe'],
-                    'location' => $v[2]
-                ];
-
-                array_push($return_data, $data);
-            }
-        }
+        $return_data = $this->acceptableManagerCreateOrder($start_lng, $start_lat, $company_id);
         return $return_data;
     }
 
     public
-    function acceptableManagerCreateOrder($start_lng, $start_lat)
+    function acceptableManagerCreateOrder($start_lng, $start_lat, $company_id = 0)
     {
-        $company_id = Token::getCurrentTokenVar('company_id');
+        if (!$company_id) {
+            $company_id = Token::getCurrentTokenVar('company_id');
+        }
         $driver_location_key = self::getLocationCacheKey($company_id);
 
         $list = $this->redis->rawCommand('georadius', $driver_location_key, $start_lng, $start_lat, 100000, 'km', 'WITHDIST', 'WITHCOORD');
