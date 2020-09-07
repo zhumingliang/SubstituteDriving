@@ -935,10 +935,9 @@ class OrderService
         try {
             Db::startTrans();
             $id = $params['id'];
-            $this->checkOrderComplete($id);
+           // $this->checkOrderComplete($id);
             //处理订单完成唯一性
             $distance = round($params['distance'] / 1000, 2);
-
             $wait_time = $params['wait_time'];
             $order = $this->getOrder($id);
             if (!empty($params['end'])) {

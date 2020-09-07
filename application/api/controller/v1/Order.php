@@ -116,6 +116,7 @@ class Order extends BaseController
         return json(new SuccessMessage());
 
     }
+
     /**
      * @api {POST} /api/v1/order/push/handel  Android司机端-接单/拒单
      * @apiGroup   Android
@@ -330,7 +331,6 @@ class Order extends BaseController
     public function orderComplete()
     {
         $params = $this->request->param();
-        LogService::save(\GuzzleHttp\json_encode($params));
         $order = (new OrderService())->driverCompleteOrder($params);
         return json(new SuccessMessageWithData(['data' => $order]));
 
