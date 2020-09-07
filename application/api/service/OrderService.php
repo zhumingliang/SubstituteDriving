@@ -1025,6 +1025,7 @@ class OrderService
             (new SendSMSService())->sendOrderCompleteSMS($order->phone, $sendData);
             return $this->prepareOrderInfo($order);
         } catch (Exception $e) {
+            LogService::save($e->getMessage());
             $this->deleteRedisOrderComplete($id);
             Db::rollback();
             throw $e;
