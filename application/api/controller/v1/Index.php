@@ -72,14 +72,10 @@ class Index
     }
 
     public
-    function log($msg = '')
+    function log($id = '')
     {
-        $data = [
-            'phone' => \app\api\service\Token::getCurrentTokenVar('phone'),
-            'msg' => $msg
-        ];
-        LocationLogT::create($data);
-        return json(new SuccessMessage());
+        (new  OrderService())->checkOrderComplete($id);
+
 
     }
 
