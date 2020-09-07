@@ -935,6 +935,7 @@ class OrderService
         try {
             Db::startTrans();
             $id = $params['id'];
+            LogService::save($id);
             $this->checkOrderComplete($id);
             //处理订单完成唯一性
             $distance = round($params['distance'] / 1000, 2);
@@ -1050,7 +1051,9 @@ class OrderService
 
     public function checkRedisOrderComplete($order_id)
     {
-        return Redis::instance()->sIsMember('driver:complete', $order_id);
+        $res = Redis::instance()->sIsMember('driver:complete', $order_id);
+        LogService::save('check:'.$res);
+        return $res;
     }
 
     public function deleteRedisOrderComplete($order_id)
