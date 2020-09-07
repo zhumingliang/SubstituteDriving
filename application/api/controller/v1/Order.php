@@ -330,6 +330,7 @@ class Order extends BaseController
     public function orderComplete()
     {
         $params = $this->request->param();
+        LogService::save(\GuzzleHttp\json_encode($params));
         $order = (new OrderService())->driverCompleteOrder($params);
         return json(new SuccessMessageWithData(['data' => $order]));
 
