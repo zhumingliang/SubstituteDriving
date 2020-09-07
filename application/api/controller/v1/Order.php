@@ -6,6 +6,7 @@ namespace app\api\controller\v1;
 
 use app\api\controller\BaseController;
 use app\api\model\OrderPushT;
+use app\api\service\LogService;
 use app\api\service\OrderService;
 use app\lib\enum\OrderEnum;
 use app\lib\exception\SuccessMessage;
@@ -329,6 +330,7 @@ class Order extends BaseController
     public function orderComplete()
     {
         $params = $this->request->param();
+        LogService::save(1);
         $order = (new OrderService())->driverCompleteOrder($params);
         return json(new SuccessMessageWithData(['data' => $order]));
 
