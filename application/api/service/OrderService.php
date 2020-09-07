@@ -935,7 +935,7 @@ class OrderService
         try {
             Db::startTrans();
             $id = $params['id'];
-            LogService::save($id);
+            LogService::save(\GuzzleHttp\json_encode($params));
             $this->checkOrderComplete($id);
             //处理订单完成唯一性
             $distance = round($params['distance'] / 1000, 2);
