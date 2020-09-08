@@ -1044,7 +1044,7 @@ class OrderService
     public function addRedisOrderComplete($order_id)
     {
 
-        Redis::instance()->set('order_id', $order_id,60);
+        Redis::instance()->set($order_id, $order_id,60);
     }
 
     public function checkRedisOrderComplete($order_id)
