@@ -1044,13 +1044,14 @@ class OrderService
     public function addRedisOrderComplete($order_id)
     {
 
-        Redis::instance()->sAdd('driver:complete', $order_id);
+        Redis::instance()->set('order_id', $order_id,60);
     }
 
     public function checkRedisOrderComplete($order_id)
     {
-        $res = Redis::instance()->sIsMember('driver:complete', $order_id);
-        var_dump($res);
+    /*    $res = Redis::instance()->sIsMember('driver:complete', $order_id);
+        return $res;*/
+        $res = Redis::instance()->get($order_id);
         return $res;
     }
 
