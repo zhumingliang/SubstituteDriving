@@ -15,7 +15,7 @@ class BaseModel extends Model
 {
     protected function prefixImgUrl($value)
     {
-        $finalUrl = config('setting.domain') . $value;
+        $finalUrl = config('setting.houseDomain') . $value;
         return $finalUrl;
     }
 
