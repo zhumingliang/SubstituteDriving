@@ -496,7 +496,6 @@ class OrderService
     {
         try {
             $p_id = (int)($params['p_id']);
-            LogService::save("p_id:$p_id");
             $type = $params['type'];
             //修改推送表状态
             $push = Redis::instance()->hGet($p_id);
@@ -511,6 +510,7 @@ class OrderService
                 OrderT::update(['d_id' => $driver_id, 'state' => 2], ['id' => $order_id]);
                 $order = $this->checkOrderState($order_id);
                 $this->prefixPushAgree($driver_id, $order_id);
+
                 //处理远程接驾费用
                 $this->prefixFarDistance($order, $driver_id);
                 if ($push_type == "normal") {
@@ -576,7 +576,7 @@ class OrderService
         $redis->sRem('driver_order_ing:' . $company_id, $d_id);
         $redis->sAdd('driver_order_receive:' . $company_id, $d_id);
 
-        //将订单由正在处理集合改为已经完成集合
+        //将订单推送由正在处理集合改为已经完成集合
         $redis->sRem('order:ing', $order_id);
         $redis->sAdd('order:complete', $order_id);
     }

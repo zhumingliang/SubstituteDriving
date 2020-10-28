@@ -419,16 +419,6 @@ class DriverService extends BaseService
         if (!count($online)) {
             return array();
         }
-        /* $ids = implode(',', $ids_arr);
-         $drivers_info = DriverT::field('id,username')->whereIn('id', $ids)->select();
-         foreach ($online as $k => $v) {
-             foreach ($drivers_info as $k2 => $v2) {
-                 if ($v['id'] == $v2->id) {
-                     $online[$k]['username'] = $v2->username;
-                     break;
-                 }
-             }
-         }*/
         return $online;
 
     }

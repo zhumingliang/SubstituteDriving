@@ -39,11 +39,6 @@ class Gateway extends BaseController
         $group = 'company-' . $company_id;
         \GatewayClient\Gateway::joinGroup($client_id, $group);
         \GatewayClient\Gateway::bindUid($client_id, $grade . '-' . $u_id);
-
-        SocketBindT::create([
-            'u_id' => $u_id,
-            'client_id' => $client_id
-        ]);
         //检测余额
         (new WalletService())->checkDriverBalance($u_id);
         return json(new SuccessMessage());

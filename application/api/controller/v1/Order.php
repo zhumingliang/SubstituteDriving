@@ -52,23 +52,6 @@ class Order extends BaseController
         return json(new SuccessMessageWithData(['data' => ['id' => $id]]));
     }
 
-    /**
-     * 处理等待推送订单队列
-     */
-    public function orderListHandel()
-    {
-        (new OrderService())->orderListHandel();
-        // return json(new SuccessMessage());
-    }
-
-    /**
-     * 处理推送信息
-     */
-    public function handelDriverNoAnswer()
-    {
-        (new OrderService())->handelDriverNoAnswer();
-        //  return json(new SuccessMessage());
-    }
 
     /**
      * @api {POST} /api/v1/order/cancel 小程序端/Android司机端/Android管理端-取消订单
