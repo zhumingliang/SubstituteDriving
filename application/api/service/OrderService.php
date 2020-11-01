@@ -499,7 +499,11 @@ class OrderService
             $type = $params['type'];
             //修改推送表状态
             $push = Redis::instance()->hGet($p_id);
-            // Redis::instance()->hSet($p_id, 'state', $type);
+            //推送接受并回传
+            Redis::instance()->hSet($p_id, 'state', 3);
+            //从司机接受到信息且未操作队列中删除
+            Redis::instance()->lRem('driver_receive_push', 100, $p_id);;
+
             $push_type = $push['type'];
             $order_id = $push['order_id'];
             $driver_id = $push['driver_id'];

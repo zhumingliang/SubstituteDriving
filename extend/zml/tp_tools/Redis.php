@@ -205,6 +205,17 @@ class Redis
         return $this->redisObj[$this->sn]->llen($key);
     }
 
+    /**
+     * 删除列表元素
+     * @return mixed
+     */
+    public function lRem($key, $count, $value)
+    {
+        $re = $this->redisObj[$this->sn]->exists($key);//存在返回1，不存在返回0
+        if (!$re) return false;
+        return $this->redisObj[$this->sn]->lrem($key, $count, $value);
+    }
+
 
     /*------------------------------------2.end list结构----------------------------------------------------*/
 
