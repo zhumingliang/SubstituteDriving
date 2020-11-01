@@ -541,6 +541,9 @@ class OrderService
                     }
             } else if ($type == OrderEnum::ORDER_PUSH_REFUSE) {
                 $this->prefixPushRefuse($driver_id, $order_id);
+            } else if ($type == OrderEnum::ORDER_PUSH_INVALID) {
+                $this->prefixPushRefuse($driver_id, $order_id, 1);
+
             }
         } catch (Exception $e) {
             LogService::save("handel:" . $e->getTraceAsString());
@@ -611,7 +614,7 @@ class OrderService
     }
 
     private
-    function prefixPushRefuse($d_id, $order_id = 0)
+    function prefixPushRefuse($d_id, $order_id = 0, $revoke = 0)
     {
         $company_id = (new DriverService())->getDriverCompanyId($d_id);
         //更新司机状态:从正在派单移除；添加到未接单
@@ -626,7 +629,7 @@ class OrderService
         $redis->sAdd('order:no', $order_id);
 
         //将司机加入巨拒单列表，不会重复发送
-        if ($order_id) {
+        if (!$revoke && $order_id) {
             $redis->sAdd("refuse:$order_id", $d_id);
         }
     }
@@ -1044,13 +1047,13 @@ class OrderService
     public function addRedisOrderComplete($order_id)
     {
 
-        Redis::instance()->set($order_id, $order_id,60);
+        Redis::instance()->set($order_id, $order_id, 60);
     }
 
     public function checkRedisOrderComplete($order_id)
     {
-    /*    $res = Redis::instance()->sIsMember('driver:complete', $order_id);
-        return $res;*/
+        /*    $res = Redis::instance()->sIsMember('driver:complete', $order_id);
+            return $res;*/
         $res = Redis::instance()->get($order_id);
         return $res;
     }
@@ -1634,11 +1637,6 @@ class OrderService
             //发送推送给司机说明订单撤销
             $this->pushDriverWithOrderRevoke($d_id);
         } else {
-            /* $orderPush = OrderPushT::where('o_id', $o_id)
-                 ->where('state', CommonEnum::STATE_IS_OK)
-                 ->order(
-            'create_time desc')
-                ->find();*/
 
             $p_id = $o_id;
             //修改推送表状态

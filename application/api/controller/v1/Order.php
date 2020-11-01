@@ -101,17 +101,17 @@ class Order extends BaseController
     }
 
     /**
-     * @api {POST} /api/v1/order/push/handel  Android司机端-接单/拒单
+     * @api {POST} /api/v1/order/push/handel  Android司机端-接单/拒单/不操作超时
      * @apiGroup   Android
      * @apiVersion 1.0.1
      * @apiDescription   Android司机端-接单/拒单
      * @apiExample {post}  请求样例:
      *    {
      *       "p_id": 1,
-     *       "type":2,
+     *       "type":2
      *     }
      * @apiParam (请求参数说明) {int} p_id  推送id
-     * @apiParam (请求参数说明) {int} type  推送处理状态：2 | 接单；3 | 拒单
+     * @apiParam (请求参数说明) {int} type  推送处理状态：2:接单；3:拒单;4:未处理（接收到通知但是未处理订单）
      * @apiSuccessExample {json} 返回样例:
      *{"msg":"ok","errorCode":0}
      * @apiSuccess (返回参数说明) {int} errorCode 错误码： 0表示操作成功无错误
