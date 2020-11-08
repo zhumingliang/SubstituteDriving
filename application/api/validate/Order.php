@@ -8,7 +8,7 @@ class Order extends BaseValidate
 {
     protected $rule = [
         'id' => 'require|isPositiveInteger',
-        'type' => 'require|in:2,3',
+        'type' => 'require|in:2,3,4',
         'start' => 'require|isNotEmpty',
         'phone' => 'require|isMobile',
         'start_lng' => 'require|isNotEmpty',
