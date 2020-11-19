@@ -46,10 +46,10 @@ class TicketService
         }
         //派送优惠券通知
         foreach ($data as $k => $v) {
-            $data = $this->getCompanyInfo();
-            $data['money'] = $ticket->price;
-            //(new SendSMSService())->sendTicketSMS($v['phone'], ['phone' => '19855751988']);
-            (new SendSMSService())->sendTicketSMS($v['phone'], $data);
+            $sendData = $this->getCompanyInfo();
+            //$data['money'] = $ticket->price;
+            (new SendSMSService())->sendTicketSMS($v['phone'], ['phone' => $sendData['phone']]);
+            // (new SendSMSService())->sendTicketSMS($v['phone'], $sendData);
         }
 
         return true;
