@@ -28,8 +28,12 @@ class DriverService extends BaseService
 
     public function __construct()
     {
+       /* $this->redis = new \Redis();
+        $this->redis->connect('127.0.0.1', 6379, 60);*/
+
         $this->redis = new \Redis();
-        $this->redis->connect('127.0.0.1', 6379, 60);
+        $this->redis->connect('121.37.255.12', 6379, 60);
+        $this->redis->auth('waHqes-nijpi8-ruwqex');
 
     }
 
