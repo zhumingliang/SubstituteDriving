@@ -39,9 +39,19 @@ class Index
 {
     public function index($d_id = 50)
     {
-        $redis = new \Redis();
-        $redis->connect('121.37.255.12', 6379, 60);
-        $redis->auth('waHqes-nijpi8-ruwqex');
+        $drivers = DriverT::where('state', CommonEnum::STATE_IS_OK)->select();
+        foreach ($drivers as $k=>$v){
+            $driver_id = 'driver:' . $v['id'];
+            $data = [
+                'id' => $v['id'],
+                'number' =>$v['number'],
+                'username' => $v['username'],
+                'phone' => $v['phone'],
+                'company_id' => $v['company_id'],
+                'order_time' => time(),
+            ];
+            Redis::instance()->hMset($driver_id, $data);
+        }
 
         //$this->mailTask($name);
 
