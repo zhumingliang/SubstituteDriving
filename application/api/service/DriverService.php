@@ -533,12 +533,12 @@ class DriverService extends BaseService
     function getDriversCountWithLocation($company_id, $lat, $lng)
     {
         $count = 0;
-        $redis = new \Redis();
+
         $km = config('setting.mini_nearby_km');
-        $redis->connect('127.0.0.1', 6379, 60);
+
         $driver_location_key = self::getLocationCacheKey($company_id);
 
-        $list = $redis->rawCommand('georadius', $driver_location_key, $lng, $lat, $km, 'km');
+        $list = $this->redis->rawCommand('georadius', $driver_location_key, $lng, $lat, $km, 'km');
         $driver_ids = $this->redis->sMembers('driver_order_no:' . $company_id);
         if (!$driver_ids || !count($list)) {
             return 0;
