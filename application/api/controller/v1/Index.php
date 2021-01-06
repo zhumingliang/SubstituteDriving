@@ -39,6 +39,9 @@ class Index
 {
     public function index($d_id = 50)
     {
+        $redis = new \Redis();
+        $redis->connect('121.37.255.12', 6379, 60);
+        $redis->auth('waHqes-nijpi8-ruwqex');
 
         //$this->mailTask($name);
 

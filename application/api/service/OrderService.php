@@ -577,15 +577,15 @@ class OrderService
         //更新order表状态 - 用触发器：update_order_state 解决
         //更新司机状态:从正在派单移除；添加到已接单
         $company_id = (new DriverService())->getDriverCompanyId($d_id);
-        $redis = new \Redis();
-        $redis->connect('127.0.0.1', 6379, 60);
-        $redis->sRem('driver_order_no:' . $company_id, $d_id);
-        $redis->sRem('driver_order_ing:' . $company_id, $d_id);
-        $redis->sAdd('driver_order_receive:' . $company_id, $d_id);
+        /*   $redis = new \Redis();
+           $redis->connect('127.0.0.1', 6379, 60);*/
+        Redis::instance()->sRem('driver_order_no:' . $company_id, $d_id);
+        Redis::instance()->sRem('driver_order_ing:' . $company_id, $d_id);
+        Redis::instance()->sAdd('driver_order_receive:' . $company_id, $d_id);
 
         //将订单推送由正在处理集合改为已经完成集合
-        $redis->sRem('order:ing', $order_id);
-        $redis->sAdd('order:complete', $order_id);
+        Redis::instance()->sRem('order:ing', $order_id);
+        Redis::instance()->sAdd('order:complete', $order_id);
     }
 
     private
@@ -622,19 +622,19 @@ class OrderService
     {
         $company_id = (new DriverService())->getDriverCompanyId($d_id);
         //更新司机状态:从正在派单移除；添加到未接单
-        $redis = new \Redis();
-        $redis->connect('127.0.0.1', 6379, 60);
-        $redis->sRem('driver_order_receive:' . $company_id, $d_id);
-        $redis->sRem('driver_order_ing:' . $company_id, $d_id);
-        $redis->sAdd('driver_order_no:' . $company_id, $d_id);
+        /*  $redis = new \Redis();
+          $redis->connect('127.0.0.1', 6379, 60);*/
+        Redis::instance()->sRem('driver_order_receive:' . $company_id, $d_id);
+        Redis::instance()->sRem('driver_order_ing:' . $company_id, $d_id);
+        Redis::instance()->sAdd('driver_order_no:' . $company_id, $d_id);
 
         //将订单由正在处理集合改为未处理集合
-        $redis->sRem('order:ing', $order_id);
-        $redis->sAdd('order:no', $order_id);
+        Redis::instance()->sRem('order:ing', $order_id);
+        Redis::instance()->sAdd('order:no', $order_id);
 
         //将司机加入巨拒单列表，不会重复发送
         if (!$revoke && $order_id) {
-            $redis->sAdd("refuse:$order_id", $d_id);
+            Redis::instance()->sAdd("refuse:$order_id", $d_id);
         }
     }
 
@@ -671,7 +671,8 @@ class OrderService
     function findDriverToPush($order)
     {
         $redis = new \Redis();
-        $redis->connect('127.0.0.1', 6379, 60);
+        $redis->connect('121.37.255.12', 6379, 60);
+        $redis->auth('waHqes-nijpi8-ruwqex');
         $company_id = $order['company_id'];
         //查询所有司机并按距离排序
         $lat = $order['start_lat'];
@@ -1208,7 +1209,8 @@ class OrderService
     function getDriverLocation($u_id, $company_id = '')
     {
         $redis = new \Redis();
-        $redis->connect('127.0.0.1', 6379, 60);
+        $redis->connect('121.37.255.12', 6379, 60);
+        $redis->auth('waHqes-nijpi8-ruwqex');
         if (empty($company_id)) {
             $company_id = (new DriverService())->getDriverCompanyId($u_id);
         }
@@ -1277,22 +1279,22 @@ class OrderService
     function updateDriverCanReceive($d_id, $order_id = 0)
     {
         //检查新司机状态是否有订单，修改司机状态
-        $redis = new \Redis();
-        $redis->connect('127.0.0.1', 6379, 60);
+        /*        $redis = new \Redis();
+                $redis->connect('127.0.0.1', 6379, 60);*/
         $company_id = (new DriverService())->getDriverCompanyId($d_id);
-        $exits = $redis->sIsMember('driver_order_no:' . $company_id, "$d_id");
+        $exits = Redis::instance()->sIsMember('driver_order_no:' . $company_id, "$d_id");
         if (!$exits) {
             return false;
         }
         //将被转单司机从'未接单'移除，添加到：正在派单
-        $redis->sRem('driver_order_receive:' . $company_id, $d_id);
-        $redis->sRem('driver_order_no:' . $company_id, $d_id);
-        $redis->sAdd('driver_order_ing:' . $company_id, $d_id);
+        Redis::instance()->sRem('driver_order_receive:' . $company_id, $d_id);
+        Redis::instance()->sRem('driver_order_no:' . $company_id, $d_id);
+        Redis::instance()->sAdd('driver_order_ing:' . $company_id, $d_id);
 
         //将订单状态改为处理中
-        $redis->sRem('order:complete', $order_id);
-        $redis->sRem('order:no:', $order_id);
-        $redis->sAdd('order:ing', $order_id);
+        Redis::instance()->sRem('order:complete', $order_id);
+        Redis::instance()->sRem('order:no:', $order_id);
+        Redis::instance()->sAdd('order:ing', $order_id);
         return true;
     }
 

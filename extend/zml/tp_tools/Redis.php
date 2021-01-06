@@ -24,9 +24,8 @@ class Redis
     protected $sn;
     protected $index = 0;
     protected $port = 6379;
-    protected $auth = "";
-    //protected $host = "10.66.217.183";
-    protected $host = "127.0.0.1";
+    protected $auth = "waHqes-nijpi8-ruwqex";
+    protected $host = "121.37.255.12";
 
     public function __construct($options = [])
     {
