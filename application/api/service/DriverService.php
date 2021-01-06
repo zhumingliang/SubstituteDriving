@@ -319,8 +319,7 @@ class DriverService extends BaseService
 
         $list = $this->redis->rawCommand('georadius', $driver_location_key, $start_lng, $start_lat, 100000, 'km', 'WITHDIST', 'WITHCOORD');
 
-        $redis = new Redis();
-        $driver_ids = $redis->sMembers("driver_order_no:$company_id");
+        $driver_ids =  $this->redis->sMembers("driver_order_no:$company_id");
         if (!$driver_ids || !count($list)) {
             return array();
         }
@@ -333,7 +332,7 @@ class DriverService extends BaseService
                 && $this->checkOnline($d_id)
             ) {
 
-                $driver = $redis->lPop("driver:$d_id:location");
+                $driver =  $this->redis->lPop("driver:$d_id:location");
                 if ($driver) {
                     $driver = json_decode($driver, true);
                 } else {
