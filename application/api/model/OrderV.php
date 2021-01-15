@@ -189,13 +189,14 @@ class OrderV extends Model
             if (strlen($driver)) {
                 $query->where('driver|phone', 'like', '%' . $driver . '%');
             }
-        })->where(function ($query) use ($time_begin, $time_end) {
-            if (strlen($time_begin) && strlen($time_end)) {
-                $time_end = addDay(1, $time_end);
-                $query->where('create_time', " >=", $time_begin . ' 06:00:00')
-                    ->where('create_time', " <=", $time_end . ' 06:00:00');
-            }
         })
+            ->where(function ($query) use ($time_begin, $time_end) {
+                if (strlen($time_begin) && strlen($time_end)) {
+                    $time_end = addDay(1, $time_end);
+                    $query->where('create_time', " >=", $time_begin . ' 06:00:00')
+                        ->where('create_time', " <=", $time_end . ' 06:00:00');
+                }
+            })
             ->field('id,d_id,driver,superior_id,null as superior,2 as transfer ,from,state,start,end,name,money,cancel_type,cancel_remark,create_time,phone_code,phone')
             ->order('create_time desc')
             ->paginate($size, false, ['page' => $page])->toArray();
