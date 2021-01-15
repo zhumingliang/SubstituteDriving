@@ -75,8 +75,8 @@ class OrderT extends Model
             ->where(function ($query) use ($time_begin, $time_end) {
                 if (strlen($time_begin) && strlen($time_end)) {
                     $time_end = addDay(1, $time_end);
-                    $query->where('create_time', " >=", $time_begin . ' 06:00:00')
-                        ->where('create_time', " <=", $time_end . ' 06:00:00');
+                    $query->where('create_time', ">=", $time_begin . ' 06:00:00')
+                        ->where('create_time', "<=", $time_end . ' 06:00:00');
                 }
             })
             ->field('id,d_id,superior_id,null as superior,2 as transfer ,from,state,start,end,name,money,cancel_type,cancel_remark,create_time,begin,phone')
@@ -93,8 +93,8 @@ class OrderT extends Model
             ->where(function ($query) use ($time_begin, $time_end) {
                 if (strlen($time_begin) && strlen($time_end)) {
                     $time_end = addDay(1, $time_end);
-                    $query->where('create_time', " >=", $time_begin . ' 06:00:00')
-                        ->where('create_time', " <=", $time_end . ' 06:00:00');
+                    $query->where('create_time', ">=", $time_begin . ' 06:00:00')
+                        ->where('create_time', "<=", $time_end . ' 06:00:00');
                 }
             })
             ->count('phone');
@@ -112,8 +112,8 @@ class OrderT extends Model
             ->where(function ($query) use ($time_begin, $time_end) {
                 if (strlen($time_begin) && strlen($time_end)) {
                     $time_end = addDay(1, $time_end);
-                    $query->where('create_time', " >=", $time_begin . ' 06:00:00')
-                        ->where('create_time', " <=", $time_end . ' 06:00:00');
+                    $query->where('create_time', ">=", $time_begin . ' 06:00:00')
+                        ->where('create_time', "<=", $time_end . ' 06:00:00');
                 }
             })
             ->field('sum(money+ticket_money) as all_money,sum(ticket_money) as ticket_money ')
