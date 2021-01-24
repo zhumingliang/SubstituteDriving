@@ -1320,36 +1320,6 @@ class OrderService
             'order_time' => date('H:i',
                 strtotime($order->create_time))]);
 
-        /*  $orderPush = OrderPushT::create(
-              [
-                  'f_d_id' => $order->d_id,
-                  'd_id' => $d_id,
-                  'o_id' => $order->id,
-                  'type' => 'transfer',
-                  'state' => OrderEnum::ORDER_PUSH_NO,
-                  'limit_time' => time()
-              ]
-          );*/
-        //通过websocket推送给司机
-        /*     $push_data = [
-                 'type' => 'transfer',
-                 'order_info' => [
-                     'from_type' => $push_type == "transfer" ? 'driver' : 'manager',
-                     'from' => $from_name,
-                     'o_id' => $order->id,
-                     'name' => $order->name,
-                     'phone' => $order->phone,
-                     'start' => $order->start,
-                     'end' => $order->end,
-                     'create_time' => $order->create_time,
-                     'p_id' => $orderPush->id,
-                     'distance' => $distance_info['distance'],
-                     'distance_money' => $distance_info['distance_money']
-                 ]
-             ];
-             GatewayService::sendToDriverClient($d_id, $push_data);
-             $orderPush->message = json_encode($push_data);
-             $orderPush->save();*/
 
         //通过websocket推送给司机
         $push_data = [
@@ -1650,7 +1620,7 @@ class OrderService
             if ($push) {
                 $d_id = $push['driver_id'];
                 //处理推送取消
-                // Redis::instance()->hSet($p_id, 'state', 2);
+                Redis::instance()->delete($p_id, 'hash');
             } else {
                 $d_id = '';
             }

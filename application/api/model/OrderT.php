@@ -76,7 +76,7 @@ class OrderT extends Model
                 if (strlen($time_begin) && strlen($time_end)) {
                     $time_end = addDay(1, $time_end);
                     $query->where('create_time', ">=", $time_begin . ' 06:00:00')
-                        ->where('create_time', "<=", $time_end . ' 06:00:00');
+                        ->where('create_time', "                              <=", $time_end . ' 06:00:00');
                 }
             })
             ->field('id,d_id,superior_id,null as superior,2 as transfer ,from,state,start,end,name,money,cancel_type,cancel_remark,create_time,begin,phone')

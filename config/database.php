@@ -65,14 +65,14 @@ return [
         // 数据库类型
         'type'        => 'mysql',
         // 服务器地址
-        'hostname'    => '55a32a9887e03.gz.cdb.myqcloud.com',
+        'hostname'    => '139.9.106.80',
         // 数据库名
         'database'    => 'service',
         // 数据库用户名
         'username'    => 'cdb_outerroot',
         // 数据库密码
-        'password'    => 'Libo1234',
-        'hostport'        => '16273',
+        'password'    => '6DYOFCjmCVMP',
+        'hostport'        => '3306',
         // 数据库编码默认采用utf8
         'charset'     => 'utf8',
         // 数据库表前缀
