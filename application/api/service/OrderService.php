@@ -1620,7 +1620,7 @@ class OrderService
             if ($push) {
                 $d_id = $push['driver_id'];
                 //处理推送取消
-                Redis::instance()->delete($p_id, 'hash');
+                Redis::instance()->delete($p_id);
             } else {
                 $d_id = '';
             }
