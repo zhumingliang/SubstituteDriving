@@ -1133,8 +1133,8 @@ class OrderService
     function prefixWeather($distance_money)
     {
         $money = 0;
-        $time_begin = '2020-01-22 12:00:00';
-        $time_end = '2020-02-02 23:59:00';
+        $time_begin = '2021-02-07 12:00:00';
+        $time_end = '2021-02-22 23:59:00';
         if (strtotime($time_begin) < time() && strtotime($time_end) > time()) {
             $money += 6;
         }
