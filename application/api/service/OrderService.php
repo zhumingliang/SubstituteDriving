@@ -1134,7 +1134,7 @@ class OrderService
     {
         $money = 0;
         $time_begin = '2021-02-07 12:00:00';
-        $time_end = '2021-02-22 23:59:00';
+        $time_end = '2021-02-21 23:59:00';
         if (strtotime($time_begin) < time() && strtotime($time_end) > time()) {
             $money += 6;
         }
