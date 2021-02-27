@@ -76,7 +76,7 @@ class OrderV extends Model
                     $query->whereBetweenTime('create_time', $time_begin, $time_end);
                 }
             })
-            ->whereNotIn('d_id', '28,35,27,39,50')
+            ->whereNotIn('d_id', '28,35,27,39,50,131')
             ->field('id,d_id,from,driver,money,state,create_time,name')
             ->order('create_time desc')
             ->paginate($size, false, ['page' => $page])->toArray();
