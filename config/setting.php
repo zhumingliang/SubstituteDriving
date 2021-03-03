@@ -3,7 +3,7 @@
 return [
     'domain' => 'https://tonglingok.com',
     'houseDomain' => 'http://test.tonglingok.com',
-    'image_domain' => 'http://image.tonglingok.com',
+    'image_domain' => 'http://test.tonglingok.com',
     'driver_push_expire_in' => 45,
     'driver_nearby_km' => 20,
     'manager_nearby_km' => 300000,
