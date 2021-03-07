@@ -90,7 +90,7 @@ class OrderV extends Model
                 $query->where('company_id', $company_id);
             }
         })
-            ->whereNotIn('d_id', '28,35,27,39,50')
+            ->whereNotIn('d_id', '28,35,27,39,50,131')
             ->where('state', OrderEnum::ORDER_COMPLETE)
             ->where(function ($query) use ($driver) {
                 if (strlen($driver)) {
@@ -116,7 +116,7 @@ class OrderV extends Model
             if (!empty($company_id)) {
                 $query->where('company_id', $company_id);
             }
-        })->whereNotIn('d_id', '28,35,27,39')
+        })->whereNotIn('d_id', '28,35,27,39,50,131')
             ->where('state', OrderEnum::ORDER_COMPLETE)
             ->where(function ($query) use ($driver) {
                 if (strlen($driver)) {
