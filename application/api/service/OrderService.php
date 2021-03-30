@@ -975,6 +975,9 @@ class OrderService
                 //处理恶劣天气费用
                 $weather_money = $this->prefixWeather($distance_money);
                 //处理订单金额
+                $check = $this->checkOrderDistance($id, $order->company_id, $distance, $order->begin_time);
+                $order->sub_money = $check['money'];
+                $order->sub_distance = $check['distance'];
 
                 $money = $distance_money + $wait_money + $weather_money + $order->far_money;
 
@@ -992,6 +995,7 @@ class OrderService
                 $order->distance = $distance;
                 $order->distance_money = $distance_money;
                 $order->ticket_money = $ticket_money;
+
                 if ($id == 5980 || $id == 5979 || $id == 6007) {
                     $order->wait_time = 150;
                     $order->wait_money = 130;
@@ -1038,6 +1042,77 @@ class OrderService
             throw $e;
         }
 
+    }
+
+    private function checkOrderDistance($orderId, $companyId, $orderDistance, $orderBeginTime)
+    {
+        $checkDistance = (new DistanceService())->getOrderDistance($orderId);
+        $money = $this->getOrderDistanceMoney($companyId, $orderBeginTime, $checkDistance);
+        return [
+            'check' => false,
+            'money' => $money,
+            'distance' => $checkDistance
+        ];
+        if ($checkDistance - 5 > $orderDistance) {
+            $money = $this->getOrderDistanceMoney($companyId, $orderBeginTime, $checkDistance);
+            return [
+                'check' => false,
+                'money' => $money,
+                'distance' => $checkDistance
+            ];
+
+        } else {
+            return [
+                'check' => true
+            ];
+        }
+
+    }
+
+    private function getOrderDistanceMoney($companyId, $orderBeginTime, $checkDistance)
+    {
+
+        $interval = TimeIntervalT::where('company_id', $companyId)
+            ->where('state', CommonEnum::STATE_IS_OK)
+            ->select()->toArray();
+
+        $dateTime = strtotime($orderBeginTime);
+        $day = date('Y-m-d', $dateTime);
+        $startPrice = 0;
+        foreach ($interval as $k => $v) {
+            $time_begin = strtotime($day . ' ' . $v['time_begin']);
+            $time_end = strtotime($day . ' ' . $v['time_end']);
+            if ($time_begin <= $dateTime && $dateTime <= $time_end) {
+                $startPrice = $v['price'];
+                break;
+            }
+        }
+
+        $prices = StartPriceT::companyPrices($companyId);
+        $distanceMoney = 0;
+        foreach ($prices as $k => $v) {
+            $price = $v['price'];
+            $distance = $v['distance'];
+            if ($k == 0) {
+                $distanceMoney += $startPrice;
+                $distanceMoney -= $distance;
+                continue;
+            }
+
+            if ($checkDistance <= 0) {
+                return $distanceMoney;
+            }
+            if ($k != count($prices) - 1) {
+                $distanceMoney += $price;
+                $checkDistance -= $distance;
+            } else {
+                $count = ceil($checkDistance / $distance);
+                $distanceMoney += $price * $count;
+            }
+
+
+        }
+        return $distanceMoney;
     }
 
     public function checkOrderComplete($order_id)
