@@ -32,6 +32,7 @@ use GuzzleHttp\Handler\CurlHandler;
 use think\Db;
 use think\Exception;
 use think\facade\Log;
+use think\facade\Request;
 use zml\tp_tools\CalculateUtil;
 use zml\tp_tools\Redis;
 
@@ -975,9 +976,15 @@ class OrderService
                 //处理恶劣天气费用
                 $weather_money = $this->prefixWeather($distance_money);
                 //处理订单金额
-                $check = $this->checkOrderDistance($id, $order->company_id, $distance, $order->begin_time);
-                $order->sub_money = $check['money'];
-                $order->sub_distance = $check['distance'];
+
+                try {
+                    $check = $this->checkOrderDistance($id, $order->company_id, $distance, $order->begin_time);
+                    $order->sub_money = $check['money'];
+                    $order->sub_distance = $check['distance'];
+                } catch (Exception $e) {
+                    LogService::save($e->getMessage());
+                }
+
 
                 $money = $distance_money + $wait_money + $weather_money + $order->far_money;
 
@@ -1022,7 +1029,6 @@ class OrderService
                  throw new SaveException(['msg' => '订单抽成失败']);
              }*/
             Db::commit();
-
             Redis::instance()->hSet('driver:' . $order->d_id, 'order_time', time());
             (new DriverService())->handelDriveStateByComplete($order->d_id);
             (new WalletService())->checkDriverBalance(Token::getCurrentUid());
@@ -1044,7 +1050,7 @@ class OrderService
 
     }
 
-    private function checkOrderDistance($orderId, $companyId, $orderDistance, $orderBeginTime)
+    public function checkOrderDistance($orderId, $companyId, $orderDistance, $orderBeginTime)
     {
         $checkDistance = (new DistanceService())->getOrderDistance($orderId);
         $money = $this->getOrderDistanceMoney($companyId, $orderBeginTime, $checkDistance);
@@ -1095,7 +1101,7 @@ class OrderService
             $distance = $v['distance'];
             if ($k == 0) {
                 $distanceMoney += $startPrice;
-                $distanceMoney -= $distance;
+                $checkDistance -= $distance;
                 continue;
             }
 

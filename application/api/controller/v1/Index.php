@@ -39,26 +39,10 @@ class Index
 {
     public function index($d_id = 50)
     {
-
-        $companyId = 1;
-        $orderBeginTime = "2021-03-29 21:00:00";
-        $interval = TimeIntervalT::where('company_id', $companyId)
-            ->where('state', CommonEnum::STATE_IS_OK)
-            ->select()->toArray();
-
-        $dateTime = strtotime($orderBeginTime);
-        $day = date('Y-m-d', $dateTime);
-        $price = 0;
-        foreach ($interval as $k => $v) {
-            $time_begin = strtotime($day . ' ' . $v['time_begin']);
-            $time_end = strtotime($day . ' ' . $v['time_end']);
-            if ($time_begin <= $dateTime && $dateTime <= $time_end) {
-                $price = $v['price'];
-                break;
-            }
-        }
-        echo $price;
-
+        $id = 22726;
+        $order = OrderT::get($id);
+        $check = (new  OrderService())->checkOrderDistance($id, $order->company_id, 0, $order->begin_time);
+        print_r($check);
         /* echo (new OrderService())->getStartPrice(1, 10, 3240);
 
 
