@@ -76,7 +76,7 @@ class OrderV extends Model
                     $query->whereBetweenTime('create_time', $time_begin, $time_end);
                 }
             })
-            ->whereNotIn('d_id', '28,35,27,39,50,131,82')
+            ->whereNotIn('d_id', '28,35,27,39,50,131,135')
             ->field('id,d_id,from,driver,money,state,create_time,name')
             ->order('create_time desc')
             ->paginate($size, false, ['page' => $page])->toArray();
@@ -90,7 +90,7 @@ class OrderV extends Model
                 $query->where('company_id', $company_id);
             }
         })
-            ->whereNotIn('d_id', '28,35,27,39,50,131,82')
+            ->whereNotIn('d_id', '28,35,27,39,50,131,135')
             ->where('state', OrderEnum::ORDER_COMPLETE)
             ->where(function ($query) use ($driver) {
                 if (strlen($driver)) {
@@ -116,7 +116,7 @@ class OrderV extends Model
             if (!empty($company_id)) {
                 $query->where('company_id', $company_id);
             }
-        })->whereNotIn('d_id', '28,35,27,39,50,131,82')
+        })->whereNotIn('d_id', '28,35,27,39,50,131,135')
             ->where('state', OrderEnum::ORDER_COMPLETE)
             ->where(function ($query) use ($driver) {
                 if (strlen($driver)) {
