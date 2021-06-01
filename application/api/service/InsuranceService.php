@@ -24,17 +24,15 @@ class InsuranceService
             'company' => $this->company,
 
         ];
-        LogService::save(\GuzzleHttp\json_encode($data));
         $res = Http::sendRequest($url, $data);
-        LogService::save(\GuzzleHttp\json_encode($res));
+        //保险生成失败
+        InsuranceLogT::create([
+            'order_id' => $orderId,
+            'data' => json_encode($data),
+            'return_data' => json_encode($res),
+            'type' => "begin"
+        ]);
         if (empty($res['info']['code']) || $res['info']['code'] != 200) {
-            //保险生成失败
-            InsuranceLogT::create([
-                'order_id' => $orderId,
-                'data' => json_encode($data),
-                'return_data' => json_encode($res),
-                'type' => "begin"
-            ]);
             return 0;
         }
         $insuranceId = $res['info']['data']['id'];
@@ -53,14 +51,13 @@ class InsuranceService
 
         ];
         $res = Http::sendRequest($url, $data);
+        InsuranceLogT::create([
+            'order_id' => $insuranceId,
+            'data' => json_encode($data),
+            'return_data' => json_encode($res),
+            'type' => "complete"
+        ]);
         if (empty($res['info']['code']) || $res['info']['code'] != 200) {
-            //保险生成失败
-            InsuranceLogT::create([
-                'order_id' => $insuranceId,
-                'data' => json_encode($data),
-                'return_data' => json_encode($res),
-                'type' => "complete"
-            ]);
             return false;
         }
         return true;
