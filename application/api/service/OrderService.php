@@ -840,7 +840,7 @@ class OrderService
         //添加保险记录
         $driver = Token::getCurrentTokenVar('username');
         $driverPhone = Token::getCurrentTokenVar('phone');
-        $insuranceId = (new InsuranceService())->submit($o_id, $order->phone, $order->begin_time, $driver, $driverPhone, $order->start);
+        $insuranceId = (new InsuranceService())->submit($o_id, $order->phone, time(), $driver, $driverPhone, $order->start);
         OrderT::update([
             'id' => $o_id,
             'insurance_id' => $insuranceId

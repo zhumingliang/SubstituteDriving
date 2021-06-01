@@ -24,6 +24,7 @@ class InsuranceService
             'company' => $this->company,
 
         ];
+        LogService::save(\GuzzleHttp\json_encode($data));
         $res = Http::sendRequest($url, $data);
         LogService::save(\GuzzleHttp\json_encode($res));
         if (empty($res['info']['code']) || $res['info']['code'] != 200) {
