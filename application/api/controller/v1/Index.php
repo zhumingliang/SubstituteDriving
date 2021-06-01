@@ -18,6 +18,7 @@ use app\api\model\WaitPriceT;
 use app\api\model\WeatherT;
 use app\api\service\DriverService;
 use app\api\service\GatewayService;
+use app\api\service\InsuranceService;
 use app\api\service\LogService;
 use app\api\service\OrderService;
 use app\api\service\SendSMSService;
@@ -37,12 +38,29 @@ use function GuzzleHttp\Psr7\str;
 
 class Index
 {
-    public function index($d_id = 50)
+    public function index($id = 1, $type = 1)
     {
-        $id = 22726;
-        $order = OrderT::get($id);
-        $check = (new  OrderService())->checkOrderDistance($id, $order->company_id, 0, $order->begin_time);
-        print_r($check);
+        if ($type == 1) {
+            $res = (new InsuranceService())->submit($id, "18956225230", time(), "朱明良", "18156218502", "安徽铜陵高速地产");
+            print_r($res);
+        } elseif ($type == 2) {
+            $res = (new InsuranceService())->complete($id, 1, time(), "安徽铜陵高速地产");
+            if ($res) {
+                echo "success";
+            } else {
+                echo "fail";
+            }
+
+        } else if ($type == 3) {
+            (new InsuranceService())->search($id);
+
+        }
+
+
+        /*       $id = 22726;
+               $order = OrderT::get($id);
+               $check = (new  OrderService())->checkOrderDistance($id, $order->company_id, 0, $order->begin_time);
+               print_r($check);*/
         /* echo (new OrderService())->getStartPrice(1, 10, 3240);
 
 

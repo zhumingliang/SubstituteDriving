@@ -836,6 +836,15 @@ class OrderService
         if (!$res) {
             throw new UpdateException();
         }
+
+        //添加保险记录
+        $driver = Token::getCurrentTokenVar('username');
+        $driverPhone = Token::getCurrentTokenVar('phone');
+        $insuranceId = (new InsuranceService())->submit($o_id, $order->phone, $order->begin_time, $driver, $driverPhone, $order->start);
+        OrderT::update([
+            'id' => $o_id,
+            'insurance_id' => $insuranceId
+        ]);
     }
 
     public
@@ -1018,6 +1027,13 @@ class OrderService
             }
 
             $order->state = OrderEnum::ORDER_COMPLETE;
+            //完成保险订单
+
+            $insuranceComplete = (new InsuranceService())->complete($order->insurance_id,
+                $params['distance'], time(), $params['end']);
+            if ($insuranceComplete) {
+                $order->insurance_success = CommonEnum::STATE_IS_OK;
+            }
             $res = $order->save();
             if (!$res) {
                 Db::rollback();
