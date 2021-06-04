@@ -837,7 +837,7 @@ class OrderService
             throw new UpdateException();
         }
 
-        $noInsurance = [27, 28, 35, 39];
+        $noInsurance = [27, 28, 35, 39,131,139];
         //添加保险记录
         if (!in_array($order->d_id, $noInsurance)) {
             $driver = Token::getCurrentTokenVar('username');
